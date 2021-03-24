@@ -1,0 +1,594 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.9.2" />
+<title>genshinstats.genshinstats API documentation</title>
+<meta name="description" content="Wrapper for the hoyolab.com gameRecord api …" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<link rel="preconnect" href="https://www.google.com">
+<script async src="https://cse.google.com/cse.js?cx=017837193012385208679:pey8ky8gdqw"></script>
+<style>
+.gsc-control-cse {padding:0 !important;margin-top:1em}
+body.gsc-overflow-hidden #sidebar {overflow: visible;}
+</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>genshinstats.genshinstats</code></h1>
+</header>
+<section id="section-intro">
+<p>Wrapper for the hoyolab.com gameRecord api.</p>
+<p>Can fetch data for a user's stats like stats, characters, spiral abyss runs&hellip;</p>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+<a href="https://github.com/thesadru/genshinstats/blob/0f570acdfecfe756c3d8c70090897ba9bcfdaaff/genshinstats\genshinstats.py#L0-L197" class="git-link">Browse git</a>
+</summary>
+<pre><code class="python">&#34;&#34;&#34;Wrapper for the hoyolab.com gameRecord api.
+
+Can fetch data for a user&#39;s stats like stats, characters, spiral abyss runs...
+&#34;&#34;&#34;
+import hashlib
+import random
+import re
+import string
+import time
+from http.cookies import SimpleCookie
+from typing import List
+from urllib.parse import urljoin
+
+from requests import Session
+from requests.cookies import cookiejar_from_dict
+
+from .errors import *
+from .pretty import *
+
+session = Session()
+session.headers.update({
+    # required headers
+    &#34;x-rpc-app_version&#34;:&#34;1.5.0&#34;, # chinese api uses 2.x.x, global api uses 1.x.x
+    &#34;x-rpc-client_type&#34;:&#34;4&#34;,
+    &#34;x-rpc-language&#34;:&#34;en-us&#34;,
+    # authentications headers
+    &#34;ds&#34;:&#34;&#34;,
+    # recommended headers
+    &#34;user-agent&#34;:&#34;Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36&#34;,
+})
+DS_SALT = &#34;6cqshh5dhw73bzxn20oexa9k516chk7s&#34;
+HOYOLABS_URL = &#34;https://bbs-api-os.hoyolab.com/&#34; # global
+TAKUMI_URL = &#34;https://api-takumi.mihoyo.com&#34; # chinese
+
+def set_cookie(account_id: int, cookie_token: str) -&gt; None:
+    &#34;&#34;&#34;Basic configuration function, required for anything beyond search.
+    
+    Account id and cookie token must be copied from your browser&#39;s cookies.
+    &#34;&#34;&#34;
+    session.cookies.set(&#39;account_id&#39;,str(account_id))
+    session.cookies.set(&#39;cookie_token&#39;,cookie_token)
+
+def set_cookie_header(header: str) -&gt; None:
+    &#34;&#34;&#34;Like set_cookie, but you can set the header directly.&#34;&#34;&#34;
+    c = SimpleCookie()
+    c.load(header)
+    session.cookies = cookiejar_from_dict({k:v.value for k,v in c.items()},session.cookies)
+
+def get_ds_token(salt: str) -&gt; str:
+    &#34;&#34;&#34;Creates a new ds token.
+    
+    Uses an MD5 hash with a unique salt.
+    &#34;&#34;&#34;
+    t = int(time.time()) # current seconds
+    c = &#39;&#39;.join(random.sample(string.ascii_lowercase+string.digits, k=6)) # 6 random chars
+    h = hashlib.md5(f&#34;salt={salt}&amp;t={t}&amp;r={c}&#34;.encode()).hexdigest() # hash and get hex
+    return f&#39;{t},{c},{h}&#39;
+
+def fetch_endpoint(endpoint: str, *, chinese: bool=False, **kwargs) -&gt; dict:
+    &#34;&#34;&#34;Fetch an enpoint from the hoyolabs API.
+    
+    Takes in an endpoint url which is joined with the base url.
+    A request is then sent and returns a parsed response.
+    Includes error handling and ds token renewal.
+    
+    Can specifically use the chinese base url  and request data for chinese users, 
+    but that requires being logged in as that user.
+    &#34;&#34;&#34;
+    session.headers[&#39;ds&#39;] = get_ds_token(DS_SALT)
+    method = kwargs.pop(&#39;method&#39;,&#39;get&#39;)
+    url = urljoin(TAKUMI_URL if chinese else HOYOLABS_URL, endpoint)
+    
+    r = session.request(method,url,**kwargs)
+    r.raise_for_status()
+    
+    data = r.json()
+    if data[&#39;data&#39;] is not None: # success
+        return data[&#39;data&#39;]
+    
+    # Custom HTTP Errors
+    retcode,msg = data[&#39;retcode&#39;],data[&#39;message&#39;]
+    # UID
+    if   retcode == 1009  and msg == &#34;角色信息错误&#34;:
+        raise InvalidUID(&#39;UID could not be found.&#39;)
+    elif retcode == 10102 and msg == &#39;Data is not public for the user&#39;:
+        raise DataNotPublic(&#39;User has set their data to be private. To enable go to https://www.hoyolab.com/genshin/accountCenter/gameRecord&#39;)
+    # token
+    elif retcode == -401  and msg == &#39;请求异常&#39;:
+        raise InvalidDS(&#39;Invalid DS token, might be expired.&#39;)
+    elif retcode == -100 or retcode == 10001 and msg == &#39;Please login&#39;:
+        raise NotLoggedIn(&#39;Login cookies have not been provided or are incorrect.&#39;)
+    # other
+    elif retcode == 1     and msg == &#39;Invalid schedule type&#39;:
+        raise InvalidScheduleType(&#39;Invalid Spiral Abyss schedule type, can only be 1 or 2.&#39;)
+    elif retcode == 2001  and msg == &#39;Duplicate operation or update failed&#39;:
+        raise CannotCheckIn(&#39;Check-in is currently timed out, wait at least a day before checking-in again.&#39;)
+    elif retcode == -2003 and msg == &#39;Invalid redemption code&#39;:
+        raise InvalidCode(&#39;Invalid redemption code&#39;)
+    elif retcode == -2017 and msg == &#39;This Redemption Code is already in use&#39;:
+        raise CodeAlreadyUsed(&#39;Redemption code has been claimed already.&#39;)
+    elif retcode == -2021 and msg == &#39;You do not meet the Adventure Rank requirements. This redemption code is only valid if your Adventure Rank is equal to or above 10&#39;:
+        raise TooLowAdventureRank(&#39;Cannot claim codes for account with advunture rank lower than 10.&#39;)
+    elif retcode == -5003 and msg == &#34;Traveler, you&#39;ve already checked in today~&#34;:
+        raise AlreadySignedIn(&#39;Already claimed daily reward, try again tommorow.&#39;)
+    elif retcode ==-10002 and msg == &#39;No character created yet&#39;:
+        raise NoGameAccount(&#39;Cannot get rewards info. Account has no game account binded to it.&#39;)
+    elif retcode == -1    and msg.endswith(&#39; is not exists&#39;):
+        t,n = msg.split(&#39;:&#39;)
+        raise InvalidItemID(f&#39;{t} &#34;{n.split()[0]}&#34; does not exist.&#39;)
+    else:
+        raise GenshinStatsException(f&#34;{retcode} Error ({data[&#39;message&#39;]}) for url: \&#34;{r.url}\&#34;&#34;)
+
+def recognize_server(uid: int) -&gt; str:
+    &#34;&#34;&#34;Recognizes which server a UID is from.&#34;&#34;&#34;
+    server = {
+        1:&#39;cn_gf01&#39;,
+        5:&#39;cn_qd01&#39;,
+        6:&#39;os_usa&#39;,
+        7:&#39;os_euro&#39;,
+        8:&#39;os_asia&#39;,
+        9:&#39;os_cht&#39;,
+    }.get(int(str(uid)[0]))
+    if server:
+        return server
+    else:
+        raise InvalidUID(&#34;UID isn&#39;t associated with any server&#34;)
+
+def get_user_info(uid: int, raw: bool=False) -&gt; dict:
+    &#34;&#34;&#34;Gets game user info of a user based on their uid.
+    
+    Game user info contain the main nformation regarding a user.
+    Contains owned characters, stats, city and world explorations and role.
+    &#34;&#34;&#34;
+    server = recognize_server(uid)
+    data = fetch_endpoint(
+        &#34;game_record/genshin/api/index&#34;,
+        chinese=is_chinese(uid),
+        params=dict(server=server,role_id=uid)
+    )
+    return data if raw else prettify_user_info(data)
+
+def get_characters(uid: int, character_ids: List[int], lang: str=&#39;en-us&#39;, raw: bool=False) -&gt; list:
+    &#34;&#34;&#34;Gets characters of a user set by their ids.
+    
+    Characters contain info about their level, constelation, weapon, and artifacts.
+    Talents are not included.
+    
+    Change the language with lang, 
+    possible langs can be found with get_langs() under the value field.
+    &#34;&#34;&#34;
+    server = recognize_server(uid)
+    data = fetch_endpoint(
+        &#34;game_record/genshin/api/character&#34;,
+        chinese=is_chinese(uid),
+        method=&#39;POST&#39;,
+        json={&#39;character_ids&#39;:character_ids,&#39;role_id&#39;:uid,&#39;server&#39;:server},
+        headers={&#39;x-rpc-language&#39;:lang},
+    )[&#34;avatars&#34;]
+    return data if raw else prettify_characters(data)
+
+def get_all_characters(uid: int, lang: str=&#39;en-us&#39;, raw: bool=False) -&gt; list:
+    &#34;&#34;&#34;Gets all characters of a user.
+    
+    Characters contain info about their level, constelation, weapon, and artifacts.
+    Talents are not included.
+    
+    Change the language with lang, 
+    possible langs can be found with get_langs() under the value field.
+    &#34;&#34;&#34;
+    characters = get_user_info(uid)[&#39;characters&#39;]
+    return get_characters(uid,[i[&#39;id&#39;] for i in characters], lang, raw)
+
+def get_spiral_abyss(uid: int, previous: bool=False, raw: bool=False) -&gt; dict:
+    &#34;&#34;&#34;Gets how far the user has gotten in spiral abyss and their season progress.
+    
+    Spiral abyss info contains their porgress, stats and individual completes.
+    
+    Every season these stats refresh and you can get the previous stats with `previous`.
+    &#34;&#34;&#34;
+    server = recognize_server(uid)
+    schedule_type = 2 if previous else 1
+    data = fetch_endpoint(
+        &#34;game_record/genshin/api/spiralAbyss&#34;,
+        chinese=is_chinese(uid),
+        params=dict(server=server,role_id=uid,schedule_type=schedule_type)
+    )
+    return data if raw else prettify_spiral_abyss(data)
+
+def is_game_uid(uid: int) -&gt; bool:
+    &#34;&#34;&#34;Recognizes whether the uid is a game uid.
+    
+    Return True if it&#39;s a game uid, False if it&#39;s a community uid
+    &#34;&#34;&#34;
+    return bool(re.fullmatch(r&#39;[6789]\d{8}&#39;,str(uid)))
+
+def is_chinese(x: str) -&gt; bool:
+    &#34;&#34;&#34;Recognizes whether the server/uid is chinese.&#34;&#34;&#34;
+    return str(x).startswith((&#39;cn&#39;,&#39;1&#39;,&#39;5&#39;))</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="genshinstats.genshinstats.fetch_endpoint"><code class="name flex">
+<span>def <span class="ident">fetch_endpoint</span></span>(<span>endpoint: str, *, chinese: bool = False, **kwargs) ‑> dict</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Fetch an enpoint from the hoyolabs API.</p>
+<p>Takes in an endpoint url which is joined with the base url.
+A request is then sent and returns a parsed response.
+Includes error handling and ds token renewal.</p>
+<p>Can specifically use the chinese base url
+and request data for chinese users,
+but that requires being logged in as that user.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+<a href="https://github.com/thesadru/genshinstats/blob/0f570acdfecfe756c3d8c70090897ba9bcfdaaff/genshinstats\genshinstats.py#L59-L111" class="git-link">Browse git</a>
+</summary>
+<pre><code class="python">def fetch_endpoint(endpoint: str, *, chinese: bool=False, **kwargs) -&gt; dict:
+    &#34;&#34;&#34;Fetch an enpoint from the hoyolabs API.
+    
+    Takes in an endpoint url which is joined with the base url.
+    A request is then sent and returns a parsed response.
+    Includes error handling and ds token renewal.
+    
+    Can specifically use the chinese base url  and request data for chinese users, 
+    but that requires being logged in as that user.
+    &#34;&#34;&#34;
+    session.headers[&#39;ds&#39;] = get_ds_token(DS_SALT)
+    method = kwargs.pop(&#39;method&#39;,&#39;get&#39;)
+    url = urljoin(TAKUMI_URL if chinese else HOYOLABS_URL, endpoint)
+    
+    r = session.request(method,url,**kwargs)
+    r.raise_for_status()
+    
+    data = r.json()
+    if data[&#39;data&#39;] is not None: # success
+        return data[&#39;data&#39;]
+    
+    # Custom HTTP Errors
+    retcode,msg = data[&#39;retcode&#39;],data[&#39;message&#39;]
+    # UID
+    if   retcode == 1009  and msg == &#34;角色信息错误&#34;:
+        raise InvalidUID(&#39;UID could not be found.&#39;)
+    elif retcode == 10102 and msg == &#39;Data is not public for the user&#39;:
+        raise DataNotPublic(&#39;User has set their data to be private. To enable go to https://www.hoyolab.com/genshin/accountCenter/gameRecord&#39;)
+    # token
+    elif retcode == -401  and msg == &#39;请求异常&#39;:
+        raise InvalidDS(&#39;Invalid DS token, might be expired.&#39;)
+    elif retcode == -100 or retcode == 10001 and msg == &#39;Please login&#39;:
+        raise NotLoggedIn(&#39;Login cookies have not been provided or are incorrect.&#39;)
+    # other
+    elif retcode == 1     and msg == &#39;Invalid schedule type&#39;:
+        raise InvalidScheduleType(&#39;Invalid Spiral Abyss schedule type, can only be 1 or 2.&#39;)
+    elif retcode == 2001  and msg == &#39;Duplicate operation or update failed&#39;:
+        raise CannotCheckIn(&#39;Check-in is currently timed out, wait at least a day before checking-in again.&#39;)
+    elif retcode == -2003 and msg == &#39;Invalid redemption code&#39;:
+        raise InvalidCode(&#39;Invalid redemption code&#39;)
+    elif retcode == -2017 and msg == &#39;This Redemption Code is already in use&#39;:
+        raise CodeAlreadyUsed(&#39;Redemption code has been claimed already.&#39;)
+    elif retcode == -2021 and msg == &#39;You do not meet the Adventure Rank requirements. This redemption code is only valid if your Adventure Rank is equal to or above 10&#39;:
+        raise TooLowAdventureRank(&#39;Cannot claim codes for account with advunture rank lower than 10.&#39;)
+    elif retcode == -5003 and msg == &#34;Traveler, you&#39;ve already checked in today~&#34;:
+        raise AlreadySignedIn(&#39;Already claimed daily reward, try again tommorow.&#39;)
+    elif retcode ==-10002 and msg == &#39;No character created yet&#39;:
+        raise NoGameAccount(&#39;Cannot get rewards info. Account has no game account binded to it.&#39;)
+    elif retcode == -1    and msg.endswith(&#39; is not exists&#39;):
+        t,n = msg.split(&#39;:&#39;)
+        raise InvalidItemID(f&#39;{t} &#34;{n.split()[0]}&#34; does not exist.&#39;)
+    else:
+        raise GenshinStatsException(f&#34;{retcode} Error ({data[&#39;message&#39;]}) for url: \&#34;{r.url}\&#34;&#34;)</code></pre>
+</details>
+</dd>
+<dt id="genshinstats.genshinstats.get_all_characters"><code class="name flex">
+<span>def <span class="ident">get_all_characters</span></span>(<span>uid: int, lang: str = 'en-us', raw: bool = False) ‑> list</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Gets all characters of a user.</p>
+<p>Characters contain info about their level, constelation, weapon, and artifacts.
+Talents are not included.</p>
+<p>Change the language with lang,
+possible langs can be found with get_langs() under the value field.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+<a href="https://github.com/thesadru/genshinstats/blob/0f570acdfecfe756c3d8c70090897ba9bcfdaaff/genshinstats\genshinstats.py#L161-L171" class="git-link">Browse git</a>
+</summary>
+<pre><code class="python">def get_all_characters(uid: int, lang: str=&#39;en-us&#39;, raw: bool=False) -&gt; list:
+    &#34;&#34;&#34;Gets all characters of a user.
+    
+    Characters contain info about their level, constelation, weapon, and artifacts.
+    Talents are not included.
+    
+    Change the language with lang, 
+    possible langs can be found with get_langs() under the value field.
+    &#34;&#34;&#34;
+    characters = get_user_info(uid)[&#39;characters&#39;]
+    return get_characters(uid,[i[&#39;id&#39;] for i in characters], lang, raw)</code></pre>
+</details>
+</dd>
+<dt id="genshinstats.genshinstats.get_characters"><code class="name flex">
+<span>def <span class="ident">get_characters</span></span>(<span>uid: int, character_ids: List[int], lang: str = 'en-us', raw: bool = False) ‑> list</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Gets characters of a user set by their ids.</p>
+<p>Characters contain info about their level, constelation, weapon, and artifacts.
+Talents are not included.</p>
+<p>Change the language with lang,
+possible langs can be found with get_langs() under the value field.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+<a href="https://github.com/thesadru/genshinstats/blob/0f570acdfecfe756c3d8c70090897ba9bcfdaaff/genshinstats\genshinstats.py#L142-L159" class="git-link">Browse git</a>
+</summary>
+<pre><code class="python">def get_characters(uid: int, character_ids: List[int], lang: str=&#39;en-us&#39;, raw: bool=False) -&gt; list:
+    &#34;&#34;&#34;Gets characters of a user set by their ids.
+    
+    Characters contain info about their level, constelation, weapon, and artifacts.
+    Talents are not included.
+    
+    Change the language with lang, 
+    possible langs can be found with get_langs() under the value field.
+    &#34;&#34;&#34;
+    server = recognize_server(uid)
+    data = fetch_endpoint(
+        &#34;game_record/genshin/api/character&#34;,
+        chinese=is_chinese(uid),
+        method=&#39;POST&#39;,
+        json={&#39;character_ids&#39;:character_ids,&#39;role_id&#39;:uid,&#39;server&#39;:server},
+        headers={&#39;x-rpc-language&#39;:lang},
+    )[&#34;avatars&#34;]
+    return data if raw else prettify_characters(data)</code></pre>
+</details>
+</dd>
+<dt id="genshinstats.genshinstats.get_ds_token"><code class="name flex">
+<span>def <span class="ident">get_ds_token</span></span>(<span>salt: str) ‑> str</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Creates a new ds token.</p>
+<p>Uses an MD5 hash with a unique salt.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+<a href="https://github.com/thesadru/genshinstats/blob/0f570acdfecfe756c3d8c70090897ba9bcfdaaff/genshinstats\genshinstats.py#L49-L57" class="git-link">Browse git</a>
+</summary>
+<pre><code class="python">def get_ds_token(salt: str) -&gt; str:
+    &#34;&#34;&#34;Creates a new ds token.
+    
+    Uses an MD5 hash with a unique salt.
+    &#34;&#34;&#34;
+    t = int(time.time()) # current seconds
+    c = &#39;&#39;.join(random.sample(string.ascii_lowercase+string.digits, k=6)) # 6 random chars
+    h = hashlib.md5(f&#34;salt={salt}&amp;t={t}&amp;r={c}&#34;.encode()).hexdigest() # hash and get hex
+    return f&#39;{t},{c},{h}&#39;</code></pre>
+</details>
+</dd>
+<dt id="genshinstats.genshinstats.get_spiral_abyss"><code class="name flex">
+<span>def <span class="ident">get_spiral_abyss</span></span>(<span>uid: int, previous: bool = False, raw: bool = False) ‑> dict</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Gets how far the user has gotten in spiral abyss and their season progress.</p>
+<p>Spiral abyss info contains their porgress, stats and individual completes.</p>
+<p>Every season these stats refresh and you can get the previous stats with <code>previous</code>.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+<a href="https://github.com/thesadru/genshinstats/blob/0f570acdfecfe756c3d8c70090897ba9bcfdaaff/genshinstats\genshinstats.py#L173-L187" class="git-link">Browse git</a>
+</summary>
+<pre><code class="python">def get_spiral_abyss(uid: int, previous: bool=False, raw: bool=False) -&gt; dict:
+    &#34;&#34;&#34;Gets how far the user has gotten in spiral abyss and their season progress.
+    
+    Spiral abyss info contains their porgress, stats and individual completes.
+    
+    Every season these stats refresh and you can get the previous stats with `previous`.
+    &#34;&#34;&#34;
+    server = recognize_server(uid)
+    schedule_type = 2 if previous else 1
+    data = fetch_endpoint(
+        &#34;game_record/genshin/api/spiralAbyss&#34;,
+        chinese=is_chinese(uid),
+        params=dict(server=server,role_id=uid,schedule_type=schedule_type)
+    )
+    return data if raw else prettify_spiral_abyss(data)</code></pre>
+</details>
+</dd>
+<dt id="genshinstats.genshinstats.get_user_info"><code class="name flex">
+<span>def <span class="ident">get_user_info</span></span>(<span>uid: int, raw: bool = False) ‑> dict</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Gets game user info of a user based on their uid.</p>
+<p>Game user info contain the main nformation regarding a user.
+Contains owned characters, stats, city and world explorations and role.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+<a href="https://github.com/thesadru/genshinstats/blob/0f570acdfecfe756c3d8c70090897ba9bcfdaaff/genshinstats\genshinstats.py#L128-L140" class="git-link">Browse git</a>
+</summary>
+<pre><code class="python">def get_user_info(uid: int, raw: bool=False) -&gt; dict:
+    &#34;&#34;&#34;Gets game user info of a user based on their uid.
+    
+    Game user info contain the main nformation regarding a user.
+    Contains owned characters, stats, city and world explorations and role.
+    &#34;&#34;&#34;
+    server = recognize_server(uid)
+    data = fetch_endpoint(
+        &#34;game_record/genshin/api/index&#34;,
+        chinese=is_chinese(uid),
+        params=dict(server=server,role_id=uid)
+    )
+    return data if raw else prettify_user_info(data)</code></pre>
+</details>
+</dd>
+<dt id="genshinstats.genshinstats.is_chinese"><code class="name flex">
+<span>def <span class="ident">is_chinese</span></span>(<span>x: str) ‑> bool</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Recognizes whether the server/uid is chinese.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+<a href="https://github.com/thesadru/genshinstats/blob/0f570acdfecfe756c3d8c70090897ba9bcfdaaff/genshinstats\genshinstats.py#L196-L198" class="git-link">Browse git</a>
+</summary>
+<pre><code class="python">def is_chinese(x: str) -&gt; bool:
+    &#34;&#34;&#34;Recognizes whether the server/uid is chinese.&#34;&#34;&#34;
+    return str(x).startswith((&#39;cn&#39;,&#39;1&#39;,&#39;5&#39;))</code></pre>
+</details>
+</dd>
+<dt id="genshinstats.genshinstats.is_game_uid"><code class="name flex">
+<span>def <span class="ident">is_game_uid</span></span>(<span>uid: int) ‑> bool</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Recognizes whether the uid is a game uid.</p>
+<p>Return True if it's a game uid, False if it's a community uid</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+<a href="https://github.com/thesadru/genshinstats/blob/0f570acdfecfe756c3d8c70090897ba9bcfdaaff/genshinstats\genshinstats.py#L189-L194" class="git-link">Browse git</a>
+</summary>
+<pre><code class="python">def is_game_uid(uid: int) -&gt; bool:
+    &#34;&#34;&#34;Recognizes whether the uid is a game uid.
+    
+    Return True if it&#39;s a game uid, False if it&#39;s a community uid
+    &#34;&#34;&#34;
+    return bool(re.fullmatch(r&#39;[6789]\d{8}&#39;,str(uid)))</code></pre>
+</details>
+</dd>
+<dt id="genshinstats.genshinstats.recognize_server"><code class="name flex">
+<span>def <span class="ident">recognize_server</span></span>(<span>uid: int) ‑> str</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Recognizes which server a UID is from.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+<a href="https://github.com/thesadru/genshinstats/blob/0f570acdfecfe756c3d8c70090897ba9bcfdaaff/genshinstats\genshinstats.py#L113-L126" class="git-link">Browse git</a>
+</summary>
+<pre><code class="python">def recognize_server(uid: int) -&gt; str:
+    &#34;&#34;&#34;Recognizes which server a UID is from.&#34;&#34;&#34;
+    server = {
+        1:&#39;cn_gf01&#39;,
+        5:&#39;cn_qd01&#39;,
+        6:&#39;os_usa&#39;,
+        7:&#39;os_euro&#39;,
+        8:&#39;os_asia&#39;,
+        9:&#39;os_cht&#39;,
+    }.get(int(str(uid)[0]))
+    if server:
+        return server
+    else:
+        raise InvalidUID(&#34;UID isn&#39;t associated with any server&#34;)</code></pre>
+</details>
+</dd>
+<dt id="genshinstats.genshinstats.set_cookie"><code class="name flex">
+<span>def <span class="ident">set_cookie</span></span>(<span>account_id: int, cookie_token: str) ‑> NoneType</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Basic configuration function, required for anything beyond search.</p>
+<p>Account id and cookie token must be copied from your browser's cookies.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+<a href="https://github.com/thesadru/genshinstats/blob/0f570acdfecfe756c3d8c70090897ba9bcfdaaff/genshinstats\genshinstats.py#L35-L41" class="git-link">Browse git</a>
+</summary>
+<pre><code class="python">def set_cookie(account_id: int, cookie_token: str) -&gt; None:
+    &#34;&#34;&#34;Basic configuration function, required for anything beyond search.
+    
+    Account id and cookie token must be copied from your browser&#39;s cookies.
+    &#34;&#34;&#34;
+    session.cookies.set(&#39;account_id&#39;,str(account_id))
+    session.cookies.set(&#39;cookie_token&#39;,cookie_token)</code></pre>
+</details>
+</dd>
+<dt id="genshinstats.genshinstats.set_cookie_header"><code class="name flex">
+<span>def <span class="ident">set_cookie_header</span></span>(<span>header: str) ‑> NoneType</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Like set_cookie, but you can set the header directly.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+<a href="https://github.com/thesadru/genshinstats/blob/0f570acdfecfe756c3d8c70090897ba9bcfdaaff/genshinstats\genshinstats.py#L43-L47" class="git-link">Browse git</a>
+</summary>
+<pre><code class="python">def set_cookie_header(header: str) -&gt; None:
+    &#34;&#34;&#34;Like set_cookie, but you can set the header directly.&#34;&#34;&#34;
+    c = SimpleCookie()
+    c.load(header)
+    session.cookies = cookiejar_from_dict({k:v.value for k,v in c.items()},session.cookies)</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+</section>
+</article>
+<nav id="sidebar">
+<div class="gcse-search" style="height: 70px"
+data-as_oq="inurl:github.com/thesadru/genshinstats site:thesadru.github.io site:localhost:8080/genshinstats"
+data-gaCategoryParameter="genshinstats.genshinstats">
+</div>
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="genshinstats" href="index.html">genshinstats</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="two-column">
+<li><code><a title="genshinstats.genshinstats.fetch_endpoint" href="#genshinstats.genshinstats.fetch_endpoint">fetch_endpoint</a></code></li>
+<li><code><a title="genshinstats.genshinstats.get_all_characters" href="#genshinstats.genshinstats.get_all_characters">get_all_characters</a></code></li>
+<li><code><a title="genshinstats.genshinstats.get_characters" href="#genshinstats.genshinstats.get_characters">get_characters</a></code></li>
+<li><code><a title="genshinstats.genshinstats.get_ds_token" href="#genshinstats.genshinstats.get_ds_token">get_ds_token</a></code></li>
+<li><code><a title="genshinstats.genshinstats.get_spiral_abyss" href="#genshinstats.genshinstats.get_spiral_abyss">get_spiral_abyss</a></code></li>
+<li><code><a title="genshinstats.genshinstats.get_user_info" href="#genshinstats.genshinstats.get_user_info">get_user_info</a></code></li>
+<li><code><a title="genshinstats.genshinstats.is_chinese" href="#genshinstats.genshinstats.is_chinese">is_chinese</a></code></li>
+<li><code><a title="genshinstats.genshinstats.is_game_uid" href="#genshinstats.genshinstats.is_game_uid">is_game_uid</a></code></li>
+<li><code><a title="genshinstats.genshinstats.recognize_server" href="#genshinstats.genshinstats.recognize_server">recognize_server</a></code></li>
+<li><code><a title="genshinstats.genshinstats.set_cookie" href="#genshinstats.genshinstats.set_cookie">set_cookie</a></code></li>
+<li><code><a title="genshinstats.genshinstats.set_cookie_header" href="#genshinstats.genshinstats.set_cookie_header">set_cookie_header</a></code></li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.9.2</a>.</p>
+</footer>
+</body>
+</html>
