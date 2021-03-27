@@ -27,7 +27,7 @@
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/fd9599a205de22e1df4994f06cc4526660542e0d/genshinstats\genshinstats.py#L0-L197" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/0cd84a6c36ad726995ef5d2d66115bf3075e7105/genshinstats\genshinstats.py#L0-L220" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">&#34;&#34;&#34;Wrapper for the hoyolab.com gameRecord api.
 
@@ -75,7 +75,28 @@ def set_cookie_header(header: str) -&gt; None:
     &#34;&#34;&#34;Like set_cookie, but you can set the header directly.&#34;&#34;&#34;
     c = SimpleCookie()
     c.load(header)
-    session.cookies = cookiejar_from_dict({k:v.value for k,v in c.items()},session.cookies)
+    session.cookies = cookiejar_from_dict({k:v.value for k,v in c.items()}, session.cookies)
+
+def set_cookie_auto(browser: str=None):
+    &#34;&#34;&#34;Like set_cookie, but gets the cookies by itself.
+    
+    Requires the module browser-cookie3
+    Be aware that this process can take up to 10 seconds, 
+    so it should be ran only once.
+    To speed it up select a browser.
+    
+    If a specifc browser is set, gets data from that browser only.
+    Avalible browsers: chrome, chromium, opera, edge, firefox
+    &#34;&#34;&#34;
+    import browser_cookie3
+    if browser is None:
+        jar = browser_cookie3.load()
+    else:
+        jar = getattr(browser_cookie3,browser)()
+    
+    for c in jar:
+        if &#39;hoyolab&#39; in c.domain or &#39;mihoyo&#39; in c.domain:
+            session.cookies.set(c.name,c.value)
 
 def get_ds_token(salt: str) -&gt; str:
     &#34;&#34;&#34;Creates a new ds token.
@@ -83,9 +104,9 @@ def get_ds_token(salt: str) -&gt; str:
     Uses an MD5 hash with a unique salt.
     &#34;&#34;&#34;
     t = int(time.time()) # current seconds
-    c = &#39;&#39;.join(random.sample(string.ascii_lowercase+string.digits, k=6)) # 6 random chars
-    h = hashlib.md5(f&#34;salt={salt}&amp;t={t}&amp;r={c}&#34;.encode()).hexdigest() # hash and get hex
-    return f&#39;{t},{c},{h}&#39;
+    r = &#39;&#39;.join(random.sample(string.ascii_lowercase+string.digits, k=6)) # 6 random chars
+    h = hashlib.md5(f&#34;salt={salt}&amp;t={t}&amp;r={r}&#34;.encode()).hexdigest() # hash and get hex
+    return f&#39;{t},{r},{h}&#39;
 
 def fetch_endpoint(endpoint: str, *, chinese: bool=False, **kwargs) -&gt; dict:
     &#34;&#34;&#34;Fetch an enpoint from the hoyolabs API.
@@ -130,7 +151,9 @@ def fetch_endpoint(endpoint: str, *, chinese: bool=False, **kwargs) -&gt; dict:
     elif retcode == -2017 and msg == &#39;This Redemption Code is already in use&#39;:
         raise CodeAlreadyUsed(&#39;Redemption code has been claimed already.&#39;)
     elif retcode == -2021 and msg == &#39;You do not meet the Adventure Rank requirements. This redemption code is only valid if your Adventure Rank is equal to or above 10&#39;:
-        raise TooLowAdventureRank(&#39;Cannot claim codes for account with advunture rank lower than 10.&#39;)
+        raise TooLowAdventureRank(&#39;Cannot claim codes for account with adventure rank lower than 10.&#39;)
+    elif retcode == -1073 and msg == &#34;You haven&#39;t created a character on this server. Create a character first and then try redeeming the code.&#34;:
+        raise NoGameAccount(&#39;Cannot claim code. Account has no game account binded to it.&#39;)
     elif retcode == -5003 and msg == &#34;Traveler, you&#39;ve already checked in today~&#34;:
         raise AlreadySignedIn(&#39;Already claimed daily reward, try again tommorow.&#39;)
     elif retcode ==-10002 and msg == &#39;No character created yet&#39;:
@@ -139,7 +162,7 @@ def fetch_endpoint(endpoint: str, *, chinese: bool=False, **kwargs) -&gt; dict:
         t,n = msg.split(&#39;:&#39;)
         raise InvalidItemID(f&#39;{t} &#34;{n.split()[0]}&#34; does not exist.&#39;)
     else:
-        raise GenshinStatsException(f&#34;{retcode} Error ({data[&#39;message&#39;]}) for url: \&#34;{r.url}\&#34;&#34;)
+        raise GenshinStatsException(f&#34;{retcode} Error ({data[&#39;message&#39;]}) for url: \&#34;{url}\&#34;&#34;)
 
 def recognize_server(uid: int) -&gt; str:
     &#34;&#34;&#34;Recognizes which server a UID is from.&#34;&#34;&#34;
@@ -250,7 +273,7 @@ but that requires being logged in as that user.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/fd9599a205de22e1df4994f06cc4526660542e0d/genshinstats\genshinstats.py#L59-L111" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/0cd84a6c36ad726995ef5d2d66115bf3075e7105/genshinstats\genshinstats.py#L80-L134" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def fetch_endpoint(endpoint: str, *, chinese: bool=False, **kwargs) -&gt; dict:
     &#34;&#34;&#34;Fetch an enpoint from the hoyolabs API.
@@ -295,7 +318,9 @@ but that requires being logged in as that user.</p></div>
     elif retcode == -2017 and msg == &#39;This Redemption Code is already in use&#39;:
         raise CodeAlreadyUsed(&#39;Redemption code has been claimed already.&#39;)
     elif retcode == -2021 and msg == &#39;You do not meet the Adventure Rank requirements. This redemption code is only valid if your Adventure Rank is equal to or above 10&#39;:
-        raise TooLowAdventureRank(&#39;Cannot claim codes for account with advunture rank lower than 10.&#39;)
+        raise TooLowAdventureRank(&#39;Cannot claim codes for account with adventure rank lower than 10.&#39;)
+    elif retcode == -1073 and msg == &#34;You haven&#39;t created a character on this server. Create a character first and then try redeeming the code.&#34;:
+        raise NoGameAccount(&#39;Cannot claim code. Account has no game account binded to it.&#39;)
     elif retcode == -5003 and msg == &#34;Traveler, you&#39;ve already checked in today~&#34;:
         raise AlreadySignedIn(&#39;Already claimed daily reward, try again tommorow.&#39;)
     elif retcode ==-10002 and msg == &#39;No character created yet&#39;:
@@ -304,7 +329,7 @@ but that requires being logged in as that user.</p></div>
         t,n = msg.split(&#39;:&#39;)
         raise InvalidItemID(f&#39;{t} &#34;{n.split()[0]}&#34; does not exist.&#39;)
     else:
-        raise GenshinStatsException(f&#34;{retcode} Error ({data[&#39;message&#39;]}) for url: \&#34;{r.url}\&#34;&#34;)</code></pre>
+        raise GenshinStatsException(f&#34;{retcode} Error ({data[&#39;message&#39;]}) for url: \&#34;{url}\&#34;&#34;)</code></pre>
 </details>
 </dd>
 <dt id="genshinstats.genshinstats.get_all_characters"><code class="name flex">
@@ -319,7 +344,7 @@ possible langs can be found with get_langs() under the value field.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/fd9599a205de22e1df4994f06cc4526660542e0d/genshinstats\genshinstats.py#L161-L171" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/0cd84a6c36ad726995ef5d2d66115bf3075e7105/genshinstats\genshinstats.py#L184-L194" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def get_all_characters(uid: int, lang: str=&#39;en-us&#39;, raw: bool=False) -&gt; list:
     &#34;&#34;&#34;Gets all characters of a user.
@@ -346,7 +371,7 @@ possible langs can be found with get_langs() under the value field.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/fd9599a205de22e1df4994f06cc4526660542e0d/genshinstats\genshinstats.py#L142-L159" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/0cd84a6c36ad726995ef5d2d66115bf3075e7105/genshinstats\genshinstats.py#L165-L182" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def get_characters(uid: int, character_ids: List[int], lang: str=&#39;en-us&#39;, raw: bool=False) -&gt; list:
     &#34;&#34;&#34;Gets characters of a user set by their ids.
@@ -377,7 +402,7 @@ possible langs can be found with get_langs() under the value field.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/fd9599a205de22e1df4994f06cc4526660542e0d/genshinstats\genshinstats.py#L49-L57" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/0cd84a6c36ad726995ef5d2d66115bf3075e7105/genshinstats\genshinstats.py#L70-L78" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def get_ds_token(salt: str) -&gt; str:
     &#34;&#34;&#34;Creates a new ds token.
@@ -385,9 +410,9 @@ possible langs can be found with get_langs() under the value field.</p></div>
     Uses an MD5 hash with a unique salt.
     &#34;&#34;&#34;
     t = int(time.time()) # current seconds
-    c = &#39;&#39;.join(random.sample(string.ascii_lowercase+string.digits, k=6)) # 6 random chars
-    h = hashlib.md5(f&#34;salt={salt}&amp;t={t}&amp;r={c}&#34;.encode()).hexdigest() # hash and get hex
-    return f&#39;{t},{c},{h}&#39;</code></pre>
+    r = &#39;&#39;.join(random.sample(string.ascii_lowercase+string.digits, k=6)) # 6 random chars
+    h = hashlib.md5(f&#34;salt={salt}&amp;t={t}&amp;r={r}&#34;.encode()).hexdigest() # hash and get hex
+    return f&#39;{t},{r},{h}&#39;</code></pre>
 </details>
 </dd>
 <dt id="genshinstats.genshinstats.get_spiral_abyss"><code class="name flex">
@@ -400,7 +425,7 @@ possible langs can be found with get_langs() under the value field.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/fd9599a205de22e1df4994f06cc4526660542e0d/genshinstats\genshinstats.py#L173-L187" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/0cd84a6c36ad726995ef5d2d66115bf3075e7105/genshinstats\genshinstats.py#L196-L210" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def get_spiral_abyss(uid: int, previous: bool=False, raw: bool=False) -&gt; dict:
     &#34;&#34;&#34;Gets how far the user has gotten in spiral abyss and their season progress.
@@ -429,7 +454,7 @@ Contains owned characters, stats, city and world explorations and role.</p></div
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/fd9599a205de22e1df4994f06cc4526660542e0d/genshinstats\genshinstats.py#L128-L140" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/0cd84a6c36ad726995ef5d2d66115bf3075e7105/genshinstats\genshinstats.py#L151-L163" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def get_user_info(uid: int, raw: bool=False) -&gt; dict:
     &#34;&#34;&#34;Gets game user info of a user based on their uid.
@@ -454,7 +479,7 @@ Contains owned characters, stats, city and world explorations and role.</p></div
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/fd9599a205de22e1df4994f06cc4526660542e0d/genshinstats\genshinstats.py#L196-L198" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/0cd84a6c36ad726995ef5d2d66115bf3075e7105/genshinstats\genshinstats.py#L219-L221" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def is_chinese(x: str) -&gt; bool:
     &#34;&#34;&#34;Recognizes whether the server/uid is chinese.&#34;&#34;&#34;
@@ -470,7 +495,7 @@ Contains owned characters, stats, city and world explorations and role.</p></div
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/fd9599a205de22e1df4994f06cc4526660542e0d/genshinstats\genshinstats.py#L189-L194" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/0cd84a6c36ad726995ef5d2d66115bf3075e7105/genshinstats\genshinstats.py#L212-L217" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def is_game_uid(uid: int) -&gt; bool:
     &#34;&#34;&#34;Recognizes whether the uid is a game uid.
@@ -488,7 +513,7 @@ Contains owned characters, stats, city and world explorations and role.</p></div
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/fd9599a205de22e1df4994f06cc4526660542e0d/genshinstats\genshinstats.py#L113-L126" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/0cd84a6c36ad726995ef5d2d66115bf3075e7105/genshinstats\genshinstats.py#L136-L149" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def recognize_server(uid: int) -&gt; str:
     &#34;&#34;&#34;Recognizes which server a UID is from.&#34;&#34;&#34;
@@ -515,7 +540,7 @@ Contains owned characters, stats, city and world explorations and role.</p></div
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/fd9599a205de22e1df4994f06cc4526660542e0d/genshinstats\genshinstats.py#L35-L41" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/0cd84a6c36ad726995ef5d2d66115bf3075e7105/genshinstats\genshinstats.py#L35-L41" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def set_cookie(account_id: int, cookie_token: str) -&gt; None:
     &#34;&#34;&#34;Basic configuration function, required for anything beyond search.
@@ -526,6 +551,44 @@ Contains owned characters, stats, city and world explorations and role.</p></div
     session.cookies.set(&#39;cookie_token&#39;,cookie_token)</code></pre>
 </details>
 </dd>
+<dt id="genshinstats.genshinstats.set_cookie_auto"><code class="name flex">
+<span>def <span class="ident">set_cookie_auto</span></span>(<span>browser: str = None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Like set_cookie, but gets the cookies by itself.</p>
+<p>Requires the module browser-cookie3
+Be aware that this process can take up to 10 seconds,
+so it should be ran only once.
+To speed it up select a browser.</p>
+<p>If a specifc browser is set, gets data from that browser only.
+Avalible browsers: chrome, chromium, opera, edge, firefox</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+<a href="https://github.com/thesadru/genshinstats/blob/0cd84a6c36ad726995ef5d2d66115bf3075e7105/genshinstats\genshinstats.py#L49-L68" class="git-link">Browse git</a>
+</summary>
+<pre><code class="python">def set_cookie_auto(browser: str=None):
+    &#34;&#34;&#34;Like set_cookie, but gets the cookies by itself.
+    
+    Requires the module browser-cookie3
+    Be aware that this process can take up to 10 seconds, 
+    so it should be ran only once.
+    To speed it up select a browser.
+    
+    If a specifc browser is set, gets data from that browser only.
+    Avalible browsers: chrome, chromium, opera, edge, firefox
+    &#34;&#34;&#34;
+    import browser_cookie3
+    if browser is None:
+        jar = browser_cookie3.load()
+    else:
+        jar = getattr(browser_cookie3,browser)()
+    
+    for c in jar:
+        if &#39;hoyolab&#39; in c.domain or &#39;mihoyo&#39; in c.domain:
+            session.cookies.set(c.name,c.value)</code></pre>
+</details>
+</dd>
 <dt id="genshinstats.genshinstats.set_cookie_header"><code class="name flex">
 <span>def <span class="ident">set_cookie_header</span></span>(<span>header: str) ‑> NoneType</span>
 </code></dt>
@@ -534,13 +597,13 @@ Contains owned characters, stats, city and world explorations and role.</p></div
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/fd9599a205de22e1df4994f06cc4526660542e0d/genshinstats\genshinstats.py#L43-L47" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/0cd84a6c36ad726995ef5d2d66115bf3075e7105/genshinstats\genshinstats.py#L43-L47" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def set_cookie_header(header: str) -&gt; None:
     &#34;&#34;&#34;Like set_cookie, but you can set the header directly.&#34;&#34;&#34;
     c = SimpleCookie()
     c.load(header)
-    session.cookies = cookiejar_from_dict({k:v.value for k,v in c.items()},session.cookies)</code></pre>
+    session.cookies = cookiejar_from_dict({k:v.value for k,v in c.items()}, session.cookies)</code></pre>
 </details>
 </dd>
 </dl>
@@ -617,6 +680,7 @@ setTimeout(() => input.focus(), 100);
 <li><code><a title="genshinstats.genshinstats.is_game_uid" href="#genshinstats.genshinstats.is_game_uid">is_game_uid</a></code></li>
 <li><code><a title="genshinstats.genshinstats.recognize_server" href="#genshinstats.genshinstats.recognize_server">recognize_server</a></code></li>
 <li><code><a title="genshinstats.genshinstats.set_cookie" href="#genshinstats.genshinstats.set_cookie">set_cookie</a></code></li>
+<li><code><a title="genshinstats.genshinstats.set_cookie_auto" href="#genshinstats.genshinstats.set_cookie_auto">set_cookie_auto</a></code></li>
 <li><code><a title="genshinstats.genshinstats.set_cookie_header" href="#genshinstats.genshinstats.set_cookie_header">set_cookie_header</a></code></li>
 </ul>
 </li>

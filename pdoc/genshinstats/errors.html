@@ -26,7 +26,7 @@
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/fd9599a205de22e1df4994f06cc4526660542e0d/genshinstats\errors.py#L0-L45" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/0cd84a6c36ad726995ef5d2d66115bf3075e7105/genshinstats\errors.py#L0-L45" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">&#34;&#34;&#34;Genshinstats errors.&#34;&#34;&#34;
 class GenshinStatsException(Exception):
@@ -45,6 +45,8 @@ class DataNotPublic(GenshinStatsException):
     &#34;&#34;&#34;User has not allowed their data to be seen.&#34;&#34;&#34;
 class InvalidScheduleType(GenshinStatsException):
     &#34;&#34;&#34;Invalid Spiral Abyss schedule&#34;&#34;&#34;
+class NoGameAccount(GenshinStatsException):
+    &#34;&#34;&#34;Tried to get info without an account&#34;&#34;&#34;
 class CannotCheckIn(GenshinStatsException):
     &#34;&#34;&#34;Could not check in.&#34;&#34;&#34;
 
@@ -71,9 +73,7 @@ class SignInException(GenshinStatsException):
 class AlreadySignedIn(SignInException):
     &#34;&#34;&#34;Already signed in dailies&#34;&#34;&#34;
 class FirstSignIn(SignInException):
-    &#34;&#34;&#34;First sign in must be done manually.&#34;&#34;&#34;
-class NoGameAccount(SignInException):
-    &#34;&#34;&#34;Tried to get info without an account&#34;&#34;&#34;</code></pre>
+    &#34;&#34;&#34;First sign in must be done manually.&#34;&#34;&#34;</code></pre>
 </details>
 </section>
 <section>
@@ -94,7 +94,7 @@ class NoGameAccount(SignInException):
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/fd9599a205de22e1df4994f06cc4526660542e0d/genshinstats\errors.py#L41-L42" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/0cd84a6c36ad726995ef5d2d66115bf3075e7105/genshinstats\errors.py#L43-L44" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">class AlreadySignedIn(SignInException):
     &#34;&#34;&#34;Already signed in dailies&#34;&#34;&#34;</code></pre>
@@ -116,7 +116,7 @@ class NoGameAccount(SignInException):
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/fd9599a205de22e1df4994f06cc4526660542e0d/genshinstats\errors.py#L30-L31" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/0cd84a6c36ad726995ef5d2d66115bf3075e7105/genshinstats\errors.py#L32-L33" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">class AuthKeyError(GachaLogException):
     &#34;&#34;&#34;Authkey error.&#34;&#34;&#34;</code></pre>
@@ -138,7 +138,7 @@ class NoGameAccount(SignInException):
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/fd9599a205de22e1df4994f06cc4526660542e0d/genshinstats\errors.py#L32-L33" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/0cd84a6c36ad726995ef5d2d66115bf3075e7105/genshinstats\errors.py#L34-L35" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">class AuthKeyTimeout(GachaLogException):
     &#34;&#34;&#34;Authkey timeout.&#34;&#34;&#34;</code></pre>
@@ -160,7 +160,7 @@ class NoGameAccount(SignInException):
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/fd9599a205de22e1df4994f06cc4526660542e0d/genshinstats\errors.py#L34-L35" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/0cd84a6c36ad726995ef5d2d66115bf3075e7105/genshinstats\errors.py#L36-L37" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">class BadGachaType(GachaLogException):
     &#34;&#34;&#34;Base GenshinGachaLog Exception.&#34;&#34;&#34;</code></pre>
@@ -182,7 +182,7 @@ class NoGameAccount(SignInException):
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/fd9599a205de22e1df4994f06cc4526660542e0d/genshinstats\errors.py#L18-L19" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/0cd84a6c36ad726995ef5d2d66115bf3075e7105/genshinstats\errors.py#L20-L21" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">class CannotCheckIn(GenshinStatsException):
     &#34;&#34;&#34;Could not check in.&#34;&#34;&#34;</code></pre>
@@ -203,7 +203,7 @@ class NoGameAccount(SignInException):
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/fd9599a205de22e1df4994f06cc4526660542e0d/genshinstats\errors.py#L23-L24" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/0cd84a6c36ad726995ef5d2d66115bf3075e7105/genshinstats\errors.py#L25-L26" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">class CodeAlreadyUsed(GenshinStatsException):
     &#34;&#34;&#34;Redemption Code is already in use&#34;&#34;&#34;</code></pre>
@@ -224,7 +224,7 @@ class NoGameAccount(SignInException):
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/fd9599a205de22e1df4994f06cc4526660542e0d/genshinstats\errors.py#L14-L15" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/0cd84a6c36ad726995ef5d2d66115bf3075e7105/genshinstats\errors.py#L14-L15" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">class DataNotPublic(GenshinStatsException):
     &#34;&#34;&#34;User has not allowed their data to be seen.&#34;&#34;&#34;</code></pre>
@@ -245,7 +245,7 @@ class NoGameAccount(SignInException):
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/fd9599a205de22e1df4994f06cc4526660542e0d/genshinstats\errors.py#L43-L44" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/0cd84a6c36ad726995ef5d2d66115bf3075e7105/genshinstats\errors.py#L45-L46" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">class FirstSignIn(SignInException):
     &#34;&#34;&#34;First sign in must be done manually.&#34;&#34;&#34;</code></pre>
@@ -267,7 +267,7 @@ class NoGameAccount(SignInException):
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/fd9599a205de22e1df4994f06cc4526660542e0d/genshinstats\errors.py#L28-L29" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/0cd84a6c36ad726995ef5d2d66115bf3075e7105/genshinstats\errors.py#L30-L31" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">class GachaLogException(GenshinStatsException):
     &#34;&#34;&#34;Base GachaLog Exception.&#34;&#34;&#34;</code></pre>
@@ -295,7 +295,7 @@ class NoGameAccount(SignInException):
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/fd9599a205de22e1df4994f06cc4526660542e0d/genshinstats\errors.py#L2-L3" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/0cd84a6c36ad726995ef5d2d66115bf3075e7105/genshinstats\errors.py#L2-L3" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">class GenshinStatsException(Exception):
     &#34;&#34;&#34;Base error for all Genshin Stats Errors.&#34;&#34;&#34;</code></pre>
@@ -316,6 +316,7 @@ class NoGameAccount(SignInException):
 <li><a title="genshinstats.errors.InvalidItemID" href="#genshinstats.errors.InvalidItemID">InvalidItemID</a></li>
 <li><a title="genshinstats.errors.InvalidScheduleType" href="#genshinstats.errors.InvalidScheduleType">InvalidScheduleType</a></li>
 <li><a title="genshinstats.errors.InvalidUID" href="#genshinstats.errors.InvalidUID">InvalidUID</a></li>
+<li><a title="genshinstats.errors.NoGameAccount" href="#genshinstats.errors.NoGameAccount">NoGameAccount</a></li>
 <li><a title="genshinstats.errors.NotLoggedIn" href="#genshinstats.errors.NotLoggedIn">NotLoggedIn</a></li>
 <li><a title="genshinstats.errors.SignInException" href="#genshinstats.errors.SignInException">SignInException</a></li>
 <li><a title="genshinstats.errors.TooLowAdventureRank" href="#genshinstats.errors.TooLowAdventureRank">TooLowAdventureRank</a></li>
@@ -330,7 +331,7 @@ class NoGameAccount(SignInException):
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/fd9599a205de22e1df4994f06cc4526660542e0d/genshinstats\errors.py#L21-L22" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/0cd84a6c36ad726995ef5d2d66115bf3075e7105/genshinstats\errors.py#L23-L24" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">class InvalidCode(GenshinStatsException):
     &#34;&#34;&#34;Invalid redemption code.&#34;&#34;&#34;</code></pre>
@@ -351,7 +352,7 @@ class NoGameAccount(SignInException):
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/fd9599a205de22e1df4994f06cc4526660542e0d/genshinstats\errors.py#L7-L8" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/0cd84a6c36ad726995ef5d2d66115bf3075e7105/genshinstats\errors.py#L7-L8" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">class InvalidDS(GenshinStatsException):
     &#34;&#34;&#34;Invalid DS token, should be renewed.&#34;&#34;&#34;</code></pre>
@@ -372,7 +373,7 @@ class NoGameAccount(SignInException):
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/fd9599a205de22e1df4994f06cc4526660542e0d/genshinstats\errors.py#L11-L12" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/0cd84a6c36ad726995ef5d2d66115bf3075e7105/genshinstats\errors.py#L11-L12" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">class InvalidItemID(GenshinStatsException):
     &#34;&#34;&#34;Item does not exist.&#34;&#34;&#34;</code></pre>
@@ -393,7 +394,7 @@ class NoGameAccount(SignInException):
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/fd9599a205de22e1df4994f06cc4526660542e0d/genshinstats\errors.py#L16-L17" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/0cd84a6c36ad726995ef5d2d66115bf3075e7105/genshinstats\errors.py#L16-L17" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">class InvalidScheduleType(GenshinStatsException):
     &#34;&#34;&#34;Invalid Spiral Abyss schedule&#34;&#34;&#34;</code></pre>
@@ -414,7 +415,7 @@ class NoGameAccount(SignInException):
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/fd9599a205de22e1df4994f06cc4526660542e0d/genshinstats\errors.py#L5-L6" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/0cd84a6c36ad726995ef5d2d66115bf3075e7105/genshinstats\errors.py#L5-L6" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">class InvalidUID(GenshinStatsException):
     &#34;&#34;&#34;UID is not valid.&#34;&#34;&#34;</code></pre>
@@ -435,7 +436,7 @@ class NoGameAccount(SignInException):
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/fd9599a205de22e1df4994f06cc4526660542e0d/genshinstats\errors.py#L36-L37" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/0cd84a6c36ad726995ef5d2d66115bf3075e7105/genshinstats\errors.py#L38-L39" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">class MissingAuthKey(GachaLogException):
     &#34;&#34;&#34;No gacha authkey was provided.&#34;&#34;&#34;</code></pre>
@@ -457,14 +458,13 @@ class NoGameAccount(SignInException):
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/fd9599a205de22e1df4994f06cc4526660542e0d/genshinstats\errors.py#L45-L46" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/0cd84a6c36ad726995ef5d2d66115bf3075e7105/genshinstats\errors.py#L18-L19" class="git-link">Browse git</a>
 </summary>
-<pre><code class="python">class NoGameAccount(SignInException):
+<pre><code class="python">class NoGameAccount(GenshinStatsException):
     &#34;&#34;&#34;Tried to get info without an account&#34;&#34;&#34;</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
-<li><a title="genshinstats.errors.SignInException" href="#genshinstats.errors.SignInException">SignInException</a></li>
 <li><a title="genshinstats.errors.GenshinStatsException" href="#genshinstats.errors.GenshinStatsException">GenshinStatsException</a></li>
 <li>builtins.Exception</li>
 <li>builtins.BaseException</li>
@@ -479,7 +479,7 @@ class NoGameAccount(SignInException):
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/fd9599a205de22e1df4994f06cc4526660542e0d/genshinstats\errors.py#L9-L10" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/0cd84a6c36ad726995ef5d2d66115bf3075e7105/genshinstats\errors.py#L9-L10" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">class NotLoggedIn(GenshinStatsException):
     &#34;&#34;&#34;Cookies have not been provided.&#34;&#34;&#34;</code></pre>
@@ -500,7 +500,7 @@ class NoGameAccount(SignInException):
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/fd9599a205de22e1df4994f06cc4526660542e0d/genshinstats\errors.py#L39-L40" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/0cd84a6c36ad726995ef5d2d66115bf3075e7105/genshinstats\errors.py#L41-L42" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">class SignInException(GenshinStatsException):
     &#34;&#34;&#34;Base SignIn Exception.&#34;&#34;&#34;</code></pre>
@@ -515,7 +515,6 @@ class NoGameAccount(SignInException):
 <ul class="hlist">
 <li><a title="genshinstats.errors.AlreadySignedIn" href="#genshinstats.errors.AlreadySignedIn">AlreadySignedIn</a></li>
 <li><a title="genshinstats.errors.FirstSignIn" href="#genshinstats.errors.FirstSignIn">FirstSignIn</a></li>
-<li><a title="genshinstats.errors.NoGameAccount" href="#genshinstats.errors.NoGameAccount">NoGameAccount</a></li>
 </ul>
 </dd>
 <dt id="genshinstats.errors.TooLowAdventureRank"><code class="flex name class">
@@ -527,7 +526,7 @@ class NoGameAccount(SignInException):
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/fd9599a205de22e1df4994f06cc4526660542e0d/genshinstats\errors.py#L25-L26" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/0cd84a6c36ad726995ef5d2d66115bf3075e7105/genshinstats\errors.py#L27-L28" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">class TooLowAdventureRank(GenshinStatsException):
     &#34;&#34;&#34;Does not meet adventure rank requirements.&#34;&#34;&#34;</code></pre>

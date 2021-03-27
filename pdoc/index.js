@@ -54,6 +54,11 @@ INDEX=[
 "doc":"Invalid Spiral Abyss schedule"
 },
 {
+"ref":"genshinstats.errors.NoGameAccount",
+"url":1,
+"doc":"Tried to get info without an account"
+},
+{
 "ref":"genshinstats.errors.CannotCheckIn",
 "url":1,
 "doc":"Could not check in."
@@ -112,11 +117,6 @@ INDEX=[
 "ref":"genshinstats.errors.FirstSignIn",
 "url":1,
 "doc":"First sign in must be done manually."
-},
-{
-"ref":"genshinstats.errors.NoGameAccount",
-"url":1,
-"doc":"Tried to get info without an account"
 },
 {
 "ref":"genshinstats.gachalog",
@@ -186,6 +186,12 @@ INDEX=[
 "ref":"genshinstats.genshinstats.set_cookie_header",
 "url":3,
 "doc":"Like set_cookie, but you can set the header directly.",
+"func":1
+},
+{
+"ref":"genshinstats.genshinstats.set_cookie_auto",
+"url":3,
+"doc":"Like set_cookie, but gets the cookies by itself. Requires the module browser-cookie3 Be aware that this process can take up to 10 seconds, so it should be ran only once. To speed it up select a browser. If a specifc browser is set, gets data from that browser only. Avalible browsers: chrome, chromium, opera, edge, firefox",
 "func":1
 },
 {
@@ -290,21 +296,21 @@ INDEX=[
 "func":1
 },
 {
+"ref":"genshinstats.hoyolab.redeem_code",
+"url":4,
+"doc":"Redeems a gift code for the currently signed in user. Api endpoint for https: genshin.mihoyo.com/en/gift. The code will be redeemed for every avalible account, specifying the uid will claim it only for that account. Returns the amount of users it managed to claim codes for. Claiming code for every account will take 5s per account because of cooldowns. Currently codes can only be claimed for global accounts, not chinese.",
+"func":1
+},
+{
 "ref":"genshinstats.hoyolab.get_active_players",
 "url":4,
-"doc":"Gets a list of recommended active players Max page size is 195, you cannot offset beyond that.",
+"doc":"Gets a list of recommended active players When page size is None, gets all avalible active players.",
 "func":1
 },
 {
 "ref":"genshinstats.hoyolab.get_public_players",
 "url":4,
-"doc":"Gets a list of players with public players. Returns a dict of their community uid, game uid and their game card.",
-"func":1
-},
-{
-"ref":"genshinstats.hoyolab.redeem_code",
-"url":4,
-"doc":"Redeems a gift code for the currently signed in user. Api endpoint for https: genshin.mihoyo.com/en/gift. The code will be redeemed for every avalible account, specifying the uid will claim it only for that account. Returns the amount of users it managed to claim codes for. Currently codes can only be claimed for global accounts, not chinese.",
+"doc":"Gets a list of players with public accounts. Returns a dict of their community uid, game uid and their game card.",
 "func":1
 },
 {
