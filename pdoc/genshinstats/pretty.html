@@ -28,7 +28,7 @@ that were leftover from during development</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\pretty.py#L0-L264" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\pretty.py#L0-L262" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">&#34;&#34;&#34;Prettifiers for genshinstats api returns.
 
@@ -36,8 +36,8 @@ Fixes the huge problem of outdated field names in the api,
 that were leftover from during development
 &#34;&#34;&#34;
 import re
-from math import ceil
 from datetime import datetime
+from math import ceil
 
 
 def _recognize_character_icon(url: str):
@@ -289,11 +289,9 @@ def prettify_gacha_details(data: dict):
         &#34;r5_items&#34;: fprobs(data[&#34;r5_prob_list&#34;]), # list 5* of items that you can get from banner
         &#34;r4_items&#34;: fprobs(data[&#34;r4_prob_list&#34;]), # list 4* of items that you can get from banner
         &#34;r3_items&#34;: fprobs(data[&#34;r3_prob_list&#34;]), # list 3* of items that you can get from banner
-        &#34;items&#34;: sorted([
-                *fprobs(data[&#34;r5_prob_list&#34;]), 
-                *fprobs(data[&#34;r4_prob_list&#34;]), 
-                *fprobs(data[&#34;r3_prob_list&#34;])
-            ],key=lambda x: x[&#34;order_value&#34;])
+        &#34;items&#34;: sorted(
+            fprobs(data[&#34;r5_prob_list&#34;])+fprobs(data[&#34;r4_prob_list&#34;])+fprobs(data[&#34;r3_prob_list&#34;]),
+            key=lambda x: x[&#34;order_value&#34;])
     }</code></pre>
 </details>
 </section>
@@ -409,7 +407,7 @@ def prettify_gacha_details(data: dict):
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\pretty.py#L210-L265" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\pretty.py#L210-L263" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def prettify_gacha_details(data: dict):
     per = lambda p: None if p==&#39;0%&#39; else p[:-1].replace(&#39;,&#39;,&#39;.&#39;)
@@ -461,11 +459,9 @@ def prettify_gacha_details(data: dict):
         &#34;r5_items&#34;: fprobs(data[&#34;r5_prob_list&#34;]), # list 5* of items that you can get from banner
         &#34;r4_items&#34;: fprobs(data[&#34;r4_prob_list&#34;]), # list 4* of items that you can get from banner
         &#34;r3_items&#34;: fprobs(data[&#34;r3_prob_list&#34;]), # list 3* of items that you can get from banner
-        &#34;items&#34;: sorted([
-                *fprobs(data[&#34;r5_prob_list&#34;]), 
-                *fprobs(data[&#34;r4_prob_list&#34;]), 
-                *fprobs(data[&#34;r3_prob_list&#34;])
-            ],key=lambda x: x[&#34;order_value&#34;])
+        &#34;items&#34;: sorted(
+            fprobs(data[&#34;r5_prob_list&#34;])+fprobs(data[&#34;r4_prob_list&#34;])+fprobs(data[&#34;r3_prob_list&#34;]),
+            key=lambda x: x[&#34;order_value&#34;])
     }</code></pre>
 </details>
 </dd>

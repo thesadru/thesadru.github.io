@@ -5,7 +5,8 @@ URLS=[
 "genshinstats/genshinstats.html",
 "genshinstats/hoyolab.html",
 "genshinstats/pretty.html",
-"genshinstats/signin.html"
+"genshinstats/signin.html",
+"genshinstats/utils.html"
 ];
 INDEX=[
 {
@@ -24,11 +25,6 @@ INDEX=[
 "doc":"Base error for all Genshin Stats Errors."
 },
 {
-"ref":"genshinstats.errors.InvalidUID",
-"url":1,
-"doc":"UID is not valid."
-},
-{
 "ref":"genshinstats.errors.InvalidDS",
 "url":1,
 "doc":"Invalid DS token, should be renewed."
@@ -39,9 +35,9 @@ INDEX=[
 "doc":"Cookies have not been provided."
 },
 {
-"ref":"genshinstats.errors.InvalidItemID",
+"ref":"genshinstats.errors.InvalidUID",
 "url":1,
-"doc":"Item does not exist."
+"doc":"UID is not valid."
 },
 {
 "ref":"genshinstats.errors.DataNotPublic",
@@ -59,9 +55,9 @@ INDEX=[
 "doc":"Tried to get info without an account"
 },
 {
-"ref":"genshinstats.errors.CannotCheckIn",
+"ref":"genshinstats.errors.InvalidItemID",
 "url":1,
-"doc":"Could not check in."
+"doc":"Item does not exist."
 },
 {
 "ref":"genshinstats.errors.InvalidCode",
@@ -77,6 +73,26 @@ INDEX=[
 "ref":"genshinstats.errors.TooLowAdventureRank",
 "url":1,
 "doc":"Does not meet adventure rank requirements."
+},
+{
+"ref":"genshinstats.errors.SignInException",
+"url":1,
+"doc":"Base SignIn Exception."
+},
+{
+"ref":"genshinstats.errors.AlreadySignedIn",
+"url":1,
+"doc":"Already signed in dailies"
+},
+{
+"ref":"genshinstats.errors.FirstSignIn",
+"url":1,
+"doc":"First sign in must be done manually."
+},
+{
+"ref":"genshinstats.errors.CannotCheckIn",
+"url":1,
+"doc":"Could not check in."
 },
 {
 "ref":"genshinstats.errors.GachaLogException",
@@ -102,21 +118,6 @@ INDEX=[
 "ref":"genshinstats.errors.MissingAuthKey",
 "url":1,
 "doc":"No gacha authkey was provided."
-},
-{
-"ref":"genshinstats.errors.SignInException",
-"url":1,
-"doc":"Base SignIn Exception."
-},
-{
-"ref":"genshinstats.errors.AlreadySignedIn",
-"url":1,
-"doc":"Already signed in dailies"
-},
-{
-"ref":"genshinstats.errors.FirstSignIn",
-"url":1,
-"doc":"First sign in must be done manually."
 },
 {
 "ref":"genshinstats.gachalog",
@@ -207,12 +208,6 @@ INDEX=[
 "func":1
 },
 {
-"ref":"genshinstats.genshinstats.recognize_server",
-"url":3,
-"doc":"Recognizes which server a UID is from.",
-"func":1
-},
-{
 "ref":"genshinstats.genshinstats.get_user_info",
 "url":3,
 "doc":"Gets game user info of a user based on their uid. Game user info contain the main nformation regarding a user. Contains owned characters, stats, city and world explorations and role.",
@@ -234,18 +229,6 @@ INDEX=[
 "ref":"genshinstats.genshinstats.get_spiral_abyss",
 "url":3,
 "doc":"Gets how far the user has gotten in spiral abyss and their season progress. Spiral abyss info contains their porgress, stats and individual completes. Every season these stats refresh and you can get the previous stats with  previous .",
-"func":1
-},
-{
-"ref":"genshinstats.genshinstats.is_game_uid",
-"url":3,
-"doc":"Recognizes whether the uid is a game uid. Return True if it's a game uid, False if it's a community uid",
-"func":1
-},
-{
-"ref":"genshinstats.genshinstats.is_chinese",
-"url":3,
-"doc":"Recognizes whether the server/uid is chinese.",
 "func":1
 },
 {
@@ -381,6 +364,35 @@ INDEX=[
 "ref":"genshinstats.signin.sign_in",
 "url":6,
 "doc":"Signs into hoyolab and claims the daily rewards. Chinese and global servers work a bit differentelly, so you must specify you want to claim rewards for chinese accounts here. If the reward cannot be claimed, no claim will be attempted. To force the request use force. Returns whether sign-in was successful",
+"func":1
+},
+{
+"ref":"genshinstats.utils",
+"url":7,
+"doc":""
+},
+{
+"ref":"genshinstats.utils.raise_for_error",
+"url":7,
+"doc":"Raises a custom genshinstats error from a response.",
+"func":1
+},
+{
+"ref":"genshinstats.utils.recognize_server",
+"url":7,
+"doc":"Recognizes which server a UID is from.",
+"func":1
+},
+{
+"ref":"genshinstats.utils.is_game_uid",
+"url":7,
+"doc":"Recognizes whether the uid is a game uid. Return True if it's a game uid, False if it's a community uid",
+"func":1
+},
+{
+"ref":"genshinstats.utils.is_chinese",
+"url":7,
+"doc":"Recognizes whether the server/uid is chinese.",
 "func":1
 }
 ]
