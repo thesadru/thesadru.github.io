@@ -28,13 +28,14 @@ Requires an auth key that can be gotten from an output_log.txt file.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\gachalog.py#L0-L166" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\gachalog.py#L0-L170" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">&#34;&#34;&#34;Genshin Impact gacha pulls log.
 
 Gets pull data from the current banners in basic json.
 Requires an auth key that can be gotten from an output_log.txt file.
 &#34;&#34;&#34;
+import logging
 import os
 import re
 import time
@@ -45,11 +46,12 @@ from urllib.parse import unquote, urljoin
 from requests import Session
 
 from .errors import MissingAuthKey
-from .pretty import prettify_gacha_details, prettify_gacha_items, prettify_gacha_log
-from .utils import raise_for_error
+from .pretty import *
+from .utils import USER_AGENT, raise_for_error, get_genshin_dir
 
-GENSHIN_DIR = os.path.expanduser(&#39;~/AppData/LocalLow/miHoYo/Genshin Impact&#39;)
-GENSHIN_LOG = os.path.join(GENSHIN_DIR,&#39;output_log.txt&#39;)
+logger = logging.getLogger(&#39;genshinstats&#39;)
+GENSHIN_DIR = get_genshin_dir()
+GENSHIN_LOG = os.path.join(GENSHIN_DIR,&#39;output_log.txt&#39;) if GENSHIN_DIR else None
 GACHA_LOG_URL = &#34;https://hk4e-api.mihoyo.com/event/gacha_info/api/&#34;
 AUTHKEY_FILE = os.path.join(gettempdir(),&#39;genshinstats_authkey.txt&#39;)
 AUTHKEY_DURATION = 60*60*24 # 1 day
@@ -57,7 +59,7 @@ AUTHKEY_DURATION = 60*60*24 # 1 day
 session = Session()
 session.headers.update({
     # recommended header
-    &#34;user-agent&#34;:&#34;Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36&#34;
+    &#34;user-agent&#34;:USER_AGENT
 })
 session.params = {
     # required params
@@ -74,6 +76,7 @@ def get_authkey(logfile: str=None) -&gt; str:
     
     This will either be done from the logs or from a tempfile.
     &#34;&#34;&#34;
+    logger.debug(&#39;Getting an authkey from log files.&#39;)
     # first try the log
     with open(logfile or GENSHIN_LOG) as file:
         log = file.read()
@@ -133,6 +136,7 @@ def fetch_gacha_endpoint(endpoint: str, **kwargs) -&gt; dict:
     method = kwargs.pop(&#39;method&#39;,&#39;get&#39;)
     url = urljoin(GACHA_LOG_URL, endpoint)
     
+    logger.debug(f&#39;Fetching gacha endpoint &#34;{url}&#34;&#39;)
     r = session.request(method,url,**kwargs)
     r.raise_for_status()
     
@@ -217,7 +221,7 @@ Includes error handling and getting the authkey.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\gachalog.py#L93-L111" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\gachalog.py#L96-L115" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def fetch_gacha_endpoint(endpoint: str, **kwargs) -&gt; dict:
     &#34;&#34;&#34;Fetch an enpoint from mihoyo&#39;s gacha info.
@@ -230,6 +234,7 @@ Includes error handling and getting the authkey.</p></div>
     method = kwargs.pop(&#39;method&#39;,&#39;get&#39;)
     url = urljoin(GACHA_LOG_URL, endpoint)
     
+    logger.debug(f&#39;Fetching gacha endpoint &#34;{url}&#34;&#39;)
     r = session.request(method,url,**kwargs)
     r.raise_for_status()
     
@@ -249,7 +254,7 @@ Includes error handling and getting the authkey.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\gachalog.py#L64-L72" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\gachalog.py#L67-L75" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def get_all_gacha_ids(logfile: str=None) -&gt; list:
     &#34;&#34;&#34;Gets all gacha ids from a log file.
@@ -271,13 +276,14 @@ Includes error handling and getting the authkey.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\gachalog.py#L40-L62" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\gachalog.py#L42-L65" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def get_authkey(logfile: str=None) -&gt; str:
     &#34;&#34;&#34;Gets the query for log requests.
     
     This will either be done from the logs or from a tempfile.
     &#34;&#34;&#34;
+    logger.debug(&#39;Getting an authkey from log files.&#39;)
     # first try the log
     with open(logfile or GENSHIN_LOG) as file:
         log = file.read()
@@ -312,7 +318,7 @@ possible langs can be found with get_langs() under the value field.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\gachalog.py#L150-L166" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\gachalog.py#L154-L170" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def get_gacha_details(gacha_id: str, lang: str=&#39;en-us&#39;, raw: bool=False) -&gt; dict:
     &#34;&#34;&#34;Gets details of a specific gacha banner.
@@ -343,7 +349,7 @@ To get more info about a specific item use its id.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\gachalog.py#L138-L148" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\gachalog.py#L142-L152" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def get_gacha_items(lang: str=&#39;en-us&#39;, raw: bool=False) -&gt; dict:
     &#34;&#34;&#34;Gets the list of items that can be gotten from the gacha.
@@ -369,7 +375,7 @@ Possible gacha types can be found in the return of get_gacha_types().</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\gachalog.py#L124-L136" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\gachalog.py#L128-L140" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def get_gacha_log(gacha_type: int, page: int=1, size: int=20, lang: str=&#39;en&#39;, raw: bool=False) -&gt; list:
     &#34;&#34;&#34;Gets the gacha pull history log.
@@ -395,7 +401,7 @@ Possible gacha types can be found in the return of get_gacha_types().</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\gachalog.py#L113-L122" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\gachalog.py#L117-L126" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">@lru_cache()
 def get_gacha_types(lang: str=&#39;en&#39;) -&gt; list:
@@ -421,7 +427,7 @@ otherwise uses get_authkey</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\gachalog.py#L74-L91" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\gachalog.py#L77-L94" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def set_authkey(authkey: str=None, url: str=None, logfile: str=None):
     &#34;&#34;&#34;Sets an authkey for log requests.

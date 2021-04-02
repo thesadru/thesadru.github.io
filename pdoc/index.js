@@ -70,6 +70,11 @@ INDEX=[
 "doc":"Redemption Code is already in use"
 },
 {
+"ref":"genshinstats.errors.RedeemCooldown",
+"url":1,
+"doc":"Can only claim every 5 seaconds."
+},
+{
 "ref":"genshinstats.errors.TooLowAdventureRank",
 "url":1,
 "doc":"Does not meet adventure rank requirements."
@@ -281,7 +286,7 @@ INDEX=[
 {
 "ref":"genshinstats.hoyolab.redeem_code",
 "url":4,
-"doc":"Redeems a gift code for the currently signed in user. Api endpoint for https: genshin.mihoyo.com/en/gift. The code will be redeemed for every avalible account, specifying the uid will claim it only for that account. Returns the amount of users it managed to claim codes for. Claiming code for every account will take 5s per account because of cooldowns. Currently codes can only be claimed for global accounts, not chinese.",
+"doc":"Redeems a gift code for the currently signed in user. Api endpoint for https: genshin.mihoyo.com/en/gift. The code will be redeemed for every avalible account, specifying the uid will claim it only for that account. Returns the amount of users it managed to claim codes for. Claiming code for every account will take 5s per account because of cooldowns. This can be disable completely by setting sleep to False. Currently codes can only be claimed for global accounts, not chinese.",
 "func":1
 },
 {
@@ -369,7 +374,7 @@ INDEX=[
 {
 "ref":"genshinstats.utils",
 "url":7,
-"doc":""
+"doc":"Various utility functions for genshinstats."
 },
 {
 "ref":"genshinstats.utils.raise_for_error",
@@ -393,6 +398,12 @@ INDEX=[
 "ref":"genshinstats.utils.is_chinese",
 "url":7,
 "doc":"Recognizes whether the server/uid is chinese.",
+"func":1
+},
+{
+"ref":"genshinstats.utils.get_genshin_dir",
+"url":7,
+"doc":"Find and return the Genshin Impact directory. None if not found.",
 "func":1
 }
 ]

@@ -27,12 +27,13 @@
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\hoyolab.py#L0-L157" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\hoyolab.py#L0-L164" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">&#34;&#34;&#34;Wrapper for the hoyolab.com community api.
 
 Can search users, get record cards, active players...
 &#34;&#34;&#34;
+import logging
 import time
 from functools import lru_cache
 from typing import Iterable, Optional
@@ -41,6 +42,7 @@ from .errors import CodeAlreadyUsed, TooLowAdventureRank
 from .genshinstats import fetch_endpoint
 from .utils import recognize_server
 
+logger = logging.getLogger(&#39;genshinstats&#39;)
 
 def search(keyword: str, size: int=20) -&gt; dict:
     &#34;&#34;&#34;Searches posts, topics and users.
@@ -60,7 +62,7 @@ def check_in():
     fetch_endpoint(
         &#34;community/apihub/api/signIn&#34;,
         method=&#39;POST&#39;,
-        params=dict(gids=2)
+        json=dict(gids=2)
     )
 
 @lru_cache()
@@ -117,22 +119,25 @@ def get_uid_from_community(community_uid: int) -&gt; Optional[int]:
     return int(card[&#39;game_role_id&#39;]) if card else None
 
 _last_redeem = .0
-def _redeem_code(code: str, uid: int, region: str=None, game_biz: str=&#39;hk4e_global&#39;):
+def _redeem_code(code: str, uid: int, region: str=None, game_biz: str=&#39;hk4e_global&#39;, sleep: bool=True):
     &#34;&#34;&#34;Redeems a single code. Use redeem_code instead.&#34;&#34;&#34;
     global _last_redeem
-    t = time.time() - _last_redeem
-    if t &lt; 5: time.sleep(5-t)
+    
+    t = 5 - (time.time() - _last_redeem)
+    if t &gt; 0 and sleep:
+        logger.debug(f&#39;Sleeping {t}s for code redemption.&#39;)
+        time.sleep(t)
     
     region = region or recognize_server(uid)
     try:
-        return fetch_endpoint(
+        fetch_endpoint(
             &#34;https://hk4e-api-os.mihoyo.com/common/apicdkey/api/webExchangeCdkey&#34;,
             params=dict(uid=uid,region=region,cdkey=code,game_biz=game_biz,lang=&#39;en&#39;)
         )
     finally:
         _last_redeem = time.time()
 
-def redeem_code(code: str, uid: int=None) -&gt; int:
+def redeem_code(code: str, uid: int=None, sleep: bool=True) -&gt; int:
     &#34;&#34;&#34;Redeems a gift code for the currently signed in user.
     
     Api endpoint for https://genshin.mihoyo.com/en/gift.
@@ -142,19 +147,21 @@ def redeem_code(code: str, uid: int=None) -&gt; int:
     Returns the amount of users it managed to claim codes for.
     
     Claiming code for every account will take 5s per account because of cooldowns.
+    This can be disable completely by setting sleep to False.
     
     Currently codes can only be claimed for global accounts, not chinese.
     &#34;&#34;&#34;
     if uid is not None:
-        _redeem_code(code,uid)
+        _redeem_code(code,uid,sleep=sleep)
         return 1
     
     success = 0
     for account in get_game_accounts():
+        logger.debug(f&#34;Redeeming code for {account[&#39;nickname&#39;]} ({account[&#39;game_uid&#39;]}).&#34;)
         try: 
-            _redeem_code(code,account[&#39;game_uid&#39;],account[&#39;region&#39;],account[&#39;game_biz&#39;])
-        except (CodeAlreadyUsed,TooLowAdventureRank): 
-            pass
+            _redeem_code(code,account[&#39;game_uid&#39;],account[&#39;region&#39;],account[&#39;game_biz&#39;],sleep=sleep)
+        except (CodeAlreadyUsed,TooLowAdventureRank) as e: 
+            logger.debug(f&#34;Redeem for {account[&#39;nickname&#39;]} ({account[&#39;game_uid&#39;]}) failed ({e}).&#34;)
         else: 
             success += 1
     
@@ -205,7 +212,7 @@ def get_public_players() -&gt; Iterable[dict]:
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\hoyolab.py#L24-L33" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\hoyolab.py#L26-L35" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def check_in():
     &#34;&#34;&#34;Checks in the user who&#39;s cookies are currently being used.
@@ -215,7 +222,7 @@ def get_public_players() -&gt; Iterable[dict]:
     fetch_endpoint(
         &#34;community/apihub/api/signIn&#34;,
         method=&#39;POST&#39;,
-        params=dict(gids=2)
+        json=dict(gids=2)
     )</code></pre>
 </details>
 </dd>
@@ -228,7 +235,7 @@ def get_public_players() -&gt; Iterable[dict]:
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\hoyolab.py#L132-L140" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\hoyolab.py#L139-L147" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def get_active_players(page_size: int=None, offset: int=0) -&gt; list:
     &#34;&#34;&#34;Gets a list of recommended active players
@@ -252,7 +259,7 @@ It also contains stats for general community actions.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\hoyolab.py#L51-L62" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\hoyolab.py#L53-L64" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def get_community_user_info(community_uid: int) -&gt; dict:
     &#34;&#34;&#34;Gets community info of a user based on their community uid.
@@ -277,7 +284,7 @@ It also contains stats for general community actions.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\hoyolab.py#L43-L49" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\hoyolab.py#L45-L51" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def get_game_accounts(chinese: bool=False) -&gt; list:
     &#34;&#34;&#34;Gets all game accounts of the currently signed in player.
@@ -296,7 +303,7 @@ It also contains stats for general community actions.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\hoyolab.py#L35-L41" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\hoyolab.py#L37-L43" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">@lru_cache()
 def get_langs() -&gt; list:
@@ -316,7 +323,7 @@ def get_langs() -&gt; list:
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\hoyolab.py#L142-L158" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\hoyolab.py#L149-L165" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def get_public_players() -&gt; Iterable[dict]:
     &#34;&#34;&#34;Gets a list of players with public accounts.
@@ -349,7 +356,7 @@ In case the user has set their profile to be private, returns None.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\hoyolab.py#L64-L77" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\hoyolab.py#L66-L79" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def get_record_card(community_uid: int) -&gt; Optional[dict]:
     &#34;&#34;&#34;Gets a game record card of a user based on their community uid.
@@ -377,7 +384,7 @@ In case the uid is private, returns None.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\hoyolab.py#L79-L86" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\hoyolab.py#L81-L88" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def get_uid_from_community(community_uid: int) -&gt; Optional[int]:
     &#34;&#34;&#34;Gets a uid with a community uid.
@@ -390,7 +397,7 @@ In case the uid is private, returns None.</p></div>
 </details>
 </dd>
 <dt id="genshinstats.hoyolab.redeem_code"><code class="name flex">
-<span>def <span class="ident">redeem_code</span></span>(<span>code: str, uid: int = None) ‑> int</span>
+<span>def <span class="ident">redeem_code</span></span>(<span>code: str, uid: int = None, sleep: bool = True) ‑> int</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Redeems a gift code for the currently signed in user.</p>
@@ -398,14 +405,15 @@ In case the uid is private, returns None.</p></div>
 <p>The code will be redeemed for every avalible account,
 specifying the uid will claim it only for that account.
 Returns the amount of users it managed to claim codes for.</p>
-<p>Claiming code for every account will take 5s per account because of cooldowns.</p>
+<p>Claiming code for every account will take 5s per account because of cooldowns.
+This can be disable completely by setting sleep to False.</p>
 <p>Currently codes can only be claimed for global accounts, not chinese.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\hoyolab.py#L104-L130" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\hoyolab.py#L109-L137" class="git-link">Browse git</a>
 </summary>
-<pre><code class="python">def redeem_code(code: str, uid: int=None) -&gt; int:
+<pre><code class="python">def redeem_code(code: str, uid: int=None, sleep: bool=True) -&gt; int:
     &#34;&#34;&#34;Redeems a gift code for the currently signed in user.
     
     Api endpoint for https://genshin.mihoyo.com/en/gift.
@@ -415,19 +423,21 @@ Returns the amount of users it managed to claim codes for.</p>
     Returns the amount of users it managed to claim codes for.
     
     Claiming code for every account will take 5s per account because of cooldowns.
+    This can be disable completely by setting sleep to False.
     
     Currently codes can only be claimed for global accounts, not chinese.
     &#34;&#34;&#34;
     if uid is not None:
-        _redeem_code(code,uid)
+        _redeem_code(code,uid,sleep=sleep)
         return 1
     
     success = 0
     for account in get_game_accounts():
+        logger.debug(f&#34;Redeeming code for {account[&#39;nickname&#39;]} ({account[&#39;game_uid&#39;]}).&#34;)
         try: 
-            _redeem_code(code,account[&#39;game_uid&#39;],account[&#39;region&#39;],account[&#39;game_biz&#39;])
-        except (CodeAlreadyUsed,TooLowAdventureRank): 
-            pass
+            _redeem_code(code,account[&#39;game_uid&#39;],account[&#39;region&#39;],account[&#39;game_biz&#39;],sleep=sleep)
+        except (CodeAlreadyUsed,TooLowAdventureRank) as e: 
+            logger.debug(f&#34;Redeem for {account[&#39;nickname&#39;]} ({account[&#39;game_uid&#39;]}) failed ({e}).&#34;)
         else: 
             success += 1
     
@@ -443,7 +453,7 @@ Returns the amount of users it managed to claim codes for.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\hoyolab.py#L14-L22" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\hoyolab.py#L16-L24" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def search(keyword: str, size: int=20) -&gt; dict:
     &#34;&#34;&#34;Searches posts, topics and users.

@@ -27,16 +27,19 @@
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\signin.py#L0-L54" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\signin.py#L0-L58" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">&#34;&#34;&#34;Automatic sign-in for hoyolab&#39;s daily rewards.
 
 Automatically claims the next reward in the daily check-in rewards.
 &#34;&#34;&#34;
+import logging
+
 from .errors import FirstSignIn
 from .genshinstats import fetch_endpoint
 from .hoyolab import get_game_accounts
 
+logger = logging.getLogger(&#39;genshinstats&#39;)
 OS_URL = &#34;https://hk4e-api-os.mihoyo.com/event/sol/&#34; # global
 OS_ACT_ID = &#34;e202102251931481&#34;
 CN_URL = &#34;https://api-takumi.mihoyo.com/event/bbs_sign_reward/&#34; # chinese
@@ -77,6 +80,7 @@ def sign_in(chinese: bool=False, force: bool=False) -&gt; bool:
             return False # already signed in
     
     account = get_game_accounts(chinese)[0] # we need just one uid (idk about the chinese version)
+    logger.debug(f&#34;Redeeming daily reward #{info[&#39;total_sign_day&#39;]}.&#34;)
     url,act_id = (CN_URL,CN_ACT_ID) if chinese else (OS_URL,OS_ACT_ID)
     fetch_endpoint(
         url+&#34;sign&#34;,
@@ -101,7 +105,7 @@ def sign_in(chinese: bool=False, force: bool=False) -&gt; bool:
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\signin.py#L14-L20" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\signin.py#L17-L23" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def get_daily_reward_info(chinese: bool=False) -&gt; dict:
     &#34;&#34;&#34;Fetches daily award info for the currently logged-in user.&#34;&#34;&#34;
@@ -120,7 +124,7 @@ def sign_in(chinese: bool=False, force: bool=False) -&gt; bool:
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\signin.py#L22-L28" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\signin.py#L25-L31" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def get_daily_rewards(chinese: bool=False) -&gt; list:
     &#34;&#34;&#34;Gets claimed awards for the currently logged-in user&#34;&#34;&#34;
@@ -144,7 +148,7 @@ To force the request use force.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\signin.py#L30-L55" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\signin.py#L33-L59" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def sign_in(chinese: bool=False, force: bool=False) -&gt; bool:
     &#34;&#34;&#34;Signs into hoyolab and claims the daily rewards.
@@ -165,6 +169,7 @@ To force the request use force.</p>
             return False # already signed in
     
     account = get_game_accounts(chinese)[0] # we need just one uid (idk about the chinese version)
+    logger.debug(f&#34;Redeeming daily reward #{info[&#39;total_sign_day&#39;]}.&#34;)
     url,act_id = (CN_URL,CN_ACT_ID) if chinese else (OS_URL,OS_ACT_ID)
     fetch_endpoint(
         url+&#34;sign&#34;,

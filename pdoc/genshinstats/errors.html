@@ -26,7 +26,7 @@
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\errors.py#L0-L46" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\errors.py#L0-L48" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">&#34;&#34;&#34;Genshinstats errors.&#34;&#34;&#34;
 class GenshinStatsException(Exception):
@@ -53,6 +53,8 @@ class InvalidCode(GenshinStatsException):
     &#34;&#34;&#34;Invalid redemption code.&#34;&#34;&#34;
 class CodeAlreadyUsed(GenshinStatsException):
     &#34;&#34;&#34;Redemption Code is already in use&#34;&#34;&#34;
+class RedeemCooldown(GenshinStatsException):
+    &#34;&#34;&#34;Can only claim every 5 seaconds.&#34;&#34;&#34;
 class TooLowAdventureRank(GenshinStatsException):
     &#34;&#34;&#34;Does not meet adventure rank requirements.&#34;&#34;&#34;
 
@@ -95,7 +97,7 @@ class MissingAuthKey(GachaLogException):
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\errors.py#L31-L32" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\errors.py#L33-L34" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">class AlreadySignedIn(SignInException):
     &#34;&#34;&#34;Already signed in dailies&#34;&#34;&#34;</code></pre>
@@ -117,7 +119,7 @@ class MissingAuthKey(GachaLogException):
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\errors.py#L40-L41" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\errors.py#L42-L43" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">class AuthKeyError(GachaLogException):
     &#34;&#34;&#34;Authkey error.&#34;&#34;&#34;</code></pre>
@@ -139,7 +141,7 @@ class MissingAuthKey(GachaLogException):
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\errors.py#L42-L43" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\errors.py#L44-L45" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">class AuthKeyTimeout(GachaLogException):
     &#34;&#34;&#34;Authkey timeout.&#34;&#34;&#34;</code></pre>
@@ -161,7 +163,7 @@ class MissingAuthKey(GachaLogException):
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\errors.py#L44-L45" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\errors.py#L46-L47" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">class BadGachaType(GachaLogException):
     &#34;&#34;&#34;Base GenshinGachaLog Exception.&#34;&#34;&#34;</code></pre>
@@ -183,7 +185,7 @@ class MissingAuthKey(GachaLogException):
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\errors.py#L35-L36" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\errors.py#L37-L38" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">class CannotCheckIn(GenshinStatsException):
     &#34;&#34;&#34;Could not check in.&#34;&#34;&#34;</code></pre>
@@ -246,7 +248,7 @@ class MissingAuthKey(GachaLogException):
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\errors.py#L33-L34" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\errors.py#L35-L36" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">class FirstSignIn(SignInException):
     &#34;&#34;&#34;First sign in must be done manually.&#34;&#34;&#34;</code></pre>
@@ -268,7 +270,7 @@ class MissingAuthKey(GachaLogException):
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\errors.py#L38-L39" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\errors.py#L40-L41" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">class GachaLogException(GenshinStatsException):
     &#34;&#34;&#34;Base GachaLog Exception.&#34;&#34;&#34;</code></pre>
@@ -319,6 +321,7 @@ class MissingAuthKey(GachaLogException):
 <li><a title="genshinstats.errors.InvalidUID" href="#genshinstats.errors.InvalidUID">InvalidUID</a></li>
 <li><a title="genshinstats.errors.NoGameAccount" href="#genshinstats.errors.NoGameAccount">NoGameAccount</a></li>
 <li><a title="genshinstats.errors.NotLoggedIn" href="#genshinstats.errors.NotLoggedIn">NotLoggedIn</a></li>
+<li><a title="genshinstats.errors.RedeemCooldown" href="#genshinstats.errors.RedeemCooldown">RedeemCooldown</a></li>
 <li><a title="genshinstats.errors.SignInException" href="#genshinstats.errors.SignInException">SignInException</a></li>
 <li><a title="genshinstats.errors.TooLowAdventureRank" href="#genshinstats.errors.TooLowAdventureRank">TooLowAdventureRank</a></li>
 </ul>
@@ -437,7 +440,7 @@ class MissingAuthKey(GachaLogException):
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\errors.py#L46-L47" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\errors.py#L48-L49" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">class MissingAuthKey(GachaLogException):
     &#34;&#34;&#34;No gacha authkey was provided.&#34;&#34;&#34;</code></pre>
@@ -492,6 +495,27 @@ class MissingAuthKey(GachaLogException):
 <li>builtins.BaseException</li>
 </ul>
 </dd>
+<dt id="genshinstats.errors.RedeemCooldown"><code class="flex name class">
+<span>class <span class="ident">RedeemCooldown</span></span>
+<span>(</span><span>*args, **kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Can only claim every 5 seaconds.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\errors.py#L26-L27" class="git-link">Browse git</a>
+</summary>
+<pre><code class="python">class RedeemCooldown(GenshinStatsException):
+    &#34;&#34;&#34;Can only claim every 5 seaconds.&#34;&#34;&#34;</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="genshinstats.errors.GenshinStatsException" href="#genshinstats.errors.GenshinStatsException">GenshinStatsException</a></li>
+<li>builtins.Exception</li>
+<li>builtins.BaseException</li>
+</ul>
+</dd>
 <dt id="genshinstats.errors.SignInException"><code class="flex name class">
 <span>class <span class="ident">SignInException</span></span>
 <span>(</span><span>*args, **kwargs)</span>
@@ -501,7 +525,7 @@ class MissingAuthKey(GachaLogException):
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\errors.py#L29-L30" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\errors.py#L31-L32" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">class SignInException(GenshinStatsException):
     &#34;&#34;&#34;Base SignIn Exception.&#34;&#34;&#34;</code></pre>
@@ -527,7 +551,7 @@ class MissingAuthKey(GachaLogException):
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\errors.py#L26-L27" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\errors.py#L28-L29" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">class TooLowAdventureRank(GenshinStatsException):
     &#34;&#34;&#34;Does not meet adventure rank requirements.&#34;&#34;&#34;</code></pre>
@@ -654,6 +678,9 @@ setTimeout(() => input.focus(), 100);
 </li>
 <li>
 <h4><code><a title="genshinstats.errors.NotLoggedIn" href="#genshinstats.errors.NotLoggedIn">NotLoggedIn</a></code></h4>
+</li>
+<li>
+<h4><code><a title="genshinstats.errors.RedeemCooldown" href="#genshinstats.errors.RedeemCooldown">RedeemCooldown</a></code></h4>
 </li>
 <li>
 <h4><code><a title="genshinstats.errors.SignInException" href="#genshinstats.errors.SignInException">SignInException</a></code></h4>
