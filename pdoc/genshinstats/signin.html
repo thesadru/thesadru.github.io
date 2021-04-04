@@ -27,7 +27,7 @@
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\signin.py#L0-L58" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\signin.py#L0-L57" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">&#34;&#34;&#34;Automatic sign-in for hoyolab&#39;s daily rewards.
 
@@ -72,15 +72,14 @@ def sign_in(chinese: bool=False, force: bool=False) -&gt; bool:
     
     Returns whether sign-in was successful
     &#34;&#34;&#34;
-    info = get_daily_reward_info(chinese)
     if not force:
+        info = get_daily_reward_info(chinese)
         if info[&#39;first_bind&#39;]:
             raise FirstSignIn(&#39;First sign-in must be done manually. Please go to the website and claim your rewards.&#39;)
         if info[&#39;is_sign&#39;]:
             return False # already signed in
     
     account = get_game_accounts(chinese)[0] # we need just one uid (idk about the chinese version)
-    logger.debug(f&#34;Redeeming daily reward #{info[&#39;total_sign_day&#39;]}.&#34;)
     url,act_id = (CN_URL,CN_ACT_ID) if chinese else (OS_URL,OS_ACT_ID)
     fetch_endpoint(
         url+&#34;sign&#34;,
@@ -148,7 +147,7 @@ To force the request use force.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\signin.py#L33-L59" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\signin.py#L33-L58" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def sign_in(chinese: bool=False, force: bool=False) -&gt; bool:
     &#34;&#34;&#34;Signs into hoyolab and claims the daily rewards.
@@ -161,15 +160,14 @@ To force the request use force.</p>
     
     Returns whether sign-in was successful
     &#34;&#34;&#34;
-    info = get_daily_reward_info(chinese)
     if not force:
+        info = get_daily_reward_info(chinese)
         if info[&#39;first_bind&#39;]:
             raise FirstSignIn(&#39;First sign-in must be done manually. Please go to the website and claim your rewards.&#39;)
         if info[&#39;is_sign&#39;]:
             return False # already signed in
     
     account = get_game_accounts(chinese)[0] # we need just one uid (idk about the chinese version)
-    logger.debug(f&#34;Redeeming daily reward #{info[&#39;total_sign_day&#39;]}.&#34;)
     url,act_id = (CN_URL,CN_ACT_ID) if chinese else (OS_URL,OS_ACT_ID)
     fetch_endpoint(
         url+&#34;sign&#34;,

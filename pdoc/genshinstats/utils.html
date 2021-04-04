@@ -26,12 +26,12 @@
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\utils.py#L0-L90" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\utils.py#L0-L72" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">&#34;&#34;&#34;Various utility functions for genshinstats.&#34;&#34;&#34;
 import os.path
 import re
-from typing import NoReturn
+from typing import NoReturn, Optional
 
 from .errors import *
 
@@ -39,50 +39,32 @@ USER_AGENT = &#34;Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (
 
 def raise_for_error(response: dict) -&gt; NoReturn:
     &#34;&#34;&#34;Raises a custom genshinstats error from a response.&#34;&#34;&#34;
-    retcode,msg = response[&#39;retcode&#39;],response[&#39;message&#39;]
-    # authorization
-    if retcode == -401  and msg == &#39;请求异常&#39;:
-        raise InvalidDS(&#39;Invalid DS token, might be expired.&#39;)
-    elif retcode == -100 or retcode == 10001 and msg == &#39;Please login&#39;:
-        raise NotLoggedIn(&#39;Login cookies have not been provided or are incorrect.&#39;)
-    # UID
-    elif   retcode == 1009  and msg == &#34;角色信息错误&#34;:
-        raise InvalidUID(&#39;UID could not be found.&#39;)
-    elif retcode == 10102 and msg == &#39;Data is not public for the user&#39;:
-        raise DataNotPublic(&#39;User has set their data to be private. To enable go to https://www.hoyolab.com/genshin/accountCenter/gameRecord&#39;)
-    # general errors
-    elif retcode == 1     and msg == &#39;Invalid schedule type&#39;:
-        raise InvalidScheduleType(&#39;Invalid Spiral Abyss schedule type, can only be 1 or 2.&#39;)
-    elif retcode ==-10002 and msg == &#39;No character created yet&#39;:
-        raise NoGameAccount(&#39;Cannot get rewards info. Account has no game account binded to it.&#39;)
-    elif retcode == -1    and msg.endswith(&#39; is not exists&#39;):
-        t,n = re.match(r&#39;(.+?):(\d+)&#39;,msg).groups()
-        raise InvalidItemID(f&#39;{t} &#34;{n}&#34; does not exist.&#39;)
-    # code redemption
-    elif retcode == -2003 and msg == &#39;Invalid redemption code&#39;:
-        raise InvalidCode(&#39;Invalid redemption code&#39;)
-    elif retcode == -2017 and msg == &#39;This Redemption Code is already in use&#39;:
-        raise CodeAlreadyUsed(&#39;Redemption code has been claimed already.&#39;)
-    elif retcode == -2021 and msg == &#39;You do not meet the Adventure Rank requirements. This redemption code is only valid if your Adventure Rank is equal to or above 10&#39;:
-        raise TooLowAdventureRank(&#39;Cannot claim codes for account with adventure rank lower than 10.&#39;)
-    elif retcode == -1073 and msg == &#34;You haven&#39;t created a character on this server. Create a character first and then try redeeming the code.&#34;:
-        raise NoGameAccount(&#39;Cannot claim code. Account has no game account binded to it.&#39;)
-    # sign in
-    elif retcode == -5003 and msg == &#34;Traveler, you&#39;ve already checked in today~&#34;:
-        raise AlreadySignedIn(&#39;Already claimed daily reward, try again tommorow.&#39;)
-    elif retcode == 2001  and msg == &#39;Duplicate operation or update failed&#39;:
-        raise CannotCheckIn(&#39;Check-in is currently timed out, wait at least a day before checking-in again.&#39;)
-    elif retcode == -2016 and msg.startswith(&#39;Redemption in cooldown.&#39;):
-        t = re.search(r&#39;\d+&#39;,msg)
-        raise RedeemCooldown(f&#39;Redemption in cooldown. Please try again in {t} second(s).&#39;)
-    # gacha log
-    elif retcode == -100  and msg == &#34;authkey error&#34;:
-        raise AuthKeyError(&#39;Authkey is not valid.&#39;)
-    elif retcode == -101 and msg == &#34;authkey timeout&#34;:
-        raise AuthKeyTimeout(&#39;Authkey has timed-out. Update it by opening the history page in Genshin.&#39;)
-    # other
-    else:
-        raise GenshinStatsException(f&#34;{retcode} Error ({msg})&#34;)
+    error = {
+        # authorization
+        -401:  InvalidDS(&#39;Invalid DS token, might be expired.&#39;),
+        -100:  NotLoggedIn(&#39;Login cookies have not been provided or are incorrect.&#39;),
+        # UID
+        1009:  InvalidUID(&#39;UID could not be found.&#39;),
+        10102: DataNotPublic(&#39;User has set their data to be private. To enable go to https: //www.hoyolab.com/genshin/accountCenter/gameRecord&#39;),
+        # general errors
+        1:     InvalidScheduleType(&#39;Invalid Spiral Abyss schedule type, can only be 1 or 2.&#39;),
+        -10002:NoGameAccount(&#39;Cannot get rewards info. Account has no game account binded to it.&#39;),
+        -1:    InvalidItemID(&#39;{} &#34;{}&#34; does not exist.&#39;),
+        # code redemption
+        -2003: InvalidCode(&#39;Invalid redemption code&#39;),
+        -2017: CodeAlreadyUsed(&#39;Redemption code has been claimed already.&#39;),
+        -2021: TooLowAdventureRank(&#39;Cannot claim codes for account with adventure rank lower than 10.&#39;),
+        -1073: NoGameAccount(&#39;Cannot claim code. Account has no game account binded to it.&#39;),
+        -2016: RedeemCooldown(&#39;Redemption in cooldown. Please try again in {} second(s).&#39;),
+        # sign in
+        -5003: AlreadySignedIn(&#39;Already claimed daily reward, try again tommorow.&#39;),
+        2001:  CannotCheckIn(&#39;Check-in is currently timed out, wait at least a day before checking-in again.&#39;),
+        # gacha log
+        -100:  AuthKeyError(&#39;Authkey is not valid.&#39;),
+        -101:  AuthKeyTimeout(&#39;Authkey has timed-out. Update it by opening the history page in Genshin.&#39;)
+    }.get(response[&#39;retcode&#39;], GenshinStatsException(&#34;{} Error ({})&#34;))
+    error.set_response(response)
+    raise error
 
 def recognize_server(uid: int) -&gt; str:
     &#34;&#34;&#34;Recognizes which server a UID is from.&#34;&#34;&#34;
@@ -107,11 +89,11 @@ def is_game_uid(uid: int) -&gt; bool:
     &#34;&#34;&#34;
     return bool(re.fullmatch(r&#39;[6789]\d{8}&#39;,str(uid)))
 
-def is_chinese(x: str) -&gt; bool:
+def is_chinese(x) -&gt; bool:
     &#34;&#34;&#34;Recognizes whether the server/uid is chinese.&#34;&#34;&#34;
     return str(x).startswith((&#39;cn&#39;,&#39;1&#39;,&#39;5&#39;))
 
-def get_genshin_dir() -&gt; str:
+def get_genshin_dir() -&gt; Optional[str]:
     &#34;&#34;&#34;Find and return the Genshin Impact directory. None if not found.&#34;&#34;&#34;
     mihoyo_dir = os.path.expanduser(&#39;~/AppData/LocalLow/miHoYo/&#39;)
     for name in [&#34;Genshin Impact&#34;,&#34;原神&#34;,&#34;YuanShen&#34;]:
@@ -129,16 +111,16 @@ def get_genshin_dir() -&gt; str:
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
 <dt id="genshinstats.utils.get_genshin_dir"><code class="name flex">
-<span>def <span class="ident">get_genshin_dir</span></span>(<span>) ‑> str</span>
+<span>def <span class="ident">get_genshin_dir</span></span>(<span>) ‑> Optional[str]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Find and return the Genshin Impact directory. None if not found.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\utils.py#L84-L91" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\utils.py#L66-L73" class="git-link">Browse git</a>
 </summary>
-<pre><code class="python">def get_genshin_dir() -&gt; str:
+<pre><code class="python">def get_genshin_dir() -&gt; Optional[str]:
     &#34;&#34;&#34;Find and return the Genshin Impact directory. None if not found.&#34;&#34;&#34;
     mihoyo_dir = os.path.expanduser(&#39;~/AppData/LocalLow/miHoYo/&#39;)
     for name in [&#34;Genshin Impact&#34;,&#34;原神&#34;,&#34;YuanShen&#34;]:
@@ -149,16 +131,16 @@ def get_genshin_dir() -&gt; str:
 </details>
 </dd>
 <dt id="genshinstats.utils.is_chinese"><code class="name flex">
-<span>def <span class="ident">is_chinese</span></span>(<span>x: str) ‑> bool</span>
+<span>def <span class="ident">is_chinese</span></span>(<span>x) ‑> bool</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Recognizes whether the server/uid is chinese.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\utils.py#L80-L82" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\utils.py#L62-L64" class="git-link">Browse git</a>
 </summary>
-<pre><code class="python">def is_chinese(x: str) -&gt; bool:
+<pre><code class="python">def is_chinese(x) -&gt; bool:
     &#34;&#34;&#34;Recognizes whether the server/uid is chinese.&#34;&#34;&#34;
     return str(x).startswith((&#39;cn&#39;,&#39;1&#39;,&#39;5&#39;))</code></pre>
 </details>
@@ -172,7 +154,7 @@ def get_genshin_dir() -&gt; str:
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\utils.py#L73-L78" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\utils.py#L55-L60" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def is_game_uid(uid: int) -&gt; bool:
     &#34;&#34;&#34;Recognizes whether the uid is a game uid.
@@ -190,54 +172,36 @@ def get_genshin_dir() -&gt; str:
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\utils.py#L10-L55" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\utils.py#L10-L37" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def raise_for_error(response: dict) -&gt; NoReturn:
     &#34;&#34;&#34;Raises a custom genshinstats error from a response.&#34;&#34;&#34;
-    retcode,msg = response[&#39;retcode&#39;],response[&#39;message&#39;]
-    # authorization
-    if retcode == -401  and msg == &#39;请求异常&#39;:
-        raise InvalidDS(&#39;Invalid DS token, might be expired.&#39;)
-    elif retcode == -100 or retcode == 10001 and msg == &#39;Please login&#39;:
-        raise NotLoggedIn(&#39;Login cookies have not been provided or are incorrect.&#39;)
-    # UID
-    elif   retcode == 1009  and msg == &#34;角色信息错误&#34;:
-        raise InvalidUID(&#39;UID could not be found.&#39;)
-    elif retcode == 10102 and msg == &#39;Data is not public for the user&#39;:
-        raise DataNotPublic(&#39;User has set their data to be private. To enable go to https://www.hoyolab.com/genshin/accountCenter/gameRecord&#39;)
-    # general errors
-    elif retcode == 1     and msg == &#39;Invalid schedule type&#39;:
-        raise InvalidScheduleType(&#39;Invalid Spiral Abyss schedule type, can only be 1 or 2.&#39;)
-    elif retcode ==-10002 and msg == &#39;No character created yet&#39;:
-        raise NoGameAccount(&#39;Cannot get rewards info. Account has no game account binded to it.&#39;)
-    elif retcode == -1    and msg.endswith(&#39; is not exists&#39;):
-        t,n = re.match(r&#39;(.+?):(\d+)&#39;,msg).groups()
-        raise InvalidItemID(f&#39;{t} &#34;{n}&#34; does not exist.&#39;)
-    # code redemption
-    elif retcode == -2003 and msg == &#39;Invalid redemption code&#39;:
-        raise InvalidCode(&#39;Invalid redemption code&#39;)
-    elif retcode == -2017 and msg == &#39;This Redemption Code is already in use&#39;:
-        raise CodeAlreadyUsed(&#39;Redemption code has been claimed already.&#39;)
-    elif retcode == -2021 and msg == &#39;You do not meet the Adventure Rank requirements. This redemption code is only valid if your Adventure Rank is equal to or above 10&#39;:
-        raise TooLowAdventureRank(&#39;Cannot claim codes for account with adventure rank lower than 10.&#39;)
-    elif retcode == -1073 and msg == &#34;You haven&#39;t created a character on this server. Create a character first and then try redeeming the code.&#34;:
-        raise NoGameAccount(&#39;Cannot claim code. Account has no game account binded to it.&#39;)
-    # sign in
-    elif retcode == -5003 and msg == &#34;Traveler, you&#39;ve already checked in today~&#34;:
-        raise AlreadySignedIn(&#39;Already claimed daily reward, try again tommorow.&#39;)
-    elif retcode == 2001  and msg == &#39;Duplicate operation or update failed&#39;:
-        raise CannotCheckIn(&#39;Check-in is currently timed out, wait at least a day before checking-in again.&#39;)
-    elif retcode == -2016 and msg.startswith(&#39;Redemption in cooldown.&#39;):
-        t = re.search(r&#39;\d+&#39;,msg)
-        raise RedeemCooldown(f&#39;Redemption in cooldown. Please try again in {t} second(s).&#39;)
-    # gacha log
-    elif retcode == -100  and msg == &#34;authkey error&#34;:
-        raise AuthKeyError(&#39;Authkey is not valid.&#39;)
-    elif retcode == -101 and msg == &#34;authkey timeout&#34;:
-        raise AuthKeyTimeout(&#39;Authkey has timed-out. Update it by opening the history page in Genshin.&#39;)
-    # other
-    else:
-        raise GenshinStatsException(f&#34;{retcode} Error ({msg})&#34;)</code></pre>
+    error = {
+        # authorization
+        -401:  InvalidDS(&#39;Invalid DS token, might be expired.&#39;),
+        -100:  NotLoggedIn(&#39;Login cookies have not been provided or are incorrect.&#39;),
+        # UID
+        1009:  InvalidUID(&#39;UID could not be found.&#39;),
+        10102: DataNotPublic(&#39;User has set their data to be private. To enable go to https: //www.hoyolab.com/genshin/accountCenter/gameRecord&#39;),
+        # general errors
+        1:     InvalidScheduleType(&#39;Invalid Spiral Abyss schedule type, can only be 1 or 2.&#39;),
+        -10002:NoGameAccount(&#39;Cannot get rewards info. Account has no game account binded to it.&#39;),
+        -1:    InvalidItemID(&#39;{} &#34;{}&#34; does not exist.&#39;),
+        # code redemption
+        -2003: InvalidCode(&#39;Invalid redemption code&#39;),
+        -2017: CodeAlreadyUsed(&#39;Redemption code has been claimed already.&#39;),
+        -2021: TooLowAdventureRank(&#39;Cannot claim codes for account with adventure rank lower than 10.&#39;),
+        -1073: NoGameAccount(&#39;Cannot claim code. Account has no game account binded to it.&#39;),
+        -2016: RedeemCooldown(&#39;Redemption in cooldown. Please try again in {} second(s).&#39;),
+        # sign in
+        -5003: AlreadySignedIn(&#39;Already claimed daily reward, try again tommorow.&#39;),
+        2001:  CannotCheckIn(&#39;Check-in is currently timed out, wait at least a day before checking-in again.&#39;),
+        # gacha log
+        -100:  AuthKeyError(&#39;Authkey is not valid.&#39;),
+        -101:  AuthKeyTimeout(&#39;Authkey has timed-out. Update it by opening the history page in Genshin.&#39;)
+    }.get(response[&#39;retcode&#39;], GenshinStatsException(&#34;{} Error ({})&#34;))
+    error.set_response(response)
+    raise error</code></pre>
 </details>
 </dd>
 <dt id="genshinstats.utils.recognize_server"><code class="name flex">
@@ -248,7 +212,7 @@ def get_genshin_dir() -&gt; str:
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\utils.py#L57-L71" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\utils.py#L39-L53" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def recognize_server(uid: int) -&gt; str:
     &#34;&#34;&#34;Recognizes which server a UID is from.&#34;&#34;&#34;

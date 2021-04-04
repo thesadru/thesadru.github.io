@@ -27,7 +27,7 @@
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\genshinstats.py#L0-L164" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\genshinstats.py#L0-L165" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">&#34;&#34;&#34;Wrapper for the hoyolab.com gameRecord api.
 
@@ -77,7 +77,7 @@ def set_cookie_header(header: str) -&gt; None:
     c.load(header)
     session.cookies.update(c)
 
-def set_cookie_auto(browser: str=None):
+def set_cookie_auto(browser: str=None) -&gt; None:
     &#34;&#34;&#34;Like set_cookie, but gets the cookies by itself.
     
     Requires the module browser-cookie3
@@ -97,7 +97,7 @@ def set_cookie_auto(browser: str=None):
     
     for c in jar:
         if &#39;hoyolab&#39; in c.domain or &#39;mihoyo&#39; in c.domain:
-            session.cookies.set(c.name,c.value)
+            session.cookies.set(c.name,c.value) # do not limit to specific domains
 
 def get_ds_token(salt: str) -&gt; str:
     &#34;&#34;&#34;Creates a new ds token.
@@ -176,7 +176,8 @@ def get_all_characters(uid: int, lang: str=&#39;en-us&#39;, raw: bool=False) -&g
     possible langs can be found with get_langs() under the value field.
     &#34;&#34;&#34;
     characters = get_user_info(uid)[&#39;characters&#39;]
-    return get_characters(uid,[i[&#39;id&#39;] for i in characters], lang, raw)
+    ids = [i[&#39;id&#39;] for i in characters]
+    return get_characters(uid,ids,lang,raw)
 
 def get_spiral_abyss(uid: int, previous: bool=False, raw: bool=False) -&gt; dict:
     &#34;&#34;&#34;Gets how far the user has gotten in spiral abyss and their season progress.
@@ -255,7 +256,7 @@ possible langs can be found with get_langs() under the value field.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\genshinstats.py#L138-L148" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\genshinstats.py#L138-L149" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def get_all_characters(uid: int, lang: str=&#39;en-us&#39;, raw: bool=False) -&gt; list:
     &#34;&#34;&#34;Gets all characters of a user.
@@ -267,7 +268,8 @@ possible langs can be found with get_langs() under the value field.</p></div>
     possible langs can be found with get_langs() under the value field.
     &#34;&#34;&#34;
     characters = get_user_info(uid)[&#39;characters&#39;]
-    return get_characters(uid,[i[&#39;id&#39;] for i in characters], lang, raw)</code></pre>
+    ids = [i[&#39;id&#39;] for i in characters]
+    return get_characters(uid,ids,lang,raw)</code></pre>
 </details>
 </dd>
 <dt id="genshinstats.genshinstats.get_characters"><code class="name flex">
@@ -336,7 +338,7 @@ possible langs can be found with get_langs() under the value field.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\genshinstats.py#L150-L164" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\genshinstats.py#L151-L165" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def get_spiral_abyss(uid: int, previous: bool=False, raw: bool=False) -&gt; dict:
     &#34;&#34;&#34;Gets how far the user has gotten in spiral abyss and their season progress.
@@ -403,7 +405,7 @@ Contains owned characters, stats, city and world explorations and role.</p></div
 </details>
 </dd>
 <dt id="genshinstats.genshinstats.set_cookie_auto"><code class="name flex">
-<span>def <span class="ident">set_cookie_auto</span></span>(<span>browser: str = None)</span>
+<span>def <span class="ident">set_cookie_auto</span></span>(<span>browser: str = None) ‑> NoneType</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Like set_cookie, but gets the cookies by itself.</p>
@@ -418,7 +420,7 @@ Avalible browsers: chrome, chromium, opera, edge, firefox</p></div>
 <span>Expand source code</span>
 <a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\genshinstats.py#L49-L69" class="git-link">Browse git</a>
 </summary>
-<pre><code class="python">def set_cookie_auto(browser: str=None):
+<pre><code class="python">def set_cookie_auto(browser: str=None) -&gt; None:
     &#34;&#34;&#34;Like set_cookie, but gets the cookies by itself.
     
     Requires the module browser-cookie3
@@ -438,7 +440,7 @@ Avalible browsers: chrome, chromium, opera, edge, firefox</p></div>
     
     for c in jar:
         if &#39;hoyolab&#39; in c.domain or &#39;mihoyo&#39; in c.domain:
-            session.cookies.set(c.name,c.value)</code></pre>
+            session.cookies.set(c.name,c.value) # do not limit to specific domains</code></pre>
 </details>
 </dd>
 <dt id="genshinstats.genshinstats.set_cookie_header"><code class="name flex">

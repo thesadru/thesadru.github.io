@@ -27,7 +27,7 @@
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\hoyolab.py#L0-L164" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\hoyolab.py#L0-L160" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">&#34;&#34;&#34;Wrapper for the hoyolab.com community api.
 
@@ -38,7 +38,7 @@ import time
 from functools import lru_cache
 from typing import Iterable, Optional
 
-from .errors import CodeAlreadyUsed, TooLowAdventureRank
+from .errors import CodeAlreadyUsed, RedeemCooldown, TooLowAdventureRank
 from .genshinstats import fetch_endpoint
 from .utils import recognize_server
 
@@ -54,7 +54,7 @@ def search(keyword: str, size: int=20) -&gt; dict:
         params=dict(keyword=keyword,size=size,gids=2)
     )
 
-def check_in():
+def check_in() -&gt; None:
     &#34;&#34;&#34;Checks in the user who&#39;s cookies are currently being used.
     
     This will give you points on hoyolab&#39;s site.
@@ -118,24 +118,20 @@ def get_uid_from_community(community_uid: int) -&gt; Optional[int]:
     card = get_record_card(community_uid)
     return int(card[&#39;game_role_id&#39;]) if card else None
 
-_last_redeem = .0
-def _redeem_code(code: str, uid: int, region: str=None, game_biz: str=&#39;hk4e_global&#39;, sleep: bool=True):
+def _redeem_code(code: str, uid: int, region: str=None, game_biz: str=&#39;hk4e_global&#39;, sleep: bool=True) -&gt; None:
     &#34;&#34;&#34;Redeems a single code. Use redeem_code instead.&#34;&#34;&#34;
-    global _last_redeem
-    
-    t = 5 - (time.time() - _last_redeem)
-    if t &gt; 0 and sleep:
-        logger.debug(f&#39;Sleeping {t}s for code redemption.&#39;)
-        time.sleep(t)
-    
     region = region or recognize_server(uid)
     try:
         fetch_endpoint(
             &#34;https://hk4e-api-os.mihoyo.com/common/apicdkey/api/webExchangeCdkey&#34;,
             params=dict(uid=uid,region=region,cdkey=code,game_biz=game_biz,lang=&#39;en&#39;)
         )
-    finally:
-        _last_redeem = time.time()
+    except RedeemCooldown as e:
+        if not sleep:
+            raise
+        logger.debug(f&#39;Sleeping {e.cooldown}s for code redemption.&#39;)
+        time.sleep(e.cooldown)
+        _redeem_code(code,uid,region,game_biz,sleep=False)
 
 def redeem_code(code: str, uid: int=None, sleep: bool=True) -&gt; int:
     &#34;&#34;&#34;Redeems a gift code for the currently signed in user.
@@ -157,11 +153,11 @@ def redeem_code(code: str, uid: int=None, sleep: bool=True) -&gt; int:
     
     success = 0
     for account in get_game_accounts():
-        logger.debug(f&#34;Redeeming code for {account[&#39;nickname&#39;]} ({account[&#39;game_uid&#39;]}).&#34;)
+        logger.info(f&#34;Redeeming code for {account[&#39;nickname&#39;]} ({account[&#39;game_uid&#39;]}).&#34;)
         try: 
             _redeem_code(code,account[&#39;game_uid&#39;],account[&#39;region&#39;],account[&#39;game_biz&#39;],sleep=sleep)
         except (CodeAlreadyUsed,TooLowAdventureRank) as e: 
-            logger.debug(f&#34;Redeem for {account[&#39;nickname&#39;]} ({account[&#39;game_uid&#39;]}) failed ({e}).&#34;)
+            logger.info(f&#34;Redeem for {account[&#39;nickname&#39;]} ({account[&#39;game_uid&#39;]}) failed ({e}).&#34;)
         else: 
             success += 1
     
@@ -204,7 +200,7 @@ def get_public_players() -&gt; Iterable[dict]:
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
 <dt id="genshinstats.hoyolab.check_in"><code class="name flex">
-<span>def <span class="ident">check_in</span></span>(<span>)</span>
+<span>def <span class="ident">check_in</span></span>(<span>) ‑> NoneType</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Checks in the user who's cookies are currently being used.</p>
@@ -214,7 +210,7 @@ def get_public_players() -&gt; Iterable[dict]:
 <span>Expand source code</span>
 <a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\hoyolab.py#L26-L35" class="git-link">Browse git</a>
 </summary>
-<pre><code class="python">def check_in():
+<pre><code class="python">def check_in() -&gt; None:
     &#34;&#34;&#34;Checks in the user who&#39;s cookies are currently being used.
     
     This will give you points on hoyolab&#39;s site.
@@ -235,7 +231,7 @@ def get_public_players() -&gt; Iterable[dict]:
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\hoyolab.py#L139-L147" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\hoyolab.py#L135-L143" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def get_active_players(page_size: int=None, offset: int=0) -&gt; list:
     &#34;&#34;&#34;Gets a list of recommended active players
@@ -323,7 +319,7 @@ def get_langs() -&gt; list:
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\hoyolab.py#L149-L165" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\hoyolab.py#L145-L161" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def get_public_players() -&gt; Iterable[dict]:
     &#34;&#34;&#34;Gets a list of players with public accounts.
@@ -411,7 +407,7 @@ This can be disable completely by setting sleep to False.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\hoyolab.py#L109-L137" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\hoyolab.py#L105-L133" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def redeem_code(code: str, uid: int=None, sleep: bool=True) -&gt; int:
     &#34;&#34;&#34;Redeems a gift code for the currently signed in user.
@@ -433,11 +429,11 @@ This can be disable completely by setting sleep to False.</p>
     
     success = 0
     for account in get_game_accounts():
-        logger.debug(f&#34;Redeeming code for {account[&#39;nickname&#39;]} ({account[&#39;game_uid&#39;]}).&#34;)
+        logger.info(f&#34;Redeeming code for {account[&#39;nickname&#39;]} ({account[&#39;game_uid&#39;]}).&#34;)
         try: 
             _redeem_code(code,account[&#39;game_uid&#39;],account[&#39;region&#39;],account[&#39;game_biz&#39;],sleep=sleep)
         except (CodeAlreadyUsed,TooLowAdventureRank) as e: 
-            logger.debug(f&#34;Redeem for {account[&#39;nickname&#39;]} ({account[&#39;game_uid&#39;]}) failed ({e}).&#34;)
+            logger.info(f&#34;Redeem for {account[&#39;nickname&#39;]} ({account[&#39;game_uid&#39;]}) failed ({e}).&#34;)
         else: 
             success += 1
     
