@@ -28,7 +28,7 @@ Requires an auth key that can be gotten from an output_log.txt file.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\gachalog.py#L0-L174" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\gachalog.py#L0-L191" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">&#34;&#34;&#34;Genshin Impact gacha pulls log.
 
@@ -41,13 +41,14 @@ import re
 import time
 from functools import lru_cache
 from tempfile import gettempdir
+from typing import Iterable
 from urllib.parse import unquote, urljoin
 
 from requests import Session
 
 from .errors import MissingAuthKey
 from .pretty import *
-from .utils import USER_AGENT, raise_for_error, get_genshin_dir
+from .utils import USER_AGENT, get_genshin_dir, raise_for_error
 
 logger = logging.getLogger(&#39;genshinstats&#39;)
 GENSHIN_DIR = get_genshin_dir()
@@ -161,19 +162,35 @@ def get_gacha_types(lang: str=&#39;en&#39;) -&gt; list:
         params=dict(lang=lang)
     )[&#39;gacha_type_list&#39;]
 
-def get_gacha_log(gacha_type: int, page: int=1, size: int=20, lang: str=&#39;en&#39;, raw: bool=False) -&gt; list:
+def get_gacha_log(gacha_type: int, size: int=None, lang: str=&#39;en&#39;, raw: bool=False) -&gt; Iterable[dict]:
     &#34;&#34;&#34;Gets the gacha pull history log.
     
     Needs a gacha type, this must be the key (for example 301).
     Possible gacha types can be found in the return of get_gacha_types().
     
-    Returns a list of dicts. 
+    Yields instead of returning, since it&#39;s paginated.
+    May return less than size when size is too big.
+    If size is not set it will yield until it runs out of items.
     &#34;&#34;&#34;
-    data = fetch_gacha_endpoint(
-        &#34;getGachaLog&#34;,
-        params=dict(gacha_type=gacha_type,page=page,size=size,lang=lang)
-    )[&#39;list&#39;]
-    return data if raw else prettify_gacha_log(data)
+    page_size = 20 # max size is 20
+    end_id = 0
+    while True:
+        data = fetch_gacha_endpoint(
+            &#34;getGachaLog&#34;,
+            params=dict(gacha_type=gacha_type,size=page_size,end_id=end_id,lang=lang)
+        )[&#39;list&#39;]
+        
+        yield from data if raw else prettify_gacha_log(data)
+        
+        if len(data) &lt; page_size:
+            return # return if reached the end
+        if size is not None:
+            size -= page_size
+            page_size = min(size,20)
+            if size &lt;= 0:
+                return
+
+        end_id = data[-1][&#39;id&#39;]
 
 def get_gacha_items(lang: str=&#39;en-us&#39;, raw: bool=False) -&gt; list:
     &#34;&#34;&#34;Gets the list of items that can be gotten from the gacha.
@@ -225,7 +242,7 @@ Includes error handling and getting the authkey.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\gachalog.py#L100-L119" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\gachalog.py#L101-L120" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def fetch_gacha_endpoint(endpoint: str, **kwargs) -&gt; dict:
     &#34;&#34;&#34;Fetch an enpoint from mihoyo&#39;s gacha info.
@@ -258,7 +275,7 @@ Includes error handling and getting the authkey.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\gachalog.py#L72-L79" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\gachalog.py#L73-L80" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def get_all_gacha_ids(logfile: str=None) -&gt; list:
     &#34;&#34;&#34;Gets all gacha ids from a log file.
@@ -279,7 +296,7 @@ Includes error handling and getting the authkey.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\gachalog.py#L48-L70" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\gachalog.py#L49-L71" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def get_authkey(logfile: str=None) -&gt; str:
     &#34;&#34;&#34;Gets the query for log requests.
@@ -320,7 +337,7 @@ possible langs can be found with get_langs() under the value field.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\gachalog.py#L158-L174" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\gachalog.py#L175-L191" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def get_gacha_details(gacha_id: str, lang: str=&#39;en-us&#39;, raw: bool=False) -&gt; dict:
     &#34;&#34;&#34;Gets details of a specific gacha banner.
@@ -351,7 +368,7 @@ To get more info about a specific item use its id.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\gachalog.py#L146-L156" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\gachalog.py#L163-L173" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def get_gacha_items(lang: str=&#39;en-us&#39;, raw: bool=False) -&gt; list:
     &#34;&#34;&#34;Gets the list of items that can be gotten from the gacha.
@@ -367,31 +384,49 @@ To get more info about a specific item use its id.</p></div>
 </details>
 </dd>
 <dt id="genshinstats.gachalog.get_gacha_log"><code class="name flex">
-<span>def <span class="ident">get_gacha_log</span></span>(<span>gacha_type: int, page: int = 1, size: int = 20, lang: str = 'en', raw: bool = False) ‑> list</span>
+<span>def <span class="ident">get_gacha_log</span></span>(<span>gacha_type: int, size: int = None, lang: str = 'en', raw: bool = False) ‑> Iterable[dict]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Gets the gacha pull history log.</p>
 <p>Needs a gacha type, this must be the key (for example 301).
 Possible gacha types can be found in the return of get_gacha_types().</p>
-<p>Returns a list of dicts.</p></div>
+<p>Yields instead of returning, since it's paginated.
+May return less than size when size is too big.
+If size is not set it will yield until it runs out of items.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\gachalog.py#L132-L144" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\gachalog.py#L133-L161" class="git-link">Browse git</a>
 </summary>
-<pre><code class="python">def get_gacha_log(gacha_type: int, page: int=1, size: int=20, lang: str=&#39;en&#39;, raw: bool=False) -&gt; list:
+<pre><code class="python">def get_gacha_log(gacha_type: int, size: int=None, lang: str=&#39;en&#39;, raw: bool=False) -&gt; Iterable[dict]:
     &#34;&#34;&#34;Gets the gacha pull history log.
     
     Needs a gacha type, this must be the key (for example 301).
     Possible gacha types can be found in the return of get_gacha_types().
     
-    Returns a list of dicts. 
+    Yields instead of returning, since it&#39;s paginated.
+    May return less than size when size is too big.
+    If size is not set it will yield until it runs out of items.
     &#34;&#34;&#34;
-    data = fetch_gacha_endpoint(
-        &#34;getGachaLog&#34;,
-        params=dict(gacha_type=gacha_type,page=page,size=size,lang=lang)
-    )[&#39;list&#39;]
-    return data if raw else prettify_gacha_log(data)</code></pre>
+    page_size = 20 # max size is 20
+    end_id = 0
+    while True:
+        data = fetch_gacha_endpoint(
+            &#34;getGachaLog&#34;,
+            params=dict(gacha_type=gacha_type,size=page_size,end_id=end_id,lang=lang)
+        )[&#39;list&#39;]
+        
+        yield from data if raw else prettify_gacha_log(data)
+        
+        if len(data) &lt; page_size:
+            return # return if reached the end
+        if size is not None:
+            size -= page_size
+            page_size = min(size,20)
+            if size &lt;= 0:
+                return
+
+        end_id = data[-1][&#39;id&#39;]</code></pre>
 </details>
 </dd>
 <dt id="genshinstats.gachalog.get_gacha_types"><code class="name flex">
@@ -403,7 +438,7 @@ Possible gacha types can be found in the return of get_gacha_types().</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\gachalog.py#L121-L130" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\gachalog.py#L122-L131" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">@lru_cache()
 def get_gacha_types(lang: str=&#39;en&#39;) -&gt; list:
@@ -429,7 +464,7 @@ otherwise uses get_authkey</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\gachalog.py#L81-L98" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\gachalog.py#L82-L99" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def set_authkey(authkey: str=None, url: str=None, logfile: str=None) -&gt; None:
     &#34;&#34;&#34;Sets an authkey for log requests.

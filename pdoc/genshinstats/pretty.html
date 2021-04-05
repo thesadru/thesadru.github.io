@@ -28,7 +28,7 @@ that were leftover from during development</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\pretty.py#L0-L262" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\pretty.py#L0-L261" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">&#34;&#34;&#34;Prettifiers for genshinstats api returns.
 
@@ -210,7 +210,7 @@ def prettify_character(data: dict):
         } for a in data[&#34;reliquaries&#34;]],
         &#34;constellations&#34;: [{
             &#34;name&#34;: c[&#34;name&#34;],
-            &#34;effect&#34;: c[&#34;effect&#34;].replace(&#39;\\n&#39;,&#39;\n&#39;),
+            &#34;effect&#34;: c[&#34;effect&#34;],
             &#34;is_activated&#34;: c[&#34;is_actived&#34;],
             &#34;index&#34;: c[&#34;pos&#34;],
             &#34;icon&#34;: c[&#34;icon&#34;],
@@ -235,7 +235,6 @@ def prettify_gacha_items(data: list):
         &#34;name&#34;:i[&#34;name&#34;],
         &#34;type&#34;:i[&#34;item_type&#34;],
         &#34;rarity&#34;:i[&#34;rank_type&#34;],
-        &#34;is_character&#34;:len(i[&#34;item_id&#34;])==4,
         &#34;id&#34;:10000000+int(i[&#34;item_id&#34;])-1000 if len(i[&#34;item_id&#34;])==4 else int(i[&#34;item_id&#34;]),
     } for i in data]
 
@@ -375,7 +374,7 @@ def prettify_gacha_details(data: dict):
         } for a in data[&#34;reliquaries&#34;]],
         &#34;constellations&#34;: [{
             &#34;name&#34;: c[&#34;name&#34;],
-            &#34;effect&#34;: c[&#34;effect&#34;].replace(&#39;\\n&#39;,&#39;\n&#39;),
+            &#34;effect&#34;: c[&#34;effect&#34;],
             &#34;is_activated&#34;: c[&#34;is_actived&#34;],
             &#34;index&#34;: c[&#34;pos&#34;],
             &#34;icon&#34;: c[&#34;icon&#34;],
@@ -407,7 +406,7 @@ def prettify_gacha_details(data: dict):
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\pretty.py#L210-L263" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\pretty.py#L209-L262" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def prettify_gacha_details(data: dict):
     per = lambda p: None if p==&#39;0%&#39; else p[:-1].replace(&#39;,&#39;,&#39;.&#39;)
@@ -473,14 +472,13 @@ def prettify_gacha_details(data: dict):
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\pretty.py#L201-L208" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\pretty.py#L201-L207" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def prettify_gacha_items(data: list):
     return [{
         &#34;name&#34;:i[&#34;name&#34;],
         &#34;type&#34;:i[&#34;item_type&#34;],
         &#34;rarity&#34;:i[&#34;rank_type&#34;],
-        &#34;is_character&#34;:len(i[&#34;item_id&#34;])==4,
         &#34;id&#34;:10000000+int(i[&#34;item_id&#34;])-1000 if len(i[&#34;item_id&#34;])==4 else int(i[&#34;item_id&#34;]),
     } for i in data]</code></pre>
 </details>
