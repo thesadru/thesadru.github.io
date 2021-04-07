@@ -523,6 +523,12 @@ INDEX=[
 "func":1
 },
 {
+"ref":"genshinstats.gachalog.get_entire_gacha_log",
+"url":2,
+"doc":"Gets the entire gacha pull history log. Basically same as running get_gacha_log() with every possible key. Will yield pulls from most recent to oldest.",
+"func":1
+},
+{
 "ref":"genshinstats.gachalog.get_gacha_items",
 "url":2,
 "doc":"Gets the list of items that can be gotten from the gacha. Returns a list of avalible characters and weapons. To get more info about a specific item use its id.",
