@@ -28,7 +28,7 @@ Requires an auth key that can be gotten from an output_log.txt file.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\gachalog.py#L0-L204" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\gachalog.py#L0-L208" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">&#34;&#34;&#34;Genshin Impact gacha pulls log.
 
@@ -234,7 +234,11 @@ def get_gacha_details(gacha_id: str, lang: str=&#39;en-us&#39;, raw: bool=False)
         f&#34;https://webstatic-sea.mihoyo.com/hk4e/gacha_info/os_asia/{gacha_id}/{lang}.json&#34;
     )
     r.raise_for_status()
-    return r.json() if raw else prettify_gacha_details(r.json())</code></pre>
+    return r.json() if raw else prettify_gacha_details(r.json())
+
+if __name__ == &#39;__main__&#39;:
+    for i in get_entire_gacha_log():
+        print(i)</code></pre>
 </details>
 </section>
 <section>
