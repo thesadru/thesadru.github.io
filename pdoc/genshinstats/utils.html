@@ -45,11 +45,11 @@ def raise_for_error(response: dict) -&gt; NoReturn:
         -100:  NotLoggedIn(&#39;Login cookies have not been provided or are incorrect.&#39;),
         # UID
         1009:  InvalidUID(&#39;UID could not be found.&#39;),
-        10102: DataNotPublic(&#39;User has set their data to be private. To enable go to https: //www.hoyolab.com/genshin/accountCenter/gameRecord&#39;),
+        10102: DataNotPublic(&#39;User has set their data to be private. If this is your account look at the README.md to see how to make it public.&#39;),
         # general errors
         1:     InvalidScheduleType(&#39;Invalid Spiral Abyss schedule type, can only be 1 or 2.&#39;),
         -10002:NoGameAccount(&#39;Cannot get rewards info. Account has no game account binded to it.&#39;),
-        -1:    InvalidUID(&#39;UID does not exist&#39;) if response[&#39;message&#39;]==&#39;Invalid uid&#39; else InvalidItemID(&#39;{} &#34;{}&#34; does not exist.&#39;),
+        -1:    InvalidUID(&#39;UID is not valid.&#39;) if response[&#39;message&#39;]==&#39;Invalid uid&#39; else InvalidItemID(&#39;{} &#34;{}&#34; does not exist.&#39;),
         # code redemption
         -2003: InvalidCode(&#39;Invalid redemption code&#39;),
         -2017: CodeAlreadyUsed(&#39;Redemption code has been claimed already.&#39;),
@@ -182,11 +182,11 @@ def get_genshin_dir() -&gt; Optional[str]:
         -100:  NotLoggedIn(&#39;Login cookies have not been provided or are incorrect.&#39;),
         # UID
         1009:  InvalidUID(&#39;UID could not be found.&#39;),
-        10102: DataNotPublic(&#39;User has set their data to be private. To enable go to https: //www.hoyolab.com/genshin/accountCenter/gameRecord&#39;),
+        10102: DataNotPublic(&#39;User has set their data to be private. If this is your account look at the README.md to see how to make it public.&#39;),
         # general errors
         1:     InvalidScheduleType(&#39;Invalid Spiral Abyss schedule type, can only be 1 or 2.&#39;),
         -10002:NoGameAccount(&#39;Cannot get rewards info. Account has no game account binded to it.&#39;),
-        -1:    InvalidUID(&#39;UID does not exist&#39;) if response[&#39;message&#39;]==&#39;Invalid uid&#39; else InvalidItemID(&#39;{} &#34;{}&#34; does not exist.&#39;),
+        -1:    InvalidUID(&#39;UID is not valid.&#39;) if response[&#39;message&#39;]==&#39;Invalid uid&#39; else InvalidItemID(&#39;{} &#34;{}&#34; does not exist.&#39;),
         # code redemption
         -2003: InvalidCode(&#39;Invalid redemption code&#39;),
         -2017: CodeAlreadyUsed(&#39;Redemption code has been claimed already.&#39;),

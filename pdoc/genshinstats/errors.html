@@ -37,7 +37,7 @@ It&#39;s possible to add retcodes and the original api response message with `.s
 &#34;&#34;&#34;
 import re
 
-class GenshinStatsException(BaseException):
+class GenshinStatsException(Exception):
     &#34;&#34;&#34;Base error for all Genshin Stats Errors.&#34;&#34;&#34;
     retcode: int = 0
     orig_msg: str = &#39;&#39;
@@ -141,6 +141,7 @@ class MissingAuthKey(GachaLogException):
 <ul class="hlist">
 <li><a title="genshinstats.errors.SignInException" href="#genshinstats.errors.SignInException">SignInException</a></li>
 <li><a title="genshinstats.errors.GenshinStatsException" href="#genshinstats.errors.GenshinStatsException">GenshinStatsException</a></li>
+<li>builtins.Exception</li>
 <li>builtins.BaseException</li>
 </ul>
 <h3>Class variables</h3>
@@ -181,6 +182,7 @@ class MissingAuthKey(GachaLogException):
 <ul class="hlist">
 <li><a title="genshinstats.errors.GachaLogException" href="#genshinstats.errors.GachaLogException">GachaLogException</a></li>
 <li><a title="genshinstats.errors.GenshinStatsException" href="#genshinstats.errors.GenshinStatsException">GenshinStatsException</a></li>
+<li>builtins.Exception</li>
 <li>builtins.BaseException</li>
 </ul>
 <h3>Class variables</h3>
@@ -221,6 +223,7 @@ class MissingAuthKey(GachaLogException):
 <ul class="hlist">
 <li><a title="genshinstats.errors.GachaLogException" href="#genshinstats.errors.GachaLogException">GachaLogException</a></li>
 <li><a title="genshinstats.errors.GenshinStatsException" href="#genshinstats.errors.GenshinStatsException">GenshinStatsException</a></li>
+<li>builtins.Exception</li>
 <li>builtins.BaseException</li>
 </ul>
 <h3>Class variables</h3>
@@ -261,6 +264,7 @@ class MissingAuthKey(GachaLogException):
 <ul class="hlist">
 <li><a title="genshinstats.errors.GachaLogException" href="#genshinstats.errors.GachaLogException">GachaLogException</a></li>
 <li><a title="genshinstats.errors.GenshinStatsException" href="#genshinstats.errors.GenshinStatsException">GenshinStatsException</a></li>
+<li>builtins.Exception</li>
 <li>builtins.BaseException</li>
 </ul>
 <h3>Class variables</h3>
@@ -300,6 +304,7 @@ class MissingAuthKey(GachaLogException):
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li><a title="genshinstats.errors.GenshinStatsException" href="#genshinstats.errors.GenshinStatsException">GenshinStatsException</a></li>
+<li>builtins.Exception</li>
 <li>builtins.BaseException</li>
 </ul>
 <h3>Class variables</h3>
@@ -340,6 +345,7 @@ class MissingAuthKey(GachaLogException):
 <ul class="hlist">
 <li><a title="genshinstats.errors.CodeRedeemException" href="#genshinstats.errors.CodeRedeemException">CodeRedeemException</a></li>
 <li><a title="genshinstats.errors.GenshinStatsException" href="#genshinstats.errors.GenshinStatsException">GenshinStatsException</a></li>
+<li>builtins.Exception</li>
 <li>builtins.BaseException</li>
 </ul>
 <h3>Class variables</h3>
@@ -379,6 +385,7 @@ class MissingAuthKey(GachaLogException):
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li><a title="genshinstats.errors.GenshinStatsException" href="#genshinstats.errors.GenshinStatsException">GenshinStatsException</a></li>
+<li>builtins.Exception</li>
 <li>builtins.BaseException</li>
 </ul>
 <h3>Subclasses</h3>
@@ -425,6 +432,7 @@ class MissingAuthKey(GachaLogException):
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li><a title="genshinstats.errors.GenshinStatsException" href="#genshinstats.errors.GenshinStatsException">GenshinStatsException</a></li>
+<li>builtins.Exception</li>
 <li>builtins.BaseException</li>
 </ul>
 <h3>Class variables</h3>
@@ -465,6 +473,7 @@ class MissingAuthKey(GachaLogException):
 <ul class="hlist">
 <li><a title="genshinstats.errors.SignInException" href="#genshinstats.errors.SignInException">SignInException</a></li>
 <li><a title="genshinstats.errors.GenshinStatsException" href="#genshinstats.errors.GenshinStatsException">GenshinStatsException</a></li>
+<li>builtins.Exception</li>
 <li>builtins.BaseException</li>
 </ul>
 <h3>Class variables</h3>
@@ -504,6 +513,7 @@ class MissingAuthKey(GachaLogException):
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li><a title="genshinstats.errors.GenshinStatsException" href="#genshinstats.errors.GenshinStatsException">GenshinStatsException</a></li>
+<li>builtins.Exception</li>
 <li>builtins.BaseException</li>
 </ul>
 <h3>Subclasses</h3>
@@ -544,7 +554,7 @@ class MissingAuthKey(GachaLogException):
 <span>Expand source code</span>
 <a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\errors.py#L8-L25" class="git-link">Browse git</a>
 </summary>
-<pre><code class="python">class GenshinStatsException(BaseException):
+<pre><code class="python">class GenshinStatsException(Exception):
     &#34;&#34;&#34;Base error for all Genshin Stats Errors.&#34;&#34;&#34;
     retcode: int = 0
     orig_msg: str = &#39;&#39;
@@ -565,6 +575,7 @@ class MissingAuthKey(GachaLogException):
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
+<li>builtins.Exception</li>
 <li>builtins.BaseException</li>
 </ul>
 <h3>Subclasses</h3>
@@ -647,6 +658,7 @@ def msg(self): return self.args[0]</code></pre>
 <ul class="hlist">
 <li><a title="genshinstats.errors.CodeRedeemException" href="#genshinstats.errors.CodeRedeemException">CodeRedeemException</a></li>
 <li><a title="genshinstats.errors.GenshinStatsException" href="#genshinstats.errors.GenshinStatsException">GenshinStatsException</a></li>
+<li>builtins.Exception</li>
 <li>builtins.BaseException</li>
 </ul>
 <h3>Class variables</h3>
@@ -686,6 +698,7 @@ def msg(self): return self.args[0]</code></pre>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li><a title="genshinstats.errors.GenshinStatsException" href="#genshinstats.errors.GenshinStatsException">GenshinStatsException</a></li>
+<li>builtins.Exception</li>
 <li>builtins.BaseException</li>
 </ul>
 <h3>Class variables</h3>
@@ -729,6 +742,7 @@ def msg(self): return self.args[0]</code></pre>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li><a title="genshinstats.errors.GenshinStatsException" href="#genshinstats.errors.GenshinStatsException">GenshinStatsException</a></li>
+<li>builtins.Exception</li>
 <li>builtins.BaseException</li>
 </ul>
 <h3>Class variables</h3>
@@ -768,6 +782,7 @@ def msg(self): return self.args[0]</code></pre>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li><a title="genshinstats.errors.GenshinStatsException" href="#genshinstats.errors.GenshinStatsException">GenshinStatsException</a></li>
+<li>builtins.Exception</li>
 <li>builtins.BaseException</li>
 </ul>
 <h3>Class variables</h3>
@@ -807,6 +822,7 @@ def msg(self): return self.args[0]</code></pre>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li><a title="genshinstats.errors.GenshinStatsException" href="#genshinstats.errors.GenshinStatsException">GenshinStatsException</a></li>
+<li>builtins.Exception</li>
 <li>builtins.BaseException</li>
 </ul>
 <h3>Class variables</h3>
@@ -847,6 +863,7 @@ def msg(self): return self.args[0]</code></pre>
 <ul class="hlist">
 <li><a title="genshinstats.errors.GachaLogException" href="#genshinstats.errors.GachaLogException">GachaLogException</a></li>
 <li><a title="genshinstats.errors.GenshinStatsException" href="#genshinstats.errors.GenshinStatsException">GenshinStatsException</a></li>
+<li>builtins.Exception</li>
 <li>builtins.BaseException</li>
 </ul>
 <h3>Class variables</h3>
@@ -886,6 +903,7 @@ def msg(self): return self.args[0]</code></pre>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li><a title="genshinstats.errors.GenshinStatsException" href="#genshinstats.errors.GenshinStatsException">GenshinStatsException</a></li>
+<li>builtins.Exception</li>
 <li>builtins.BaseException</li>
 </ul>
 <h3>Class variables</h3>
@@ -925,6 +943,7 @@ def msg(self): return self.args[0]</code></pre>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li><a title="genshinstats.errors.GenshinStatsException" href="#genshinstats.errors.GenshinStatsException">GenshinStatsException</a></li>
+<li>builtins.Exception</li>
 <li>builtins.BaseException</li>
 </ul>
 <h3>Class variables</h3>
@@ -970,6 +989,7 @@ def msg(self): return self.args[0]</code></pre>
 <ul class="hlist">
 <li><a title="genshinstats.errors.CodeRedeemException" href="#genshinstats.errors.CodeRedeemException">CodeRedeemException</a></li>
 <li><a title="genshinstats.errors.GenshinStatsException" href="#genshinstats.errors.GenshinStatsException">GenshinStatsException</a></li>
+<li>builtins.Exception</li>
 <li>builtins.BaseException</li>
 </ul>
 <h3>Class variables</h3>
@@ -1005,6 +1025,7 @@ def msg(self): return self.args[0]</code></pre>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li><a title="genshinstats.errors.GenshinStatsException" href="#genshinstats.errors.GenshinStatsException">GenshinStatsException</a></li>
+<li>builtins.Exception</li>
 <li>builtins.BaseException</li>
 </ul>
 <h3>Subclasses</h3>
@@ -1050,6 +1071,7 @@ def msg(self): return self.args[0]</code></pre>
 <ul class="hlist">
 <li><a title="genshinstats.errors.CodeRedeemException" href="#genshinstats.errors.CodeRedeemException">CodeRedeemException</a></li>
 <li><a title="genshinstats.errors.GenshinStatsException" href="#genshinstats.errors.GenshinStatsException">GenshinStatsException</a></li>
+<li>builtins.Exception</li>
 <li>builtins.BaseException</li>
 </ul>
 <h3>Class variables</h3>

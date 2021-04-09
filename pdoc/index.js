@@ -507,7 +507,7 @@ INDEX=[
 {
 "ref":"genshinstats.gachalog.fetch_gacha_endpoint",
 "url":2,
-"doc":"Fetch an enpoint from mihoyo's gacha info. Takes in an endpoint url which is joined with the base url. A request is then sent and returns a parsed response. Includes error handling and getting the authkey.",
+"doc":"Fetch an enpoint from mihoyo's gacha info. Takes in an endpoint url which is joined with the base url. If an autheky is provided, it uses that authkey specifically. A request is then sent and returns a parsed response. Includes error handling and getting the authkey.",
 "func":1
 },
 {
