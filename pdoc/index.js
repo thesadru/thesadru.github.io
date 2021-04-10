@@ -487,6 +487,12 @@ INDEX=[
 "doc":"Genshin Impact gacha pulls log. Gets pull data from the current banners in basic json. Requires an auth key that can be gotten from an output_log.txt file."
 },
 {
+"ref":"genshinstats.gachalog.extract_authkey",
+"url":2,
+"doc":"Extracts an authkey from the provided string. Returns None if not found.",
+"func":1
+},
+{
 "ref":"genshinstats.gachalog.get_authkey",
 "url":2,
 "doc":"Gets the query for log requests. This will either be done from the logs or from a tempfile.",
@@ -501,7 +507,7 @@ INDEX=[
 {
 "ref":"genshinstats.gachalog.set_authkey",
 "url":2,
-"doc":"Sets an authkey for log requests. passing in authkey will simply save it, passing in a url will take the authkey out of it, passing in a logfile will search it, otherwise uses get_authkey",
+"doc":"Sets an authkey for log requests. passing in authkey will simply save it, passing in a url will take the authkey out of it, passing in a logfile will search it, otherwise searches the logs and a tempfile.",
 "func":1
 },
 {
