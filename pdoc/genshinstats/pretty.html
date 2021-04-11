@@ -28,7 +28,7 @@ that were leftover from during development</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\pretty.py#L0-L262" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\pretty.py#L0-L263" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">&#34;&#34;&#34;Prettifiers for genshinstats api returns.
 
@@ -39,6 +39,7 @@ import re
 from datetime import datetime
 from math import ceil
 
+from . import gachalog
 
 def _recognize_character_icon(url: str):
     &#34;&#34;&#34;Recognizes a character&#39;s icon url and returns its name.&#34;&#34;&#34;
@@ -156,7 +157,6 @@ def prettify_character(data: dict):
             &#34;Traveler&#34;:&#34;Aether&#34; if &#34;Boy&#34; in data[&#34;icon&#34;] else &#34;Lumine&#34;,
             &#34;Venti&#34;:&#34;Barbatos&#34;,
             &#34;Zhongli&#34;:&#34;Morax&#34;,
-            &#34;Fischl&#34;:&#34;Amy&#34;,
             &#34;Albedo&#34;:&#34;Kreideprinz&#34;,
             &#34;Tartaglia&#34;:&#34;Childe&#34;,
         }.get(data[&#34;name&#34;],None),
@@ -222,13 +222,14 @@ def prettify_characters(data: list):
     &#34;&#34;&#34;Returns a prettified version of get_characters.&#34;&#34;&#34;
     return [prettify_character(i) for i in data]
 
-def prettify_gacha_log(data: list):
+def prettify_gacha_log(data: list, lang: str=&#39;en&#39;):
     return [{
         &#34;type&#34;: i[&#34;item_type&#34;],
         &#34;name&#34;: i[&#34;name&#34;],
         &#34;rarity&#34;: int(i[&#34;rank_type&#34;]),
         &#34;time&#34;: i[&#34;time&#34;],
-        &#34;gacha_type&#34;: i[&#34;gacha_type&#34;]
+        &#34;gacha_type&#34;: i[&#34;gacha_type&#34;],
+        &#34;gacha_name&#34;: gachalog.recognize_gacha_type(i[&#39;gacha_type&#39;],lang=lang)[&#39;name&#39;],
     } for i in data]
 
 def prettify_gacha_items(data: list):
@@ -310,7 +311,7 @@ def prettify_gacha_details(data: dict):
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\pretty.py#L118-L187" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\pretty.py#L119-L187" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def prettify_character(data: dict):
     &#34;&#34;&#34;Returns a prettified version of a single item from get_characters.&#34;&#34;&#34;
@@ -321,7 +322,6 @@ def prettify_gacha_details(data: dict):
             &#34;Traveler&#34;:&#34;Aether&#34; if &#34;Boy&#34; in data[&#34;icon&#34;] else &#34;Lumine&#34;,
             &#34;Venti&#34;:&#34;Barbatos&#34;,
             &#34;Zhongli&#34;:&#34;Morax&#34;,
-            &#34;Fischl&#34;:&#34;Amy&#34;,
             &#34;Albedo&#34;:&#34;Kreideprinz&#34;,
             &#34;Tartaglia&#34;:&#34;Childe&#34;,
         }.get(data[&#34;name&#34;],None),
@@ -407,7 +407,7 @@ def prettify_gacha_details(data: dict):
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\pretty.py#L210-L263" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\pretty.py#L211-L264" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def prettify_gacha_details(data: dict):
     per = lambda p: None if p==&#39;0%&#39; else p[:-1].replace(&#39;,&#39;,&#39;.&#39;)
@@ -473,7 +473,7 @@ def prettify_gacha_details(data: dict):
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\pretty.py#L202-L208" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\pretty.py#L203-L209" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def prettify_gacha_items(data: list):
     return [{
@@ -485,22 +485,23 @@ def prettify_gacha_details(data: dict):
 </details>
 </dd>
 <dt id="genshinstats.pretty.prettify_gacha_log"><code class="name flex">
-<span>def <span class="ident">prettify_gacha_log</span></span>(<span>data: list)</span>
+<span>def <span class="ident">prettify_gacha_log</span></span>(<span>data: list, lang: str = 'en')</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\pretty.py#L193-L200" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\pretty.py#L193-L201" class="git-link">Browse git</a>
 </summary>
-<pre><code class="python">def prettify_gacha_log(data: list):
+<pre><code class="python">def prettify_gacha_log(data: list, lang: str=&#39;en&#39;):
     return [{
         &#34;type&#34;: i[&#34;item_type&#34;],
         &#34;name&#34;: i[&#34;name&#34;],
         &#34;rarity&#34;: int(i[&#34;rank_type&#34;]),
         &#34;time&#34;: i[&#34;time&#34;],
-        &#34;gacha_type&#34;: i[&#34;gacha_type&#34;]
+        &#34;gacha_type&#34;: i[&#34;gacha_type&#34;],
+        &#34;gacha_name&#34;: gachalog.recognize_gacha_type(i[&#39;gacha_type&#39;],lang=lang)[&#39;name&#39;],
     } for i in data]</code></pre>
 </details>
 </dd>
@@ -512,7 +513,7 @@ def prettify_gacha_details(data: dict):
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\pretty.py#L62-L116" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\pretty.py#L63-L117" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def prettify_spiral_abyss(data: dict):
     &#34;&#34;&#34;Returns a prettified version of get_spiral_abyss.&#34;&#34;&#34;
@@ -579,7 +580,7 @@ def prettify_gacha_details(data: dict):
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\pretty.py#L26-L60" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\pretty.py#L27-L61" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def prettify_user_info(data: dict):
     &#34;&#34;&#34;Returns a prettified version of get_user_info.&#34;&#34;&#34;

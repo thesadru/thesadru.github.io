@@ -523,6 +523,12 @@ INDEX=[
 "func":1
 },
 {
+"ref":"genshinstats.gachalog.recognize_gacha_type",
+"url":2,
+"doc":"Recognizes a given gacha type by id, key or name.",
+"func":1
+},
+{
 "ref":"genshinstats.gachalog.get_gacha_log",
 "url":2,
 "doc":"Gets the gacha pull history log. Needs a gacha type, this must be the key (for example 301). Possible gacha types can be found in the return of get_gacha_types(). Yields instead of returning, since it's paginated. May return less than size when size is too big. If size is not set it will yield until it runs out of items.",

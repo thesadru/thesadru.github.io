@@ -28,7 +28,7 @@ Requires an auth key that can be gotten from an output_log.txt file.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\gachalog.py#L0-L206" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\gachalog.py#L0-L213" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">&#34;&#34;&#34;Genshin Impact gacha pulls log.
 
@@ -168,6 +168,13 @@ def get_gacha_types(lang: str=&#39;en&#39;) -&gt; list:
         params=dict(lang=lang)
     )[&#39;gacha_type_list&#39;]
 
+def recognize_gacha_type(gacha: str, lang: str=&#39;en&#39;) -&gt; Optional[dict]:
+    &#34;&#34;&#34;Recognizes a given gacha type by id, key or name.&#34;&#34;&#34;
+    for t in get_gacha_types(lang):
+        if gacha in t.values():
+            return t
+    return None
+
 def get_gacha_log(gacha_type: int, size: int=None, authkey: str=None, lang: str=&#39;en&#39;, raw: bool=False) -&gt; Iterable[dict]:
     &#34;&#34;&#34;Gets the gacha pull history log.
     
@@ -187,7 +194,7 @@ def get_gacha_log(gacha_type: int, size: int=None, authkey: str=None, lang: str=
             params=dict(gacha_type=gacha_type,size=page_size,end_id=end_id,lang=lang)
         )[&#39;list&#39;]
         
-        yield from data if raw else prettify_gacha_log(data)
+        yield from data if raw else prettify_gacha_log(data,lang)
         
         if len(data) &lt; page_size:
             return # return if reached the end
@@ -367,7 +374,7 @@ Will yield pulls from most recent to oldest.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\gachalog.py#L170-L177" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\gachalog.py#L177-L184" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def get_entire_gacha_log(size: int=None, authkey: str=None, lang: str=&#39;en&#39;, raw: bool=False) -&gt; Iterable[dict]:
     &#34;&#34;&#34;Gets the entire gacha pull history log.
@@ -393,7 +400,7 @@ possible langs can be found with get_langs() under the value field.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\gachalog.py#L191-L207" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\gachalog.py#L198-L214" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def get_gacha_details(gacha_id: str, lang: str=&#39;en-us&#39;, raw: bool=False) -&gt; dict:
     &#34;&#34;&#34;Gets details of a specific gacha banner.
@@ -424,7 +431,7 @@ To get more info about a specific item use its id.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\gachalog.py#L179-L189" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\gachalog.py#L186-L196" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def get_gacha_items(lang: str=&#39;en-us&#39;, raw: bool=False) -&gt; list:
     &#34;&#34;&#34;Gets the list of items that can be gotten from the gacha.
@@ -452,7 +459,7 @@ If size is not set it will yield until it runs out of items.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\gachalog.py#L139-L168" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\gachalog.py#L146-L175" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def get_gacha_log(gacha_type: int, size: int=None, authkey: str=None, lang: str=&#39;en&#39;, raw: bool=False) -&gt; Iterable[dict]:
     &#34;&#34;&#34;Gets the gacha pull history log.
@@ -473,7 +480,7 @@ If size is not set it will yield until it runs out of items.</p></div>
             params=dict(gacha_type=gacha_type,size=page_size,end_id=end_id,lang=lang)
         )[&#39;list&#39;]
         
-        yield from data if raw else prettify_gacha_log(data)
+        yield from data if raw else prettify_gacha_log(data,lang)
         
         if len(data) &lt; page_size:
             return # return if reached the end
@@ -507,6 +514,24 @@ def get_gacha_types(lang: str=&#39;en&#39;) -&gt; list:
         &#34;getConfigList&#34;,
         params=dict(lang=lang)
     )[&#39;gacha_type_list&#39;]</code></pre>
+</details>
+</dd>
+<dt id="genshinstats.gachalog.recognize_gacha_type"><code class="name flex">
+<span>def <span class="ident">recognize_gacha_type</span></span>(<span>gacha: str, lang: str = 'en') ‑> Optional[dict]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Recognizes a given gacha type by id, key or name.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\gachalog.py#L139-L144" class="git-link">Browse git</a>
+</summary>
+<pre><code class="python">def recognize_gacha_type(gacha: str, lang: str=&#39;en&#39;) -&gt; Optional[dict]:
+    &#34;&#34;&#34;Recognizes a given gacha type by id, key or name.&#34;&#34;&#34;
+    for t in get_gacha_types(lang):
+        if gacha in t.values():
+            return t
+    return None</code></pre>
 </details>
 </dd>
 <dt id="genshinstats.gachalog.set_authkey"><code class="name flex">
@@ -615,6 +640,7 @@ setTimeout(() => input.focus(), 100);
 <li><code><a title="genshinstats.gachalog.get_gacha_items" href="#genshinstats.gachalog.get_gacha_items">get_gacha_items</a></code></li>
 <li><code><a title="genshinstats.gachalog.get_gacha_log" href="#genshinstats.gachalog.get_gacha_log">get_gacha_log</a></code></li>
 <li><code><a title="genshinstats.gachalog.get_gacha_types" href="#genshinstats.gachalog.get_gacha_types">get_gacha_types</a></code></li>
+<li><code><a title="genshinstats.gachalog.recognize_gacha_type" href="#genshinstats.gachalog.recognize_gacha_type">recognize_gacha_type</a></code></li>
 <li><code><a title="genshinstats.gachalog.set_authkey" href="#genshinstats.gachalog.set_authkey">set_authkey</a></code></li>
 </ul>
 </li>
