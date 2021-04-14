@@ -46,27 +46,6 @@ INDEX=[
 "doc":""
 },
 {
-"ref":"genshinstats.errors.InvalidDS",
-"url":1,
-"doc":"Invalid DS token, should be renewed."
-},
-{
-"ref":"genshinstats.errors.InvalidDS.retcode",
-"url":1,
-"doc":""
-},
-{
-"ref":"genshinstats.errors.InvalidDS.orig_msg",
-"url":1,
-"doc":""
-},
-{
-"ref":"genshinstats.errors.InvalidDS.set_response",
-"url":1,
-"doc":"Adds an optional response object to the error.",
-"func":1
-},
-{
 "ref":"genshinstats.errors.NotLoggedIn",
 "url":1,
 "doc":"Cookies have not been provided."
@@ -125,27 +104,6 @@ INDEX=[
 },
 {
 "ref":"genshinstats.errors.DataNotPublic.set_response",
-"url":1,
-"doc":"Adds an optional response object to the error.",
-"func":1
-},
-{
-"ref":"genshinstats.errors.InvalidScheduleType",
-"url":1,
-"doc":"Invalid Spiral Abyss schedule"
-},
-{
-"ref":"genshinstats.errors.InvalidScheduleType.retcode",
-"url":1,
-"doc":""
-},
-{
-"ref":"genshinstats.errors.InvalidScheduleType.orig_msg",
-"url":1,
-"doc":""
-},
-{
-"ref":"genshinstats.errors.InvalidScheduleType.set_response",
 "url":1,
 "doc":"Adds an optional response object to the error.",
 "func":1
@@ -608,7 +566,7 @@ INDEX=[
 {
 "ref":"genshinstats.genshinstats.get_spiral_abyss",
 "url":3,
-"doc":"Gets how far the user has gotten in spiral abyss and their season progress. Spiral abyss info contains their porgress, stats and individual completes. Every season these stats refresh and you can get the previous stats with  previous .",
+"doc":"Gets how far the user has gotten in spiral abyss and their season progress. Spiral abyss info contains their progress, stats and individual completes. Every season these stats refresh and you can get the previous stats with  previous .",
 "func":1
 },
 {
@@ -631,7 +589,7 @@ INDEX=[
 {
 "ref":"genshinstats.hoyolab.get_langs",
 "url":4,
-"doc":"Gets a list of translations for hoyolabs.",
+"doc":"Gets a list of languages.",
 "func":1
 },
 {
@@ -668,12 +626,6 @@ INDEX=[
 "ref":"genshinstats.hoyolab.get_active_players",
 "url":4,
 "doc":"Gets a list of recommended active players When page size is None, gets all avalible active players.",
-"func":1
-},
-{
-"ref":"genshinstats.hoyolab.get_public_players",
-"url":4,
-"doc":"Gets a list of players with public accounts. Returns a dict of their community uid, game uid and their game card.",
 "func":1
 },
 {
@@ -776,9 +728,9 @@ INDEX=[
 "func":1
 },
 {
-"ref":"genshinstats.utils.get_genshin_dir",
+"ref":"genshinstats.utils.get_output_log",
 "url":7,
-"doc":"Find and return the Genshin Impact directory. None if not found.",
+"doc":"Find and return the Genshin Impact output log. None if not found.",
 "func":1
 }
 ]

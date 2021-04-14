@@ -60,8 +60,8 @@ session.headers.update({
     &#34;user-agent&#34;:USER_AGENT
 })
 DS_SALT = &#34;6cqshh5dhw73bzxn20oexa9k516chk7s&#34;
-OS_BBS_URL = &#34;https://bbs-api-os.hoyolab.com/&#34;
-CN_TAKUMI_URL = &#34;https://api-takumi.mihoyo.com/&#34;
+OS_BBS_URL = &#34;https://bbs-api-os.hoyolab.com/&#34; # global
+CN_TAKUMI_URL = &#34;https://api-takumi.mihoyo.com/&#34; # chinese
 
 def set_cookie(account_id: int, cookie_token: str) -&gt; None:
     &#34;&#34;&#34;Basic configuration function, required for anything beyond search.
@@ -161,7 +161,7 @@ def get_characters(uid: int, character_ids: List[int], lang: str=&#39;en-us&#39;
         &#34;game_record/genshin/api/character&#34;,
         chinese=is_chinese(uid),
         method=&#39;POST&#39;,
-        json={&#39;character_ids&#39;:character_ids,&#39;role_id&#39;:uid,&#39;server&#39;:server},
+        json=dict(character_ids=character_ids,role_id=uid,server=server), # POST uses the body instead
         headers={&#39;x-rpc-language&#39;:lang},
     )[&#34;avatars&#34;]
     return data if raw else prettify_characters(data)
@@ -182,7 +182,7 @@ def get_all_characters(uid: int, lang: str=&#39;en-us&#39;, raw: bool=False) -&g
 def get_spiral_abyss(uid: int, previous: bool=False, raw: bool=False) -&gt; dict:
     &#34;&#34;&#34;Gets how far the user has gotten in spiral abyss and their season progress.
     
-    Spiral abyss info contains their porgress, stats and individual completes.
+    Spiral abyss info contains their progress, stats and individual completes.
     
     Every season these stats refresh and you can get the previous stats with `previous`.
     &#34;&#34;&#34;
@@ -300,7 +300,7 @@ possible langs can be found with get_langs() under the value field.</p></div>
         &#34;game_record/genshin/api/character&#34;,
         chinese=is_chinese(uid),
         method=&#39;POST&#39;,
-        json={&#39;character_ids&#39;:character_ids,&#39;role_id&#39;:uid,&#39;server&#39;:server},
+        json=dict(character_ids=character_ids,role_id=uid,server=server), # POST uses the body instead
         headers={&#39;x-rpc-language&#39;:lang},
     )[&#34;avatars&#34;]
     return data if raw else prettify_characters(data)</code></pre>
@@ -333,7 +333,7 @@ possible langs can be found with get_langs() under the value field.</p></div>
 </code></dt>
 <dd>
 <div class="desc"><p>Gets how far the user has gotten in spiral abyss and their season progress.</p>
-<p>Spiral abyss info contains their porgress, stats and individual completes.</p>
+<p>Spiral abyss info contains their progress, stats and individual completes.</p>
 <p>Every season these stats refresh and you can get the previous stats with <code>previous</code>.</p></div>
 <details class="source">
 <summary>
@@ -343,7 +343,7 @@ possible langs can be found with get_langs() under the value field.</p></div>
 <pre><code class="python">def get_spiral_abyss(uid: int, previous: bool=False, raw: bool=False) -&gt; dict:
     &#34;&#34;&#34;Gets how far the user has gotten in spiral abyss and their season progress.
     
-    Spiral abyss info contains their porgress, stats and individual completes.
+    Spiral abyss info contains their progress, stats and individual completes.
     
     Every season these stats refresh and you can get the previous stats with `previous`.
     &#34;&#34;&#34;

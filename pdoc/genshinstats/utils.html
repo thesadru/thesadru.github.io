@@ -26,7 +26,7 @@
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\utils.py#L0-L72" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\utils.py#L0-L70" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">&#34;&#34;&#34;Various utility functions for genshinstats.&#34;&#34;&#34;
 import os.path
@@ -41,13 +41,11 @@ def raise_for_error(response: dict) -&gt; NoReturn:
     &#34;&#34;&#34;Raises a custom genshinstats error from a response.&#34;&#34;&#34;
     error = {
         # authorization
-        -401:  InvalidDS(&#39;Invalid DS token, might be expired.&#39;),
         -100:  NotLoggedIn(&#39;Login cookies have not been provided or are incorrect.&#39;),
         # UID
         1009:  InvalidUID(&#39;UID could not be found.&#39;),
         10102: DataNotPublic(&#39;User has set their data to be private. If this is your account look at the README.md to see how to make it public.&#39;),
         # general errors
-        1:     InvalidScheduleType(&#39;Invalid Spiral Abyss schedule type, can only be 1 or 2.&#39;),
         -10002:NoGameAccount(&#39;Cannot get rewards info. Account has no game account binded to it.&#39;),
         -1:    InvalidUID(&#39;UID is not valid.&#39;) if response[&#39;message&#39;]==&#39;Invalid uid&#39; else InvalidItemID(&#39;{} &#34;{}&#34; does not exist.&#39;),
         # code redemption
@@ -93,13 +91,13 @@ def is_chinese(x) -&gt; bool:
     &#34;&#34;&#34;Recognizes whether the server/uid is chinese.&#34;&#34;&#34;
     return str(x).startswith((&#39;cn&#39;,&#39;1&#39;,&#39;5&#39;))
 
-def get_genshin_dir() -&gt; Optional[str]:
-    &#34;&#34;&#34;Find and return the Genshin Impact directory. None if not found.&#34;&#34;&#34;
+def get_output_log() -&gt; Optional[str]:
+    &#34;&#34;&#34;Find and return the Genshin Impact output log. None if not found.&#34;&#34;&#34;
     mihoyo_dir = os.path.expanduser(&#39;~/AppData/LocalLow/miHoYo/&#39;)
     for name in [&#34;Genshin Impact&#34;,&#34;原神&#34;,&#34;YuanShen&#34;]:
-        directory = os.path.join(mihoyo_dir,name)
-        if os.path.exists(directory):
-            return directory
+        output_log = os.path.join(mihoyo_dir,name,&#39;output_log.txt&#39;)
+        if os.path.isfile(output_log):
+            return output_log
     return None # no genshin installation</code></pre>
 </details>
 </section>
@@ -110,23 +108,23 @@ def get_genshin_dir() -&gt; Optional[str]:
 <section>
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
-<dt id="genshinstats.utils.get_genshin_dir"><code class="name flex">
-<span>def <span class="ident">get_genshin_dir</span></span>(<span>) ‑> Optional[str]</span>
+<dt id="genshinstats.utils.get_output_log"><code class="name flex">
+<span>def <span class="ident">get_output_log</span></span>(<span>) ‑> Optional[str]</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Find and return the Genshin Impact directory. None if not found.</p></div>
+<div class="desc"><p>Find and return the Genshin Impact output log. None if not found.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\utils.py#L66-L73" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\utils.py#L64-L71" class="git-link">Browse git</a>
 </summary>
-<pre><code class="python">def get_genshin_dir() -&gt; Optional[str]:
-    &#34;&#34;&#34;Find and return the Genshin Impact directory. None if not found.&#34;&#34;&#34;
+<pre><code class="python">def get_output_log() -&gt; Optional[str]:
+    &#34;&#34;&#34;Find and return the Genshin Impact output log. None if not found.&#34;&#34;&#34;
     mihoyo_dir = os.path.expanduser(&#39;~/AppData/LocalLow/miHoYo/&#39;)
     for name in [&#34;Genshin Impact&#34;,&#34;原神&#34;,&#34;YuanShen&#34;]:
-        directory = os.path.join(mihoyo_dir,name)
-        if os.path.exists(directory):
-            return directory
+        output_log = os.path.join(mihoyo_dir,name,&#39;output_log.txt&#39;)
+        if os.path.isfile(output_log):
+            return output_log
     return None # no genshin installation</code></pre>
 </details>
 </dd>
@@ -138,7 +136,7 @@ def get_genshin_dir() -&gt; Optional[str]:
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\utils.py#L62-L64" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\utils.py#L60-L62" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def is_chinese(x) -&gt; bool:
     &#34;&#34;&#34;Recognizes whether the server/uid is chinese.&#34;&#34;&#34;
@@ -154,7 +152,7 @@ def get_genshin_dir() -&gt; Optional[str]:
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\utils.py#L55-L60" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\utils.py#L53-L58" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def is_game_uid(uid: int) -&gt; bool:
     &#34;&#34;&#34;Recognizes whether the uid is a game uid.
@@ -172,19 +170,17 @@ def get_genshin_dir() -&gt; Optional[str]:
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\utils.py#L10-L37" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\utils.py#L10-L35" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def raise_for_error(response: dict) -&gt; NoReturn:
     &#34;&#34;&#34;Raises a custom genshinstats error from a response.&#34;&#34;&#34;
     error = {
         # authorization
-        -401:  InvalidDS(&#39;Invalid DS token, might be expired.&#39;),
         -100:  NotLoggedIn(&#39;Login cookies have not been provided or are incorrect.&#39;),
         # UID
         1009:  InvalidUID(&#39;UID could not be found.&#39;),
         10102: DataNotPublic(&#39;User has set their data to be private. If this is your account look at the README.md to see how to make it public.&#39;),
         # general errors
-        1:     InvalidScheduleType(&#39;Invalid Spiral Abyss schedule type, can only be 1 or 2.&#39;),
         -10002:NoGameAccount(&#39;Cannot get rewards info. Account has no game account binded to it.&#39;),
         -1:    InvalidUID(&#39;UID is not valid.&#39;) if response[&#39;message&#39;]==&#39;Invalid uid&#39; else InvalidItemID(&#39;{} &#34;{}&#34; does not exist.&#39;),
         # code redemption
@@ -212,7 +208,7 @@ def get_genshin_dir() -&gt; Optional[str]:
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\utils.py#L39-L53" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\utils.py#L37-L51" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def recognize_server(uid: int) -&gt; str:
     &#34;&#34;&#34;Recognizes which server a UID is from.&#34;&#34;&#34;
@@ -295,7 +291,7 @@ setTimeout(() => input.focus(), 100);
 </li>
 <li><h3><a href="#header-functions">Functions</a></h3>
 <ul class="">
-<li><code><a title="genshinstats.utils.get_genshin_dir" href="#genshinstats.utils.get_genshin_dir">get_genshin_dir</a></code></li>
+<li><code><a title="genshinstats.utils.get_output_log" href="#genshinstats.utils.get_output_log">get_output_log</a></code></li>
 <li><code><a title="genshinstats.utils.is_chinese" href="#genshinstats.utils.is_chinese">is_chinese</a></code></li>
 <li><code><a title="genshinstats.utils.is_game_uid" href="#genshinstats.utils.is_game_uid">is_game_uid</a></code></li>
 <li><code><a title="genshinstats.utils.raise_for_error" href="#genshinstats.utils.raise_for_error">raise_for_error</a></code></li>

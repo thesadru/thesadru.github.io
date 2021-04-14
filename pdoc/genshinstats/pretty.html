@@ -71,7 +71,7 @@ def prettify_user_info(data: dict):
             &#34;exquisite_chests&#34;: stats[&#34;exquisite_chest_number&#34;],
             &#34;precious_chests&#34;: stats[&#34;precious_chest_number&#34;],
             &#34;luxurious_chests&#34;: stats[&#34;luxurious_chest_number&#34;],
-            &#34;unlocked_teleports&#34;: stats[&#34;way_point_number&#34;],
+            &#34;unlocked_waypoints&#34;: stats[&#34;way_point_number&#34;],
             &#34;unlocked_domains&#34;: stats[&#34;domain_number&#34;]
         },
         &#34;characters&#34;: [{
@@ -85,7 +85,7 @@ def prettify_user_info(data: dict):
         } for i in data[&#34;avatars&#34;]],
         &#34;explorations&#34;: [{
             &#34;name&#34;: i[&#34;name&#34;],
-            &#34;percentage&#34;: round(i[&#34;exploration_percentage&#34;]/10, 1),
+            &#34;explored&#34;: round(i[&#34;exploration_percentage&#34;]/10, 1),
             &#34;type&#34;:i[&#34;type&#34;],
             &#34;level&#34;:i[&#34;level&#34;],
             &#34;icon&#34;: i[&#34;icon&#34;],
@@ -597,7 +597,7 @@ def prettify_gacha_details(data: dict):
             &#34;exquisite_chests&#34;: stats[&#34;exquisite_chest_number&#34;],
             &#34;precious_chests&#34;: stats[&#34;precious_chest_number&#34;],
             &#34;luxurious_chests&#34;: stats[&#34;luxurious_chest_number&#34;],
-            &#34;unlocked_teleports&#34;: stats[&#34;way_point_number&#34;],
+            &#34;unlocked_waypoints&#34;: stats[&#34;way_point_number&#34;],
             &#34;unlocked_domains&#34;: stats[&#34;domain_number&#34;]
         },
         &#34;characters&#34;: [{
@@ -611,7 +611,7 @@ def prettify_gacha_details(data: dict):
         } for i in data[&#34;avatars&#34;]],
         &#34;explorations&#34;: [{
             &#34;name&#34;: i[&#34;name&#34;],
-            &#34;percentage&#34;: round(i[&#34;exploration_percentage&#34;]/10, 1),
+            &#34;explored&#34;: round(i[&#34;exploration_percentage&#34;]/10, 1),
             &#34;type&#34;:i[&#34;type&#34;],
             &#34;level&#34;:i[&#34;level&#34;],
             &#34;icon&#34;: i[&#34;icon&#34;],

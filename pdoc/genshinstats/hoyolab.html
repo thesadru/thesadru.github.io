@@ -27,7 +27,7 @@
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\hoyolab.py#L0-L160" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\hoyolab.py#L0-L142" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">&#34;&#34;&#34;Wrapper for the hoyolab.com community api.
 
@@ -67,7 +67,7 @@ def check_in() -&gt; None:
 
 @lru_cache()
 def get_langs() -&gt; list:
-    &#34;&#34;&#34;Gets a list of translations for hoyolabs.&#34;&#34;&#34;
+    &#34;&#34;&#34;Gets a list of languages.&#34;&#34;&#34;
     return fetch_endpoint(
         &#34;community/misc/wapi/langs&#34;,
         params=dict(gids=2)
@@ -171,25 +171,7 @@ def get_active_players(page_size: int=None, offset: int=0) -&gt; list:
     return fetch_endpoint(
         &#34;community/user/wapi/recommendActive&#34;,
         params=dict(page_size=page_size or 0xffff,offset=offset,gids=2)
-    )[&#39;list&#39;]
-
-def get_public_players() -&gt; Iterable[dict]:
-    &#34;&#34;&#34;Gets a list of players with public accounts.
-    
-    Returns a dict of their community uid, game uid and their game card.
-    &#34;&#34;&#34;
-    players = get_active_players()
-    for player in players:
-        community_uid = player[&#39;user&#39;][&#39;uid&#39;]
-        card = get_record_card(community_uid)
-        if card is None:
-            continue
-        
-        yield {
-            &#39;community_uid&#39;:community_uid,
-            &#39;uid&#39;:card[&#39;game_role_id&#39;],
-            &#39;card&#39;:card
-        }</code></pre>
+    )[&#39;list&#39;]</code></pre>
 </details>
 </section>
 <section>
@@ -295,7 +277,7 @@ It also contains stats for general community actions.</p>
 <span>def <span class="ident">get_langs</span></span>(<span>) ‑> list</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Gets a list of translations for hoyolabs.</p></div>
+<div class="desc"><p>Gets a list of languages.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -303,41 +285,11 @@ It also contains stats for general community actions.</p>
 </summary>
 <pre><code class="python">@lru_cache()
 def get_langs() -&gt; list:
-    &#34;&#34;&#34;Gets a list of translations for hoyolabs.&#34;&#34;&#34;
+    &#34;&#34;&#34;Gets a list of languages.&#34;&#34;&#34;
     return fetch_endpoint(
         &#34;community/misc/wapi/langs&#34;,
         params=dict(gids=2)
     )[&#39;langs&#39;]</code></pre>
-</details>
-</dd>
-<dt id="genshinstats.hoyolab.get_public_players"><code class="name flex">
-<span>def <span class="ident">get_public_players</span></span>(<span>) ‑> Iterable[dict]</span>
-</code></dt>
-<dd>
-<div class="desc"><p>Gets a list of players with public accounts.</p>
-<p>Returns a dict of their community uid, game uid and their game card.</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\hoyolab.py#L145-L161" class="git-link">Browse git</a>
-</summary>
-<pre><code class="python">def get_public_players() -&gt; Iterable[dict]:
-    &#34;&#34;&#34;Gets a list of players with public accounts.
-    
-    Returns a dict of their community uid, game uid and their game card.
-    &#34;&#34;&#34;
-    players = get_active_players()
-    for player in players:
-        community_uid = player[&#39;user&#39;][&#39;uid&#39;]
-        card = get_record_card(community_uid)
-        if card is None:
-            continue
-        
-        yield {
-            &#39;community_uid&#39;:community_uid,
-            &#39;uid&#39;:card[&#39;game_role_id&#39;],
-            &#39;card&#39;:card
-        }</code></pre>
 </details>
 </dd>
 <dt id="genshinstats.hoyolab.get_record_card"><code class="name flex">
@@ -531,7 +483,6 @@ setTimeout(() => input.focus(), 100);
 <li><code><a title="genshinstats.hoyolab.get_community_user_info" href="#genshinstats.hoyolab.get_community_user_info">get_community_user_info</a></code></li>
 <li><code><a title="genshinstats.hoyolab.get_game_accounts" href="#genshinstats.hoyolab.get_game_accounts">get_game_accounts</a></code></li>
 <li><code><a title="genshinstats.hoyolab.get_langs" href="#genshinstats.hoyolab.get_langs">get_langs</a></code></li>
-<li><code><a title="genshinstats.hoyolab.get_public_players" href="#genshinstats.hoyolab.get_public_players">get_public_players</a></code></li>
 <li><code><a title="genshinstats.hoyolab.get_record_card" href="#genshinstats.hoyolab.get_record_card">get_record_card</a></code></li>
 <li><code><a title="genshinstats.hoyolab.get_uid_from_community" href="#genshinstats.hoyolab.get_uid_from_community">get_uid_from_community</a></code></li>
 <li><code><a title="genshinstats.hoyolab.redeem_code" href="#genshinstats.hoyolab.redeem_code">redeem_code</a></code></li>
