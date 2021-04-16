@@ -28,7 +28,7 @@ Requires an auth key that can be gotten from an output_log.txt file.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\gachalog.py#L0-L212" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\gachalog.py#L0-L213" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">&#34;&#34;&#34;Genshin Impact gacha pulls log.
 
@@ -157,19 +157,20 @@ def fetch_gacha_endpoint(endpoint: str, authkey: str=None, **kwargs) -&gt; dict:
     raise_for_error(data)
 
 @lru_cache()
-def get_gacha_types(lang: str=&#39;en&#39;) -&gt; list:
+def get_gacha_types(authkey: str=None, lang: str=&#39;en&#39;) -&gt; list:
     &#34;&#34;&#34;Gets possible gacha types.
     
     Returns a list of dicts.
     &#34;&#34;&#34;
     return fetch_gacha_endpoint(
         &#34;getConfigList&#34;,
+        authkey=authkey,
         params=dict(lang=lang)
     )[&#39;gacha_type_list&#39;]
 
-def recognize_gacha_type(gacha: str, lang: str=&#39;en&#39;) -&gt; Optional[dict]:
+def recognize_gacha_type(gacha: str, authkey: str=None, lang: str=&#39;en&#39;) -&gt; Optional[dict]:
     &#34;&#34;&#34;Recognizes a given gacha type by id, key or name.&#34;&#34;&#34;
-    for t in get_gacha_types(lang):
+    for t in get_gacha_types(authkey,lang):
         if gacha in t.values():
             return t
     return None
@@ -211,7 +212,7 @@ def get_entire_gacha_log(size: int=None, authkey: str=None, lang: str=&#39;en&#3
     Basically same as running get_gacha_log() with every possible key.
     Will yield pulls from most recent to oldest.
     &#34;&#34;&#34;
-    gens = [get_gacha_log(t[&#39;key&#39;],authkey=authkey,lang=lang,raw=raw) for t in get_gacha_types()]
+    gens = [get_gacha_log(t[&#39;key&#39;],authkey=authkey,lang=lang,raw=raw) for t in get_gacha_types(authkey)]
     return islice(heapq.merge(*gens,key=lambda x:x[&#39;time&#39;],reverse=True),size)
 
 def get_gacha_items(lang: str=&#39;en-us&#39;, raw: bool=False) -&gt; list:
@@ -373,7 +374,7 @@ Will yield pulls from most recent to oldest.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\gachalog.py#L176-L183" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\gachalog.py#L177-L184" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def get_entire_gacha_log(size: int=None, authkey: str=None, lang: str=&#39;en&#39;, raw: bool=False) -&gt; Iterable[dict]:
     &#34;&#34;&#34;Gets the entire gacha pull history log.
@@ -381,7 +382,7 @@ Will yield pulls from most recent to oldest.</p></div>
     Basically same as running get_gacha_log() with every possible key.
     Will yield pulls from most recent to oldest.
     &#34;&#34;&#34;
-    gens = [get_gacha_log(t[&#39;key&#39;],authkey=authkey,lang=lang,raw=raw) for t in get_gacha_types()]
+    gens = [get_gacha_log(t[&#39;key&#39;],authkey=authkey,lang=lang,raw=raw) for t in get_gacha_types(authkey)]
     return islice(heapq.merge(*gens,key=lambda x:x[&#39;time&#39;],reverse=True),size)</code></pre>
 </details>
 </dd>
@@ -399,7 +400,7 @@ possible langs can be found with get_langs() under the value field.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\gachalog.py#L197-L213" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\gachalog.py#L198-L214" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def get_gacha_details(gacha_id: str, lang: str=&#39;en-us&#39;, raw: bool=False) -&gt; dict:
     &#34;&#34;&#34;Gets details of a specific gacha banner.
@@ -430,7 +431,7 @@ To get more info about a specific item use its id.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\gachalog.py#L185-L195" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\gachalog.py#L186-L196" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def get_gacha_items(lang: str=&#39;en-us&#39;, raw: bool=False) -&gt; list:
     &#34;&#34;&#34;Gets the list of items that can be gotten from the gacha.
@@ -458,7 +459,7 @@ If size is not set it will yield until it runs out of items.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\gachalog.py#L145-L174" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\gachalog.py#L146-L175" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def get_gacha_log(gacha_type: int, size: int=None, authkey: str=None, lang: str=&#39;en&#39;, raw: bool=False) -&gt; Iterable[dict]:
     &#34;&#34;&#34;Gets the gacha pull history log.
@@ -493,7 +494,7 @@ If size is not set it will yield until it runs out of items.</p></div>
 </details>
 </dd>
 <dt id="genshinstats.gachalog.get_gacha_types"><code class="name flex">
-<span>def <span class="ident">get_gacha_types</span></span>(<span>lang: str = 'en') ‑> list</span>
+<span>def <span class="ident">get_gacha_types</span></span>(<span>authkey: str = None, lang: str = 'en') ‑> list</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Gets possible gacha types.</p>
@@ -501,33 +502,34 @@ If size is not set it will yield until it runs out of items.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\gachalog.py#L127-L136" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\gachalog.py#L127-L137" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">@lru_cache()
-def get_gacha_types(lang: str=&#39;en&#39;) -&gt; list:
+def get_gacha_types(authkey: str=None, lang: str=&#39;en&#39;) -&gt; list:
     &#34;&#34;&#34;Gets possible gacha types.
     
     Returns a list of dicts.
     &#34;&#34;&#34;
     return fetch_gacha_endpoint(
         &#34;getConfigList&#34;,
+        authkey=authkey,
         params=dict(lang=lang)
     )[&#39;gacha_type_list&#39;]</code></pre>
 </details>
 </dd>
 <dt id="genshinstats.gachalog.recognize_gacha_type"><code class="name flex">
-<span>def <span class="ident">recognize_gacha_type</span></span>(<span>gacha: str, lang: str = 'en') ‑> Optional[dict]</span>
+<span>def <span class="ident">recognize_gacha_type</span></span>(<span>gacha: str, authkey: str = None, lang: str = 'en') ‑> Optional[dict]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Recognizes a given gacha type by id, key or name.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\gachalog.py#L138-L143" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\gachalog.py#L139-L144" class="git-link">Browse git</a>
 </summary>
-<pre><code class="python">def recognize_gacha_type(gacha: str, lang: str=&#39;en&#39;) -&gt; Optional[dict]:
+<pre><code class="python">def recognize_gacha_type(gacha: str, authkey: str=None, lang: str=&#39;en&#39;) -&gt; Optional[dict]:
     &#34;&#34;&#34;Recognizes a given gacha type by id, key or name.&#34;&#34;&#34;
-    for t in get_gacha_types(lang):
+    for t in get_gacha_types(authkey,lang):
         if gacha in t.values():
             return t
     return None</code></pre>
