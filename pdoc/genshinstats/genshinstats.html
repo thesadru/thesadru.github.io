@@ -136,7 +136,7 @@ def fetch_endpoint(endpoint: str, *, chinese: bool=False, **kwargs) -&gt; dict:
 def get_user_info(uid: int, raw: bool=False) -&gt; dict:
     &#34;&#34;&#34;Gets game user info of a user based on their uid.
     
-    Game user info contain the main nformation regarding a user.
+    Game user info contain the main information regarding a user.
     Contains owned characters, stats, city and world explorations and role.
     &#34;&#34;&#34;
     server = recognize_server(uid)
@@ -150,7 +150,7 @@ def get_user_info(uid: int, raw: bool=False) -&gt; dict:
 def get_characters(uid: int, character_ids: List[int], lang: str=&#39;en-us&#39;, raw: bool=False) -&gt; list:
     &#34;&#34;&#34;Gets characters of a user set by their ids.
     
-    Characters contain info about their level, constelation, weapon, and artifacts.
+    Characters contain info about their level, constellation, weapon, and artifacts.
     Talents are not included.
     
     Change the language with lang, 
@@ -169,7 +169,7 @@ def get_characters(uid: int, character_ids: List[int], lang: str=&#39;en-us&#39;
 def get_all_characters(uid: int, lang: str=&#39;en-us&#39;, raw: bool=False) -&gt; list:
     &#34;&#34;&#34;Gets all characters of a user.
     
-    Characters contain info about their level, constelation, weapon, and artifacts.
+    Characters contain info about their level, constellation, weapon, and artifacts.
     Talents are not included.
     
     Change the language with lang, 
@@ -249,7 +249,7 @@ but that requires being logged in as that user.</p></div>
 </code></dt>
 <dd>
 <div class="desc"><p>Gets all characters of a user.</p>
-<p>Characters contain info about their level, constelation, weapon, and artifacts.
+<p>Characters contain info about their level, constellation, weapon, and artifacts.
 Talents are not included.</p>
 <p>Change the language with lang,
 possible langs can be found with get_langs() under the value field.</p></div>
@@ -261,7 +261,7 @@ possible langs can be found with get_langs() under the value field.</p></div>
 <pre><code class="python">def get_all_characters(uid: int, lang: str=&#39;en-us&#39;, raw: bool=False) -&gt; list:
     &#34;&#34;&#34;Gets all characters of a user.
     
-    Characters contain info about their level, constelation, weapon, and artifacts.
+    Characters contain info about their level, constellation, weapon, and artifacts.
     Talents are not included.
     
     Change the language with lang, 
@@ -277,7 +277,7 @@ possible langs can be found with get_langs() under the value field.</p></div>
 </code></dt>
 <dd>
 <div class="desc"><p>Gets characters of a user set by their ids.</p>
-<p>Characters contain info about their level, constelation, weapon, and artifacts.
+<p>Characters contain info about their level, constellation, weapon, and artifacts.
 Talents are not included.</p>
 <p>Change the language with lang,
 possible langs can be found with get_langs() under the value field.</p></div>
@@ -289,7 +289,7 @@ possible langs can be found with get_langs() under the value field.</p></div>
 <pre><code class="python">def get_characters(uid: int, character_ids: List[int], lang: str=&#39;en-us&#39;, raw: bool=False) -&gt; list:
     &#34;&#34;&#34;Gets characters of a user set by their ids.
     
-    Characters contain info about their level, constelation, weapon, and artifacts.
+    Characters contain info about their level, constellation, weapon, and artifacts.
     Talents are not included.
     
     Change the language with lang, 
@@ -362,7 +362,7 @@ possible langs can be found with get_langs() under the value field.</p></div>
 </code></dt>
 <dd>
 <div class="desc"><p>Gets game user info of a user based on their uid.</p>
-<p>Game user info contain the main nformation regarding a user.
+<p>Game user info contain the main information regarding a user.
 Contains owned characters, stats, city and world explorations and role.</p></div>
 <details class="source">
 <summary>
@@ -372,7 +372,7 @@ Contains owned characters, stats, city and world explorations and role.</p></div
 <pre><code class="python">def get_user_info(uid: int, raw: bool=False) -&gt; dict:
     &#34;&#34;&#34;Gets game user info of a user based on their uid.
     
-    Game user info contain the main nformation regarding a user.
+    Game user info contain the main information regarding a user.
     Contains owned characters, stats, city and world explorations and role.
     &#34;&#34;&#34;
     server = recognize_server(uid)

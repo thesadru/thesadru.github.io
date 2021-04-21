@@ -39,26 +39,29 @@ USER_AGENT = &#34;Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (
 
 def raise_for_error(response: dict) -&gt; NoReturn:
     &#34;&#34;&#34;Raises a custom genshinstats error from a response.&#34;&#34;&#34;
+    # every error uses a different response code and message, 
+    # but the codes are not unique so we must check the message at some points too.
     error = {
         # authorization
         -100:  NotLoggedIn(&#39;Login cookies have not been provided or are incorrect.&#39;),
         # UID
         1009:  InvalidUID(&#39;UID could not be found.&#39;),
-        10102: DataNotPublic(&#39;User has set their data to be private. If this is your account look at the README.md to see how to make it public.&#39;),
+        10102: DataNotPublic(&#39;User\&#39;s data is not public&#39;),
         # general errors
         -10002:NoGameAccount(&#39;Cannot get rewards info. Account has no game account binded to it.&#39;),
         -1:    InvalidUID(&#39;UID is not valid.&#39;) if response[&#39;message&#39;]==&#39;Invalid uid&#39; else InvalidItemID(&#39;{} &#34;{}&#34; does not exist.&#39;),
         # code redemption
         -2003: InvalidCode(&#39;Invalid redemption code&#39;),
         -2017: CodeAlreadyUsed(&#39;Redemption code has been claimed already.&#39;),
+        -2001: CodeExpired(&#39;Redemption code has expired.&#39;),
         -2021: TooLowAdventureRank(&#39;Cannot claim codes for account with adventure rank lower than 10.&#39;),
-        -1073: NoGameAccount(&#39;Cannot claim code. Account has no game account binded to it.&#39;),
+        -1073: NoGameAccount(&#39;Cannot claim code. Account has no game account bound to it.&#39;),
         -2016: RedeemCooldown(&#39;Redemption in cooldown. Please try again in {} second(s).&#39;),
         # sign in
-        -5003: AlreadySignedIn(&#39;Already claimed daily reward, try again tommorow.&#39;),
+        -5003: AlreadySignedIn(&#39;Already claimed daily reward, try again tomorrow.&#39;),
         2001:  CannotCheckIn(&#39;Check-in is currently timed out, wait at least a day before checking-in again.&#39;),
         # gacha log
-        -100:  AuthKeyError(&#39;Authkey is not valid.&#39;),
+        -100:  AuthKeyError(&#39;Authkey is not valid.&#39;) if response[&#39;message&#39;]==&#39;authkey error&#39; else NotLoggedIn(&#39;Login cookies have not been provided or are incorrect.&#39;),
         -101:  AuthKeyTimeout(&#39;Authkey has timed-out. Update it by opening the history page in Genshin.&#39;)
     }.get(response[&#39;retcode&#39;], GenshinStatsException(&#34;{} Error ({})&#34;))
     error.set_response(response)
@@ -81,10 +84,7 @@ def recognize_server(uid: int) -&gt; str:
         raise InvalidUID(&#34;UID isn&#39;t associated with any server&#34;)
 
 def is_game_uid(uid: int) -&gt; bool:
-    &#34;&#34;&#34;Recognizes whether the uid is a game uid.
-    
-    Return True if it&#39;s a game uid, False if it&#39;s a community uid
-    &#34;&#34;&#34;
+    &#34;&#34;&#34;Recognizes whether the uid is a game uid.&#34;&#34;&#34;
     return bool(re.fullmatch(r&#39;[6789]\d{8}&#39;,str(uid)))
 
 def is_chinese(x) -&gt; bool:
@@ -147,18 +147,14 @@ def get_output_log() -&gt; Optional[str]:
 <span>def <span class="ident">is_game_uid</span></span>(<span>uid: int) ‑> bool</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Recognizes whether the uid is a game uid.</p>
-<p>Return True if it's a game uid, False if it's a community uid</p></div>
+<div class="desc"><p>Recognizes whether the uid is a game uid.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\utils.py#L53-L58" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\utils.py#L56-L58" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def is_game_uid(uid: int) -&gt; bool:
-    &#34;&#34;&#34;Recognizes whether the uid is a game uid.
-    
-    Return True if it&#39;s a game uid, False if it&#39;s a community uid
-    &#34;&#34;&#34;
+    &#34;&#34;&#34;Recognizes whether the uid is a game uid.&#34;&#34;&#34;
     return bool(re.fullmatch(r&#39;[6789]\d{8}&#39;,str(uid)))</code></pre>
 </details>
 </dd>
@@ -170,30 +166,33 @@ def get_output_log() -&gt; Optional[str]:
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\utils.py#L10-L35" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\utils.py#L10-L38" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def raise_for_error(response: dict) -&gt; NoReturn:
     &#34;&#34;&#34;Raises a custom genshinstats error from a response.&#34;&#34;&#34;
+    # every error uses a different response code and message, 
+    # but the codes are not unique so we must check the message at some points too.
     error = {
         # authorization
         -100:  NotLoggedIn(&#39;Login cookies have not been provided or are incorrect.&#39;),
         # UID
         1009:  InvalidUID(&#39;UID could not be found.&#39;),
-        10102: DataNotPublic(&#39;User has set their data to be private. If this is your account look at the README.md to see how to make it public.&#39;),
+        10102: DataNotPublic(&#39;User\&#39;s data is not public&#39;),
         # general errors
         -10002:NoGameAccount(&#39;Cannot get rewards info. Account has no game account binded to it.&#39;),
         -1:    InvalidUID(&#39;UID is not valid.&#39;) if response[&#39;message&#39;]==&#39;Invalid uid&#39; else InvalidItemID(&#39;{} &#34;{}&#34; does not exist.&#39;),
         # code redemption
         -2003: InvalidCode(&#39;Invalid redemption code&#39;),
         -2017: CodeAlreadyUsed(&#39;Redemption code has been claimed already.&#39;),
+        -2001: CodeExpired(&#39;Redemption code has expired.&#39;),
         -2021: TooLowAdventureRank(&#39;Cannot claim codes for account with adventure rank lower than 10.&#39;),
-        -1073: NoGameAccount(&#39;Cannot claim code. Account has no game account binded to it.&#39;),
+        -1073: NoGameAccount(&#39;Cannot claim code. Account has no game account bound to it.&#39;),
         -2016: RedeemCooldown(&#39;Redemption in cooldown. Please try again in {} second(s).&#39;),
         # sign in
-        -5003: AlreadySignedIn(&#39;Already claimed daily reward, try again tommorow.&#39;),
+        -5003: AlreadySignedIn(&#39;Already claimed daily reward, try again tomorrow.&#39;),
         2001:  CannotCheckIn(&#39;Check-in is currently timed out, wait at least a day before checking-in again.&#39;),
         # gacha log
-        -100:  AuthKeyError(&#39;Authkey is not valid.&#39;),
+        -100:  AuthKeyError(&#39;Authkey is not valid.&#39;) if response[&#39;message&#39;]==&#39;authkey error&#39; else NotLoggedIn(&#39;Login cookies have not been provided or are incorrect.&#39;),
         -101:  AuthKeyTimeout(&#39;Authkey has timed-out. Update it by opening the history page in Genshin.&#39;)
     }.get(response[&#39;retcode&#39;], GenshinStatsException(&#34;{} Error ({})&#34;))
     error.set_response(response)
@@ -208,7 +207,7 @@ def get_output_log() -&gt; Optional[str]:
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\utils.py#L37-L51" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\utils.py#L40-L54" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def recognize_server(uid: int) -&gt; str:
     &#34;&#34;&#34;Recognizes which server a UID is from.&#34;&#34;&#34;

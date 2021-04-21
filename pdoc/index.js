@@ -135,12 +135,12 @@ INDEX=[
 "doc":"Item does not exist."
 },
 {
-"ref":"genshinstats.errors.InvalidItemID.retcode",
+"ref":"genshinstats.errors.InvalidItemID.type",
 "url":1,
 "doc":""
 },
 {
-"ref":"genshinstats.errors.InvalidItemID.orig_msg",
+"ref":"genshinstats.errors.InvalidItemID.item",
 "url":1,
 "doc":""
 },
@@ -209,6 +209,27 @@ INDEX=[
 },
 {
 "ref":"genshinstats.errors.CodeAlreadyUsed.set_response",
+"url":1,
+"doc":"Adds an optional response object to the error.",
+"func":1
+},
+{
+"ref":"genshinstats.errors.CodeExpired",
+"url":1,
+"doc":"Redemption code is expired."
+},
+{
+"ref":"genshinstats.errors.CodeExpired.retcode",
+"url":1,
+"doc":""
+},
+{
+"ref":"genshinstats.errors.CodeExpired.orig_msg",
+"url":1,
+"doc":""
+},
+{
+"ref":"genshinstats.errors.CodeExpired.set_response",
 "url":1,
 "doc":"Adds an optional response object to the error.",
 "func":1
@@ -489,7 +510,7 @@ INDEX=[
 {
 "ref":"genshinstats.gachalog.get_gacha_log",
 "url":2,
-"doc":"Gets the gacha pull history log. Needs a gacha type, this must be the key (for example 301). Possible gacha types can be found in the return of get_gacha_types(). Yields instead of returning, since it's paginated. May return less than size when size is too big. If size is not set it will yield until it runs out of items.",
+"doc":"Gets the gacha pull history log. Needs a gacha type, this must be the key (for example 301). Possible gacha types can be found in the return of get_gacha_types(). Yields instead of returning, since it's paginated. May return less than size when size is too big. If size is not set it will yield until it runs out of items. To be able to get history starting from somewhere other than the earliest pull, you must pass in the id of the first pull before (chronologically after) the one you want to start from as end_id.",
 "func":1
 },
 {
@@ -507,7 +528,7 @@ INDEX=[
 {
 "ref":"genshinstats.gachalog.get_gacha_details",
 "url":2,
-"doc":"Gets details of a specific gacha banner. This requires a specific gacha banner id. These keep rotating so you need to find them yourself or run get_all_gacha_ids(). example standard wish: a37a19624270b092e7250edfabce541a3435c2 Change the language of the output with lang, possible langs can be found with get_langs() under the value field. The newbie gacha has no json resource tied to it, so you can't get info about it.",
+"doc":"Gets details of a specific gacha banner. This requires a specific gacha banner id. These keep rotating so you need to find them yourself or run get_all_gacha_ids(). example standard wish: \"a37a19624270b092e7250edfabce541a3435c2\" Change the language of the output with lang, possible langs can be found with get_langs() under the value field. The newbie gacha has no json resource tied to it, so you can't get info about it.",
 "func":1
 },
 {
@@ -548,19 +569,19 @@ INDEX=[
 {
 "ref":"genshinstats.genshinstats.get_user_info",
 "url":3,
-"doc":"Gets game user info of a user based on their uid. Game user info contain the main nformation regarding a user. Contains owned characters, stats, city and world explorations and role.",
+"doc":"Gets game user info of a user based on their uid. Game user info contain the main information regarding a user. Contains owned characters, stats, city and world explorations and role.",
 "func":1
 },
 {
 "ref":"genshinstats.genshinstats.get_characters",
 "url":3,
-"doc":"Gets characters of a user set by their ids. Characters contain info about their level, constelation, weapon, and artifacts. Talents are not included. Change the language with lang, possible langs can be found with get_langs() under the value field.",
+"doc":"Gets characters of a user set by their ids. Characters contain info about their level, constellation, weapon, and artifacts. Talents are not included. Change the language with lang, possible langs can be found with get_langs() under the value field.",
 "func":1
 },
 {
 "ref":"genshinstats.genshinstats.get_all_characters",
 "url":3,
-"doc":"Gets all characters of a user. Characters contain info about their level, constelation, weapon, and artifacts. Talents are not included. Change the language with lang, possible langs can be found with get_langs() under the value field.",
+"doc":"Gets all characters of a user. Characters contain info about their level, constellation, weapon, and artifacts. Talents are not included. Change the language with lang, possible langs can be found with get_langs() under the value field.",
 "func":1
 },
 {
@@ -577,7 +598,7 @@ INDEX=[
 {
 "ref":"genshinstats.hoyolab.search",
 "url":4,
-"doc":"Searches posts, topics and users. Can return up to 20 results, based on size.",
+"doc":"Searches all users. Can return up to 20 results, based on size.",
 "func":1
 },
 {
@@ -596,12 +617,6 @@ INDEX=[
 "ref":"genshinstats.hoyolab.get_game_accounts",
 "url":4,
 "doc":"Gets all game accounts of the currently signed in player. Can get accounts both for global and china.",
-"func":1
-},
-{
-"ref":"genshinstats.hoyolab.get_community_user_info",
-"url":4,
-"doc":"Gets community info of a user based on their community uid. Community info contains general data regarding the uid, nickname, introduction gender and so. It also contains stats for general community actions. You can get community id with  search .",
 "func":1
 },
 {
@@ -695,7 +710,7 @@ INDEX=[
 {
 "ref":"genshinstats.signin.sign_in",
 "url":6,
-"doc":"Signs into hoyolab and claims the daily rewards. Chinese and global servers work a bit differentelly, so you must specify you want to claim rewards for chinese accounts here. If the reward cannot be claimed, no claim will be attempted. To force the request use force. Returns whether sign-in was successful",
+"doc":"Signs into hoyolab and claims the daily rewards. Chinese and global servers work a bit differently, so you must specify you want to claim rewards for chinese accounts here. If the reward cannot be claimed, no claim will be attempted. To force the request use force. Returns whether sign-in was successful",
 "func":1
 },
 {
@@ -718,7 +733,7 @@ INDEX=[
 {
 "ref":"genshinstats.utils.is_game_uid",
 "url":7,
-"doc":"Recognizes whether the uid is a game uid. Return True if it's a game uid, False if it's a community uid",
+"doc":"Recognizes whether the uid is a game uid.",
 "func":1
 },
 {

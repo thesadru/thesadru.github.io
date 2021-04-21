@@ -27,7 +27,7 @@
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\hoyolab.py#L0-L142" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\hoyolab.py#L0-L129" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">&#34;&#34;&#34;Wrapper for the hoyolab.com community api.
 
@@ -45,14 +45,14 @@ from .utils import recognize_server
 logger = logging.getLogger(&#39;genshinstats&#39;)
 
 def search(keyword: str, size: int=20) -&gt; dict:
-    &#34;&#34;&#34;Searches posts, topics and users.
+    &#34;&#34;&#34;Searches all users.
     
     Can return up to 20 results, based on size.
     &#34;&#34;&#34;
     return fetch_endpoint(
         &#34;community/apihub/wapi/search&#34;,
         params=dict(keyword=keyword,size=size,gids=2)
-    )
+    )[&#39;users&#39;]
 
 def check_in() -&gt; None:
     &#34;&#34;&#34;Checks in the user who&#39;s cookies are currently being used.
@@ -80,19 +80,6 @@ def get_game_accounts(chinese: bool=False) -&gt; list:
     &#34;&#34;&#34;
     url = &#34;https://api-takumi.mihoyo.com/&#34; if chinese else &#34;https://api-os-takumi.mihoyo.com/&#34;
     return fetch_endpoint(url+&#34;binding/api/getUserGameRolesByCookie&#34;)[&#39;list&#39;]
-
-def get_community_user_info(community_uid: int) -&gt; dict:
-    &#34;&#34;&#34;Gets community info of a user based on their community uid.
-    
-    Community info contains general data regarding the uid, nickname, introduction gender and so.
-    It also contains stats for general community actions.
-    
-    You can get community id with `search`.
-    &#34;&#34;&#34;
-    return fetch_endpoint(
-        &#34;community/user/wapi/getUserFullInfo&#34;,
-        params=dict(uid=community_uid)
-    )
 
 def get_record_card(community_uid: int) -&gt; Optional[dict]:
     &#34;&#34;&#34;Gets a game record card of a user based on their community uid.
@@ -130,7 +117,7 @@ def _redeem_code(code: str, uid: int, region: str=None, game_biz: str=&#39;hk4e_
         if not sleep:
             raise
         logger.debug(f&#39;Sleeping {e.cooldown}s for code redemption.&#39;)
-        time.sleep(e.cooldown + 0.5)
+        time.sleep(e.cooldown + 0.5) # for safety
         _redeem_code(code,uid,region,game_biz,sleep=False)
 
 def redeem_code(code: str, uid: int=None, sleep: bool=True) -&gt; int:
@@ -213,7 +200,7 @@ def get_active_players(page_size: int=None, offset: int=0) -&gt; list:
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\hoyolab.py#L135-L143" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\hoyolab.py#L122-L130" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def get_active_players(page_size: int=None, offset: int=0) -&gt; list:
     &#34;&#34;&#34;Gets a list of recommended active players
@@ -224,33 +211,6 @@ def get_active_players(page_size: int=None, offset: int=0) -&gt; list:
         &#34;community/user/wapi/recommendActive&#34;,
         params=dict(page_size=page_size or 0xffff,offset=offset,gids=2)
     )[&#39;list&#39;]</code></pre>
-</details>
-</dd>
-<dt id="genshinstats.hoyolab.get_community_user_info"><code class="name flex">
-<span>def <span class="ident">get_community_user_info</span></span>(<span>community_uid: int) ‑> dict</span>
-</code></dt>
-<dd>
-<div class="desc"><p>Gets community info of a user based on their community uid.</p>
-<p>Community info contains general data regarding the uid, nickname, introduction gender and so.
-It also contains stats for general community actions.</p>
-<p>You can get community id with <code><a title="genshinstats.hoyolab.search" href="#genshinstats.hoyolab.search">search()</a></code>.</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\hoyolab.py#L53-L64" class="git-link">Browse git</a>
-</summary>
-<pre><code class="python">def get_community_user_info(community_uid: int) -&gt; dict:
-    &#34;&#34;&#34;Gets community info of a user based on their community uid.
-    
-    Community info contains general data regarding the uid, nickname, introduction gender and so.
-    It also contains stats for general community actions.
-    
-    You can get community id with `search`.
-    &#34;&#34;&#34;
-    return fetch_endpoint(
-        &#34;community/user/wapi/getUserFullInfo&#34;,
-        params=dict(uid=community_uid)
-    )</code></pre>
 </details>
 </dd>
 <dt id="genshinstats.hoyolab.get_game_accounts"><code class="name flex">
@@ -304,7 +264,7 @@ In case the user has set their profile to be private, returns None.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\hoyolab.py#L66-L79" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\hoyolab.py#L53-L66" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def get_record_card(community_uid: int) -&gt; Optional[dict]:
     &#34;&#34;&#34;Gets a game record card of a user based on their community uid.
@@ -332,7 +292,7 @@ In case the uid is private, returns None.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\hoyolab.py#L81-L88" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\hoyolab.py#L68-L75" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def get_uid_from_community(community_uid: int) -&gt; Optional[int]:
     &#34;&#34;&#34;Gets a uid with a community uid.
@@ -359,7 +319,7 @@ This can be disable completely by setting sleep to False.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\hoyolab.py#L105-L133" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\hoyolab.py#L92-L120" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def redeem_code(code: str, uid: int=None, sleep: bool=True) -&gt; int:
     &#34;&#34;&#34;Redeems a gift code for the currently signed in user.
@@ -396,7 +356,7 @@ This can be disable completely by setting sleep to False.</p>
 <span>def <span class="ident">search</span></span>(<span>keyword: str, size: int = 20) ‑> dict</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Searches posts, topics and users.</p>
+<div class="desc"><p>Searches all users.</p>
 <p>Can return up to 20 results, based on size.</p></div>
 <details class="source">
 <summary>
@@ -404,14 +364,14 @@ This can be disable completely by setting sleep to False.</p>
 <a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\hoyolab.py#L16-L24" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def search(keyword: str, size: int=20) -&gt; dict:
-    &#34;&#34;&#34;Searches posts, topics and users.
+    &#34;&#34;&#34;Searches all users.
     
     Can return up to 20 results, based on size.
     &#34;&#34;&#34;
     return fetch_endpoint(
         &#34;community/apihub/wapi/search&#34;,
         params=dict(keyword=keyword,size=size,gids=2)
-    )</code></pre>
+    )[&#39;users&#39;]</code></pre>
 </details>
 </dd>
 </dl>
@@ -480,7 +440,6 @@ setTimeout(() => input.focus(), 100);
 <ul class="">
 <li><code><a title="genshinstats.hoyolab.check_in" href="#genshinstats.hoyolab.check_in">check_in</a></code></li>
 <li><code><a title="genshinstats.hoyolab.get_active_players" href="#genshinstats.hoyolab.get_active_players">get_active_players</a></code></li>
-<li><code><a title="genshinstats.hoyolab.get_community_user_info" href="#genshinstats.hoyolab.get_community_user_info">get_community_user_info</a></code></li>
 <li><code><a title="genshinstats.hoyolab.get_game_accounts" href="#genshinstats.hoyolab.get_game_accounts">get_game_accounts</a></code></li>
 <li><code><a title="genshinstats.hoyolab.get_langs" href="#genshinstats.hoyolab.get_langs">get_langs</a></code></li>
 <li><code><a title="genshinstats.hoyolab.get_record_card" href="#genshinstats.hoyolab.get_record_card">get_record_card</a></code></li>

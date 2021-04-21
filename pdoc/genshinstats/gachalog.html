@@ -28,7 +28,7 @@ Requires an auth key that can be gotten from an output_log.txt file.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\gachalog.py#L0-L213" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\gachalog.py#L0-L216" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">&#34;&#34;&#34;Genshin Impact gacha pulls log.
 
@@ -42,7 +42,7 @@ import re
 from functools import lru_cache
 from itertools import islice
 from tempfile import gettempdir
-from typing import Iterable, Optional
+from typing import Iterator, Optional
 from urllib.parse import unquote, urljoin
 
 from requests import Session
@@ -73,7 +73,7 @@ gacha_session = Session() # extra session for static resources
 
 def _read_logfile(logfile: str=None) -&gt; str:
     if GENSHIN_LOG is None:
-        raise FileNotFoundError(&#39;No Genshin Installation was found, could not get data.&#39;)
+        raise FileNotFoundError(&#39;No Genshin Installation was found, could not get gacha data.&#39;)
     with open(logfile or GENSHIN_LOG) as file:
         return file.read()
 
@@ -175,7 +175,7 @@ def recognize_gacha_type(gacha: str, authkey: str=None, lang: str=&#39;en&#39;) 
             return t
     return None
 
-def get_gacha_log(gacha_type: int, size: int=None, authkey: str=None, lang: str=&#39;en&#39;, raw: bool=False) -&gt; Iterable[dict]:
+def get_gacha_log(gacha_type: int, size: int=None, authkey: str=None, end_id: int=0, lang: str=&#39;en&#39;, raw: bool=False) -&gt; Iterator[dict]:
     &#34;&#34;&#34;Gets the gacha pull history log.
     
     Needs a gacha type, this must be the key (for example 301).
@@ -184,9 +184,11 @@ def get_gacha_log(gacha_type: int, size: int=None, authkey: str=None, lang: str=
     Yields instead of returning, since it&#39;s paginated.
     May return less than size when size is too big.
     If size is not set it will yield until it runs out of items.
+    
+    To be able to get history starting from somewhere other than the earliest pull,
+    you must pass in the id of the first pull before (chronologically after) the one you want to start from as end_id.
     &#34;&#34;&#34;
     page_size = 20 # max size is 20
-    end_id = 0
     while True:
         data = fetch_gacha_endpoint(
             &#34;getGachaLog&#34;,
@@ -206,13 +208,14 @@ def get_gacha_log(gacha_type: int, size: int=None, authkey: str=None, lang: str=
 
         end_id = data[-1][&#39;id&#39;]
 
-def get_entire_gacha_log(size: int=None, authkey: str=None, lang: str=&#39;en&#39;, raw: bool=False) -&gt; Iterable[dict]:
+def get_entire_gacha_log(size: int=None, authkey: str=None, end_id: int=0, lang: str=&#39;en&#39;, raw: bool=False) -&gt; Iterator[dict]:
     &#34;&#34;&#34;Gets the entire gacha pull history log.
     
     Basically same as running get_gacha_log() with every possible key.
     Will yield pulls from most recent to oldest.
     &#34;&#34;&#34;
-    gens = [get_gacha_log(t[&#39;key&#39;],authkey=authkey,lang=lang,raw=raw) for t in get_gacha_types(authkey)]
+    gens = [get_gacha_log(t[&#39;key&#39;],authkey=authkey,end_id=end_id,lang=lang,raw=raw) 
+            for t in get_gacha_types(authkey)]
     return islice(heapq.merge(*gens,key=lambda x:x[&#39;time&#39;],reverse=True),size)
 
 def get_gacha_items(lang: str=&#39;en-us&#39;, raw: bool=False) -&gt; list:
@@ -232,7 +235,7 @@ def get_gacha_details(gacha_id: str, lang: str=&#39;en-us&#39;, raw: bool=False)
     
     This requires a specific gacha banner id.
     These keep rotating so you need to find them yourself or run get_all_gacha_ids().
-    example standard wish: a37a19624270b092e7250edfabce541a3435c2
+    example standard wish: &#34;a37a19624270b092e7250edfabce541a3435c2&#34;
     
     Change the language of the output with lang, 
     possible langs can be found with get_langs() under the value field.
@@ -365,7 +368,7 @@ Includes error handling and getting the authkey.</p></div>
 </details>
 </dd>
 <dt id="genshinstats.gachalog.get_entire_gacha_log"><code class="name flex">
-<span>def <span class="ident">get_entire_gacha_log</span></span>(<span>size: int = None, authkey: str = None, lang: str = 'en', raw: bool = False) ‑> Iterable[dict]</span>
+<span>def <span class="ident">get_entire_gacha_log</span></span>(<span>size: int = None, authkey: str = None, end_id: int = 0, lang: str = 'en', raw: bool = False) ‑> Iterator[dict]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Gets the entire gacha pull history log.</p>
@@ -374,15 +377,16 @@ Will yield pulls from most recent to oldest.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\gachalog.py#L177-L184" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\gachalog.py#L179-L187" class="git-link">Browse git</a>
 </summary>
-<pre><code class="python">def get_entire_gacha_log(size: int=None, authkey: str=None, lang: str=&#39;en&#39;, raw: bool=False) -&gt; Iterable[dict]:
+<pre><code class="python">def get_entire_gacha_log(size: int=None, authkey: str=None, end_id: int=0, lang: str=&#39;en&#39;, raw: bool=False) -&gt; Iterator[dict]:
     &#34;&#34;&#34;Gets the entire gacha pull history log.
     
     Basically same as running get_gacha_log() with every possible key.
     Will yield pulls from most recent to oldest.
     &#34;&#34;&#34;
-    gens = [get_gacha_log(t[&#39;key&#39;],authkey=authkey,lang=lang,raw=raw) for t in get_gacha_types(authkey)]
+    gens = [get_gacha_log(t[&#39;key&#39;],authkey=authkey,end_id=end_id,lang=lang,raw=raw) 
+            for t in get_gacha_types(authkey)]
     return islice(heapq.merge(*gens,key=lambda x:x[&#39;time&#39;],reverse=True),size)</code></pre>
 </details>
 </dd>
@@ -393,21 +397,21 @@ Will yield pulls from most recent to oldest.</p></div>
 <div class="desc"><p>Gets details of a specific gacha banner.</p>
 <p>This requires a specific gacha banner id.
 These keep rotating so you need to find them yourself or run get_all_gacha_ids().
-example standard wish: a37a19624270b092e7250edfabce541a3435c2</p>
+example standard wish: "a37a19624270b092e7250edfabce541a3435c2"</p>
 <p>Change the language of the output with lang,
 possible langs can be found with get_langs() under the value field.</p>
 <p>The newbie gacha has no json resource tied to it, so you can't get info about it.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\gachalog.py#L198-L214" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\gachalog.py#L201-L217" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def get_gacha_details(gacha_id: str, lang: str=&#39;en-us&#39;, raw: bool=False) -&gt; dict:
     &#34;&#34;&#34;Gets details of a specific gacha banner.
     
     This requires a specific gacha banner id.
     These keep rotating so you need to find them yourself or run get_all_gacha_ids().
-    example standard wish: a37a19624270b092e7250edfabce541a3435c2
+    example standard wish: &#34;a37a19624270b092e7250edfabce541a3435c2&#34;
     
     Change the language of the output with lang, 
     possible langs can be found with get_langs() under the value field.
@@ -431,7 +435,7 @@ To get more info about a specific item use its id.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\gachalog.py#L186-L196" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\gachalog.py#L189-L199" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def get_gacha_items(lang: str=&#39;en-us&#39;, raw: bool=False) -&gt; list:
     &#34;&#34;&#34;Gets the list of items that can be gotten from the gacha.
@@ -447,7 +451,7 @@ To get more info about a specific item use its id.</p></div>
 </details>
 </dd>
 <dt id="genshinstats.gachalog.get_gacha_log"><code class="name flex">
-<span>def <span class="ident">get_gacha_log</span></span>(<span>gacha_type: int, size: int = None, authkey: str = None, lang: str = 'en', raw: bool = False) ‑> Iterable[dict]</span>
+<span>def <span class="ident">get_gacha_log</span></span>(<span>gacha_type: int, size: int = None, authkey: str = None, end_id: int = 0, lang: str = 'en', raw: bool = False) ‑> Iterator[dict]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Gets the gacha pull history log.</p>
@@ -455,13 +459,15 @@ To get more info about a specific item use its id.</p></div>
 Possible gacha types can be found in the return of get_gacha_types().</p>
 <p>Yields instead of returning, since it's paginated.
 May return less than size when size is too big.
-If size is not set it will yield until it runs out of items.</p></div>
+If size is not set it will yield until it runs out of items.</p>
+<p>To be able to get history starting from somewhere other than the earliest pull,
+you must pass in the id of the first pull before (chronologically after) the one you want to start from as end_id.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\gachalog.py#L146-L175" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\gachalog.py#L146-L177" class="git-link">Browse git</a>
 </summary>
-<pre><code class="python">def get_gacha_log(gacha_type: int, size: int=None, authkey: str=None, lang: str=&#39;en&#39;, raw: bool=False) -&gt; Iterable[dict]:
+<pre><code class="python">def get_gacha_log(gacha_type: int, size: int=None, authkey: str=None, end_id: int=0, lang: str=&#39;en&#39;, raw: bool=False) -&gt; Iterator[dict]:
     &#34;&#34;&#34;Gets the gacha pull history log.
     
     Needs a gacha type, this must be the key (for example 301).
@@ -470,9 +476,11 @@ If size is not set it will yield until it runs out of items.</p></div>
     Yields instead of returning, since it&#39;s paginated.
     May return less than size when size is too big.
     If size is not set it will yield until it runs out of items.
+    
+    To be able to get history starting from somewhere other than the earliest pull,
+    you must pass in the id of the first pull before (chronologically after) the one you want to start from as end_id.
     &#34;&#34;&#34;
     page_size = 20 # max size is 20
-    end_id = 0
     while True:
         data = fetch_gacha_endpoint(
             &#34;getGachaLog&#34;,
