@@ -22,7 +22,7 @@ INDEX=[
 {
 "ref":"genshinstats.errors.GenshinStatsException",
 "url":1,
-"doc":"Base error for all Genshin Stats Errors."
+"doc":"Base Exception for all genshinstats errors."
 },
 {
 "ref":"genshinstats.errors.GenshinStatsException.retcode",
@@ -67,22 +67,22 @@ INDEX=[
 "func":1
 },
 {
-"ref":"genshinstats.errors.InvalidUID",
+"ref":"genshinstats.errors.AccountNotFound",
 "url":1,
-"doc":"UID is not valid."
+"doc":"Tried to get data with an invalid uid."
 },
 {
-"ref":"genshinstats.errors.InvalidUID.retcode",
-"url":1,
-"doc":""
-},
-{
-"ref":"genshinstats.errors.InvalidUID.orig_msg",
+"ref":"genshinstats.errors.AccountNotFound.retcode",
 "url":1,
 "doc":""
 },
 {
-"ref":"genshinstats.errors.InvalidUID.set_response",
+"ref":"genshinstats.errors.AccountNotFound.orig_msg",
+"url":1,
+"doc":""
+},
+{
+"ref":"genshinstats.errors.AccountNotFound.set_response",
 "url":1,
 "doc":"Adds an optional response object to the error.",
 "func":1
@@ -90,7 +90,7 @@ INDEX=[
 {
 "ref":"genshinstats.errors.DataNotPublic",
 "url":1,
-"doc":"User has not allowed their data to be seen."
+"doc":"User hasn't set their data to public."
 },
 {
 "ref":"genshinstats.errors.DataNotPublic.retcode",
@@ -104,27 +104,6 @@ INDEX=[
 },
 {
 "ref":"genshinstats.errors.DataNotPublic.set_response",
-"url":1,
-"doc":"Adds an optional response object to the error.",
-"func":1
-},
-{
-"ref":"genshinstats.errors.NoGameAccount",
-"url":1,
-"doc":"Tried to get info without an account"
-},
-{
-"ref":"genshinstats.errors.NoGameAccount.retcode",
-"url":1,
-"doc":""
-},
-{
-"ref":"genshinstats.errors.NoGameAccount.orig_msg",
-"url":1,
-"doc":""
-},
-{
-"ref":"genshinstats.errors.NoGameAccount.set_response",
 "url":1,
 "doc":"Adds an optional response object to the error.",
 "func":1
@@ -153,7 +132,7 @@ INDEX=[
 {
 "ref":"genshinstats.errors.CodeRedeemException",
 "url":1,
-"doc":"Base CodeRedeem Exception."
+"doc":"Code redemption failed."
 },
 {
 "ref":"genshinstats.errors.CodeRedeemException.retcode",
@@ -172,93 +151,9 @@ INDEX=[
 "func":1
 },
 {
-"ref":"genshinstats.errors.InvalidCode",
-"url":1,
-"doc":"Invalid redemption code."
-},
-{
-"ref":"genshinstats.errors.InvalidCode.retcode",
-"url":1,
-"doc":""
-},
-{
-"ref":"genshinstats.errors.InvalidCode.orig_msg",
-"url":1,
-"doc":""
-},
-{
-"ref":"genshinstats.errors.InvalidCode.set_response",
-"url":1,
-"doc":"Adds an optional response object to the error.",
-"func":1
-},
-{
-"ref":"genshinstats.errors.CodeAlreadyUsed",
-"url":1,
-"doc":"Redemption Code is already in use"
-},
-{
-"ref":"genshinstats.errors.CodeAlreadyUsed.retcode",
-"url":1,
-"doc":""
-},
-{
-"ref":"genshinstats.errors.CodeAlreadyUsed.orig_msg",
-"url":1,
-"doc":""
-},
-{
-"ref":"genshinstats.errors.CodeAlreadyUsed.set_response",
-"url":1,
-"doc":"Adds an optional response object to the error.",
-"func":1
-},
-{
-"ref":"genshinstats.errors.CodeExpired",
-"url":1,
-"doc":"Redemption code is expired."
-},
-{
-"ref":"genshinstats.errors.CodeExpired.retcode",
-"url":1,
-"doc":""
-},
-{
-"ref":"genshinstats.errors.CodeExpired.orig_msg",
-"url":1,
-"doc":""
-},
-{
-"ref":"genshinstats.errors.CodeExpired.set_response",
-"url":1,
-"doc":"Adds an optional response object to the error.",
-"func":1
-},
-{
-"ref":"genshinstats.errors.TooLowAdventureRank",
-"url":1,
-"doc":"Does not meet adventure rank requirements."
-},
-{
-"ref":"genshinstats.errors.TooLowAdventureRank.retcode",
-"url":1,
-"doc":""
-},
-{
-"ref":"genshinstats.errors.TooLowAdventureRank.orig_msg",
-"url":1,
-"doc":""
-},
-{
-"ref":"genshinstats.errors.TooLowAdventureRank.set_response",
-"url":1,
-"doc":"Adds an optional response object to the error.",
-"func":1
-},
-{
 "ref":"genshinstats.errors.RedeemCooldown",
 "url":1,
-"doc":"Can only claim every 5 seconds."
+"doc":"Can claim codes only every 5 seconds."
 },
 {
 "ref":"genshinstats.errors.RedeemCooldown.cooldown",
@@ -274,7 +169,7 @@ INDEX=[
 {
 "ref":"genshinstats.errors.SignInException",
 "url":1,
-"doc":"Base SignIn Exception."
+"doc":"Sign-in failed"
 },
 {
 "ref":"genshinstats.errors.SignInException.retcode",
@@ -295,7 +190,7 @@ INDEX=[
 {
 "ref":"genshinstats.errors.AlreadySignedIn",
 "url":1,
-"doc":"Already signed in dailies"
+"doc":"Already signed in, cannot sign in again."
 },
 {
 "ref":"genshinstats.errors.AlreadySignedIn.retcode",
@@ -309,48 +204,6 @@ INDEX=[
 },
 {
 "ref":"genshinstats.errors.AlreadySignedIn.set_response",
-"url":1,
-"doc":"Adds an optional response object to the error.",
-"func":1
-},
-{
-"ref":"genshinstats.errors.FirstSignIn",
-"url":1,
-"doc":"First sign in must be done manually. Not an API error!"
-},
-{
-"ref":"genshinstats.errors.FirstSignIn.retcode",
-"url":1,
-"doc":""
-},
-{
-"ref":"genshinstats.errors.FirstSignIn.orig_msg",
-"url":1,
-"doc":""
-},
-{
-"ref":"genshinstats.errors.FirstSignIn.set_response",
-"url":1,
-"doc":"Adds an optional response object to the error.",
-"func":1
-},
-{
-"ref":"genshinstats.errors.CannotCheckIn",
-"url":1,
-"doc":"Could not check in."
-},
-{
-"ref":"genshinstats.errors.CannotCheckIn.retcode",
-"url":1,
-"doc":""
-},
-{
-"ref":"genshinstats.errors.CannotCheckIn.orig_msg",
-"url":1,
-"doc":""
-},
-{
-"ref":"genshinstats.errors.CannotCheckIn.set_response",
 "url":1,
 "doc":"Adds an optional response object to the error.",
 "func":1
@@ -377,22 +230,22 @@ INDEX=[
 "func":1
 },
 {
-"ref":"genshinstats.errors.AuthKeyError",
+"ref":"genshinstats.errors.InvalidAuthkey",
 "url":1,
-"doc":"Authkey error."
+"doc":"An authkey is invalid."
 },
 {
-"ref":"genshinstats.errors.AuthKeyError.retcode",
-"url":1,
-"doc":""
-},
-{
-"ref":"genshinstats.errors.AuthKeyError.orig_msg",
+"ref":"genshinstats.errors.InvalidAuthkey.retcode",
 "url":1,
 "doc":""
 },
 {
-"ref":"genshinstats.errors.AuthKeyError.set_response",
+"ref":"genshinstats.errors.InvalidAuthkey.orig_msg",
+"url":1,
+"doc":""
+},
+{
+"ref":"genshinstats.errors.InvalidAuthkey.set_response",
 "url":1,
 "doc":"Adds an optional response object to the error.",
 "func":1
@@ -400,7 +253,7 @@ INDEX=[
 {
 "ref":"genshinstats.errors.AuthKeyTimeout",
 "url":1,
-"doc":"Authkey timeout."
+"doc":"An authkey has timed out."
 },
 {
 "ref":"genshinstats.errors.AuthKeyTimeout.retcode",
@@ -419,30 +272,9 @@ INDEX=[
 "func":1
 },
 {
-"ref":"genshinstats.errors.BadGachaType",
-"url":1,
-"doc":"Base GenshinGachaLog Exception."
-},
-{
-"ref":"genshinstats.errors.BadGachaType.retcode",
-"url":1,
-"doc":""
-},
-{
-"ref":"genshinstats.errors.BadGachaType.orig_msg",
-"url":1,
-"doc":""
-},
-{
-"ref":"genshinstats.errors.BadGachaType.set_response",
-"url":1,
-"doc":"Adds an optional response object to the error.",
-"func":1
-},
-{
 "ref":"genshinstats.errors.MissingAuthKey",
 "url":1,
-"doc":"No gacha authkey was provided. Not an API error!"
+"doc":"No gacha authkey was found."
 },
 {
 "ref":"genshinstats.errors.MissingAuthKey.retcode",
@@ -458,6 +290,12 @@ INDEX=[
 "ref":"genshinstats.errors.MissingAuthKey.set_response",
 "url":1,
 "doc":"Adds an optional response object to the error.",
+"func":1
+},
+{
+"ref":"genshinstats.errors.raise_for_error",
+"url":1,
+"doc":"Raises a custom genshinstats error from a response.",
 "func":1
 },
 {
@@ -717,12 +555,6 @@ INDEX=[
 "ref":"genshinstats.utils",
 "url":7,
 "doc":"Various utility functions for genshinstats."
-},
-{
-"ref":"genshinstats.utils.raise_for_error",
-"url":7,
-"doc":"Raises a custom genshinstats error from a response.",
-"func":1
 },
 {
 "ref":"genshinstats.utils.recognize_server",
