@@ -27,7 +27,7 @@
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\genshinstats.py#L0-L166" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\genshinstats.py#L0-L169" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">&#34;&#34;&#34;Wrapper for the hoyolab.com gameRecord api.
 
@@ -64,13 +64,18 @@ DS_SALT = &#34;6cqshh5dhw73bzxn20oexa9k516chk7s&#34;
 OS_BBS_URL = &#34;https://bbs-api-os.hoyolab.com/&#34; # global
 CN_TAKUMI_URL = &#34;https://api-takumi.mihoyo.com/&#34; # chinese
 
-def set_cookie(account_id: int, cookie_token: str) -&gt; None:
+def set_cookie(ltuid: int, ltoken: str, **kwargs) -&gt; None:
     &#34;&#34;&#34;Basic configuration function, required for anything beyond search.
     
-    Account id and cookie token must be copied from your browser&#39;s cookies.
+    ltuid and ltoken must be copied from your browser&#39;s cookies.
+    Any other kwargs provided will be also set as as a cookie.
     &#34;&#34;&#34;
-    session.cookies.set(&#39;account_id&#39;,str(account_id))
-    session.cookies.set(&#39;cookie_token&#39;,cookie_token)
+    kwargs.update({
+        &#39;ltuid&#39;: str(ltuid),
+        &#39;ltoken&#39;: ltoken
+    }) 
+    session.cookies.update(kwargs)
+
 
 def set_cookie_header(header: str) -&gt; None:
     &#34;&#34;&#34;Like set_cookie, but you can set the header directly.&#34;&#34;&#34;
@@ -91,14 +96,12 @@ def set_cookie_auto(browser: str=None) -&gt; None:
     &#34;&#34;&#34;
     import browser_cookie3
     logger.debug(f&#39;Loading cookies automatically.&#39;)
-    if browser is None:
-        jar = browser_cookie3.load()
-    else:
-        jar = getattr(browser_cookie3,browser)()
+    load = getattr(browser_cookie3,browser.lower()) if browser else browser_cookie3.load
     
-    for c in jar:
-        if &#39;hoyolab&#39; in c.domain or &#39;mihoyo&#39; in c.domain:
-            session.cookies.set(c.name,c.value) # do not limit to specific domains
+    session.cookies.update({
+        c.name:c.value for c in load(domain_name=&#39;.hoyolab.com&#39;) 
+        if c.name[0]!=&#39;_&#39;})
+            
 
 def get_ds_token(salt: str) -&gt; str:
     &#34;&#34;&#34;Creates a new ds token.
@@ -218,7 +221,7 @@ but that requires being logged in as that user.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\genshinstats.py#L82-L104" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\genshinstats.py#L85-L107" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def fetch_endpoint(endpoint: str, *, chinese: bool=False, **kwargs) -&gt; dict:
     &#34;&#34;&#34;Fetch an enpoint from the hoyolabs API.
@@ -257,7 +260,7 @@ possible langs can be found with get_langs() under the value field.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\genshinstats.py#L139-L150" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\genshinstats.py#L142-L153" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def get_all_characters(uid: int, lang: str=&#39;en-us&#39;, raw: bool=False) -&gt; list:
     &#34;&#34;&#34;Gets all characters of a user.
@@ -285,7 +288,7 @@ possible langs can be found with get_langs() under the value field.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\genshinstats.py#L120-L137" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\genshinstats.py#L123-L140" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def get_characters(uid: int, character_ids: List[int], lang: str=&#39;en-us&#39;, raw: bool=False) -&gt; list:
     &#34;&#34;&#34;Gets characters of a user set by their ids.
@@ -316,7 +319,7 @@ possible langs can be found with get_langs() under the value field.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\genshinstats.py#L72-L80" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\genshinstats.py#L75-L83" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def get_ds_token(salt: str) -&gt; str:
     &#34;&#34;&#34;Creates a new ds token.
@@ -339,7 +342,7 @@ possible langs can be found with get_langs() under the value field.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\genshinstats.py#L152-L166" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\genshinstats.py#L155-L169" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def get_spiral_abyss(uid: int, previous: bool=False, raw: bool=False) -&gt; dict:
     &#34;&#34;&#34;Gets how far the user has gotten in spiral abyss and their season progress.
@@ -368,7 +371,7 @@ Contains owned characters, stats, city and world explorations and role.</p></div
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\genshinstats.py#L106-L118" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\genshinstats.py#L109-L121" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def get_user_info(uid: int, raw: bool=False) -&gt; dict:
     &#34;&#34;&#34;Gets game user info of a user based on their uid.
@@ -386,23 +389,28 @@ Contains owned characters, stats, city and world explorations and role.</p></div
 </details>
 </dd>
 <dt id="genshinstats.genshinstats.set_cookie"><code class="name flex">
-<span>def <span class="ident">set_cookie</span></span>(<span>account_id: int, cookie_token: str) ‑> NoneType</span>
+<span>def <span class="ident">set_cookie</span></span>(<span>ltuid: int, ltoken: str, **kwargs) ‑> NoneType</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Basic configuration function, required for anything beyond search.</p>
-<p>Account id and cookie token must be copied from your browser's cookies.</p></div>
+<p>ltuid and ltoken must be copied from your browser's cookies.
+Any other kwargs provided will be also set as as a cookie.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\genshinstats.py#L36-L42" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\genshinstats.py#L36-L46" class="git-link">Browse git</a>
 </summary>
-<pre><code class="python">def set_cookie(account_id: int, cookie_token: str) -&gt; None:
+<pre><code class="python">def set_cookie(ltuid: int, ltoken: str, **kwargs) -&gt; None:
     &#34;&#34;&#34;Basic configuration function, required for anything beyond search.
     
-    Account id and cookie token must be copied from your browser&#39;s cookies.
+    ltuid and ltoken must be copied from your browser&#39;s cookies.
+    Any other kwargs provided will be also set as as a cookie.
     &#34;&#34;&#34;
-    session.cookies.set(&#39;account_id&#39;,str(account_id))
-    session.cookies.set(&#39;cookie_token&#39;,cookie_token)</code></pre>
+    kwargs.update({
+        &#39;ltuid&#39;: str(ltuid),
+        &#39;ltoken&#39;: ltoken
+    }) 
+    session.cookies.update(kwargs)</code></pre>
 </details>
 </dd>
 <dt id="genshinstats.genshinstats.set_cookie_auto"><code class="name flex">
@@ -419,7 +427,7 @@ Avalible browsers: chrome, chromium, opera, edge, firefox</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\genshinstats.py#L50-L70" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\genshinstats.py#L55-L72" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def set_cookie_auto(browser: str=None) -&gt; None:
     &#34;&#34;&#34;Like set_cookie, but gets the cookies by itself.
@@ -434,14 +442,11 @@ Avalible browsers: chrome, chromium, opera, edge, firefox</p></div>
     &#34;&#34;&#34;
     import browser_cookie3
     logger.debug(f&#39;Loading cookies automatically.&#39;)
-    if browser is None:
-        jar = browser_cookie3.load()
-    else:
-        jar = getattr(browser_cookie3,browser)()
+    load = getattr(browser_cookie3,browser.lower()) if browser else browser_cookie3.load
     
-    for c in jar:
-        if &#39;hoyolab&#39; in c.domain or &#39;mihoyo&#39; in c.domain:
-            session.cookies.set(c.name,c.value) # do not limit to specific domains</code></pre>
+    session.cookies.update({
+        c.name:c.value for c in load(domain_name=&#39;.hoyolab.com&#39;) 
+        if c.name[0]!=&#39;_&#39;})</code></pre>
 </details>
 </dd>
 <dt id="genshinstats.genshinstats.set_cookie_header"><code class="name flex">
@@ -452,7 +457,7 @@ Avalible browsers: chrome, chromium, opera, edge, firefox</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\genshinstats.py#L44-L48" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\genshinstats.py#L49-L53" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def set_cookie_header(header: str) -&gt; None:
     &#34;&#34;&#34;Like set_cookie, but you can set the header directly.&#34;&#34;&#34;

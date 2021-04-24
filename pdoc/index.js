@@ -370,6 +370,12 @@ INDEX=[
 "func":1
 },
 {
+"ref":"genshinstats.gachalog.get_uid_from_authkey",
+"url":2,
+"doc":"Gets a uid from an authkey. If an authkey is not passed in uses the currently set authkey.",
+"func":1
+},
+{
 "ref":"genshinstats.genshinstats",
 "url":3,
 "doc":"Wrapper for the hoyolab.com gameRecord api. Can fetch data for a user's stats like stats, characters, spiral abyss runs ."
@@ -377,7 +383,7 @@ INDEX=[
 {
 "ref":"genshinstats.genshinstats.set_cookie",
 "url":3,
-"doc":"Basic configuration function, required for anything beyond search. Account id and cookie token must be copied from your browser's cookies.",
+"doc":"Basic configuration function, required for anything beyond search. ltuid and ltoken must be copied from your browser's cookies. Any other kwargs provided will be also set as as a cookie.",
 "func":1
 },
 {
