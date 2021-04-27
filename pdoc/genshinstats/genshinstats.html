@@ -97,11 +97,11 @@ def set_cookie_auto(browser: str=None) -&gt; None:
     import browser_cookie3
     logger.debug(f&#39;Loading cookies automatically.&#39;)
     load = getattr(browser_cookie3,browser.lower()) if browser else browser_cookie3.load
-    
-    session.cookies.update({
-        c.name:c.value for c in load(domain_name=&#39;.hoyolab.com&#39;) 
-        if c.name[0]!=&#39;_&#39;})
-            
+
+    # we want to keep user data secure, so don&#39;t use any login ticket cookies
+    for c in load(domain_name=&#39;.mihoyo&#39;):
+        if c.name in [&#39;ltuid&#39;,&#39;ltoken&#39;]:
+            session.cookies.set(c.name,c.value)
 
 def get_ds_token(salt: str) -&gt; str:
     &#34;&#34;&#34;Creates a new ds token.
@@ -427,7 +427,7 @@ Avalible browsers: chrome, chromium, opera, edge, firefox</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\genshinstats.py#L55-L72" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\genshinstats.py#L55-L73" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def set_cookie_auto(browser: str=None) -&gt; None:
     &#34;&#34;&#34;Like set_cookie, but gets the cookies by itself.
@@ -443,10 +443,11 @@ Avalible browsers: chrome, chromium, opera, edge, firefox</p></div>
     import browser_cookie3
     logger.debug(f&#39;Loading cookies automatically.&#39;)
     load = getattr(browser_cookie3,browser.lower()) if browser else browser_cookie3.load
-    
-    session.cookies.update({
-        c.name:c.value for c in load(domain_name=&#39;.hoyolab.com&#39;) 
-        if c.name[0]!=&#39;_&#39;})</code></pre>
+
+    # we want to keep user data secure, so don&#39;t use any login ticket cookies
+    for c in load(domain_name=&#39;.mihoyo&#39;):
+        if c.name in [&#39;ltuid&#39;,&#39;ltoken&#39;]:
+            session.cookies.set(c.name,c.value)</code></pre>
 </details>
 </dd>
 <dt id="genshinstats.genshinstats.set_cookie_header"><code class="name flex">

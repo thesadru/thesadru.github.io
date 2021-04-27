@@ -28,7 +28,7 @@ It's possible to add retcodes and the original api response message with <code>.
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\errors.py#L0-L99" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\errors.py#L0-L87" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">&#34;&#34;&#34;Genshinstats errors.
 
@@ -66,15 +66,6 @@ class AccountNotFound(GenshinStatsException):
 class DataNotPublic(GenshinStatsException):
     &#34;&#34;&#34;User hasn&#39;t set their data to public.&#34;&#34;&#34;
 
-class InvalidItemID(GenshinStatsException):
-    &#34;&#34;&#34;Item does not exist.&#34;&#34;&#34;
-    type: str
-    item: str
-    def set_response(self, response: dict):
-        super().set_response(response)
-        self.type,self.item = re.match(r&#39;(.+?):(\w+)&#39;,self.orig_msg).groups()
-        self.msg = self.msg.format(self.type,self.item)
-
 class CodeRedeemException(GenshinStatsException):
     &#34;&#34;&#34;Code redemption failed.&#34;&#34;&#34;
 class RedeemCooldown(CodeRedeemException):
@@ -104,15 +95,12 @@ def raise_for_error(response: dict) -&gt; NoReturn:
     # every error uses a different response code and message, 
     # but the codes are not unique so we must check the message at some points too.
     error = {
-        # authorization
+        # general
         -100:  NotLoggedIn(&#39;Login cookies have not been provided or are incorrect.&#39;),
-        # UID
-        1009:  AccountNotFound(&#39;Could not find user; uid may not be valid.&#39;),
         10102: DataNotPublic(&#39;User\&#39;s data is not public&#39;),
-        # general errors
+        1009:  AccountNotFound(&#39;Could not find user; uid may not be valid.&#39;),
+        -1:    AccountNotFound(&#39;Could not find user; uid may not be valid.&#39;),
         -10002:AccountNotFound(&#39;Cannot get rewards info. Account has no game account binded to it.&#39;),
-        -1:    AccountNotFound(&#39;Could not find user; uid may not be valid.&#39;) if response[&#39;message&#39;]==&#39;Invalid uid&#39; else 
-                InvalidItemID(&#39;{} &#34;{}&#34; does not exist.&#39;),
         # code redemption
         -2003: CodeRedeemException(&#39;Invalid redemption code&#39;),
         -2017: CodeRedeemException(&#39;Redemption code has been claimed already.&#39;),
@@ -147,22 +135,19 @@ def raise_for_error(response: dict) -&gt; NoReturn:
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\errors.py#L70-L100" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\errors.py#L61-L88" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def raise_for_error(response: dict) -&gt; NoReturn:
     &#34;&#34;&#34;Raises a custom genshinstats error from a response.&#34;&#34;&#34;
     # every error uses a different response code and message, 
     # but the codes are not unique so we must check the message at some points too.
     error = {
-        # authorization
+        # general
         -100:  NotLoggedIn(&#39;Login cookies have not been provided or are incorrect.&#39;),
-        # UID
-        1009:  AccountNotFound(&#39;Could not find user; uid may not be valid.&#39;),
         10102: DataNotPublic(&#39;User\&#39;s data is not public&#39;),
-        # general errors
+        1009:  AccountNotFound(&#39;Could not find user; uid may not be valid.&#39;),
+        -1:    AccountNotFound(&#39;Could not find user; uid may not be valid.&#39;),
         -10002:AccountNotFound(&#39;Cannot get rewards info. Account has no game account binded to it.&#39;),
-        -1:    AccountNotFound(&#39;Could not find user; uid may not be valid.&#39;) if response[&#39;message&#39;]==&#39;Invalid uid&#39; else 
-                InvalidItemID(&#39;{} &#34;{}&#34; does not exist.&#39;),
         # code redemption
         -2003: CodeRedeemException(&#39;Invalid redemption code&#39;),
         -2017: CodeRedeemException(&#39;Redemption code has been claimed already.&#39;),
@@ -236,7 +221,7 @@ def raise_for_error(response: dict) -&gt; NoReturn:
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\errors.py#L58-L59" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\errors.py#L49-L50" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">class AlreadySignedIn(SignInException):
     &#34;&#34;&#34;Already signed in, cannot sign in again.&#34;&#34;&#34;</code></pre>
@@ -277,7 +262,7 @@ def raise_for_error(response: dict) -&gt; NoReturn:
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\errors.py#L65-L66" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\errors.py#L56-L57" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">class AuthKeyTimeout(GachaLogException):
     &#34;&#34;&#34;An authkey has timed out.&#34;&#34;&#34;</code></pre>
@@ -318,7 +303,7 @@ def raise_for_error(response: dict) -&gt; NoReturn:
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\errors.py#L46-L47" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\errors.py#L37-L38" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">class CodeRedeemException(GenshinStatsException):
     &#34;&#34;&#34;Code redemption failed.&#34;&#34;&#34;</code></pre>
@@ -402,7 +387,7 @@ def raise_for_error(response: dict) -&gt; NoReturn:
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\errors.py#L61-L62" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\errors.py#L52-L53" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">class GachaLogException(GenshinStatsException):
     &#34;&#34;&#34;Base GachaLog Exception.&#34;&#34;&#34;</code></pre>
@@ -482,7 +467,6 @@ def raise_for_error(response: dict) -&gt; NoReturn:
 <li><a title="genshinstats.errors.CodeRedeemException" href="#genshinstats.errors.CodeRedeemException">CodeRedeemException</a></li>
 <li><a title="genshinstats.errors.DataNotPublic" href="#genshinstats.errors.DataNotPublic">DataNotPublic</a></li>
 <li><a title="genshinstats.errors.GachaLogException" href="#genshinstats.errors.GachaLogException">GachaLogException</a></li>
-<li><a title="genshinstats.errors.InvalidItemID" href="#genshinstats.errors.InvalidItemID">InvalidItemID</a></li>
 <li><a title="genshinstats.errors.NotLoggedIn" href="#genshinstats.errors.NotLoggedIn">NotLoggedIn</a></li>
 <li><a title="genshinstats.errors.SignInException" href="#genshinstats.errors.SignInException">SignInException</a></li>
 </ul>
@@ -544,7 +528,7 @@ def msg(self):
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\errors.py#L63-L64" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\errors.py#L54-L55" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">class InvalidAuthkey(GachaLogException):
     &#34;&#34;&#34;An authkey is invalid.&#34;&#34;&#34;</code></pre>
@@ -576,52 +560,6 @@ def msg(self):
 </li>
 </ul>
 </dd>
-<dt id="genshinstats.errors.InvalidItemID"><code class="flex name class">
-<span>class <span class="ident">InvalidItemID</span></span>
-<span>(</span><span>msg: str)</span>
-</code></dt>
-<dd>
-<div class="desc"><p>Item does not exist.</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\errors.py#L37-L44" class="git-link">Browse git</a>
-</summary>
-<pre><code class="python">class InvalidItemID(GenshinStatsException):
-    &#34;&#34;&#34;Item does not exist.&#34;&#34;&#34;
-    type: str
-    item: str
-    def set_response(self, response: dict):
-        super().set_response(response)
-        self.type,self.item = re.match(r&#39;(.+?):(\w+)&#39;,self.orig_msg).groups()
-        self.msg = self.msg.format(self.type,self.item)</code></pre>
-</details>
-<h3>Ancestors</h3>
-<ul class="hlist">
-<li><a title="genshinstats.errors.GenshinStatsException" href="#genshinstats.errors.GenshinStatsException">GenshinStatsException</a></li>
-<li>builtins.Exception</li>
-<li>builtins.BaseException</li>
-</ul>
-<h3>Class variables</h3>
-<dl>
-<dt id="genshinstats.errors.InvalidItemID.item"><code class="name">var <span class="ident">item</span> : str</code></dt>
-<dd>
-<div class="desc"></div>
-</dd>
-<dt id="genshinstats.errors.InvalidItemID.type"><code class="name">var <span class="ident">type</span> : str</code></dt>
-<dd>
-<div class="desc"></div>
-</dd>
-</dl>
-<h3>Inherited members</h3>
-<ul class="hlist">
-<li><code><b><a title="genshinstats.errors.GenshinStatsException" href="#genshinstats.errors.GenshinStatsException">GenshinStatsException</a></b></code>:
-<ul class="hlist">
-<li><code><a title="genshinstats.errors.GenshinStatsException.set_response" href="#genshinstats.errors.GenshinStatsException.set_response">set_response</a></code></li>
-</ul>
-</li>
-</ul>
-</dd>
 <dt id="genshinstats.errors.MissingAuthKey"><code class="flex name class">
 <span>class <span class="ident">MissingAuthKey</span></span>
 <span>(</span><span>msg: str)</span>
@@ -631,7 +569,7 @@ def msg(self):
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\errors.py#L67-L68" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\errors.py#L58-L59" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">class MissingAuthKey(GachaLogException):
     &#34;&#34;&#34;No gacha authkey was found.&#34;&#34;&#34;</code></pre>
@@ -712,7 +650,7 @@ def msg(self):
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\errors.py#L48-L54" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\errors.py#L39-L45" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">class RedeemCooldown(CodeRedeemException):
     &#34;&#34;&#34;Can claim codes only every 5 seconds.&#34;&#34;&#34;
@@ -754,7 +692,7 @@ def msg(self):
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\errors.py#L56-L57" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\errors.py#L47-L48" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">class SignInException(GenshinStatsException):
     &#34;&#34;&#34;Sign-in failed&#34;&#34;&#34;</code></pre>
@@ -912,13 +850,6 @@ setTimeout(() => input.focus(), 100);
 <ul class="">
 <li><code><a title="genshinstats.errors.InvalidAuthkey.orig_msg" href="#genshinstats.errors.InvalidAuthkey.orig_msg">orig_msg</a></code></li>
 <li><code><a title="genshinstats.errors.InvalidAuthkey.retcode" href="#genshinstats.errors.InvalidAuthkey.retcode">retcode</a></code></li>
-</ul>
-</li>
-<li>
-<h4><code><a title="genshinstats.errors.InvalidItemID" href="#genshinstats.errors.InvalidItemID">InvalidItemID</a></code></h4>
-<ul class="">
-<li><code><a title="genshinstats.errors.InvalidItemID.item" href="#genshinstats.errors.InvalidItemID.item">item</a></code></li>
-<li><code><a title="genshinstats.errors.InvalidItemID.type" href="#genshinstats.errors.InvalidItemID.type">type</a></code></li>
 </ul>
 </li>
 <li>

@@ -109,27 +109,6 @@ INDEX=[
 "func":1
 },
 {
-"ref":"genshinstats.errors.InvalidItemID",
-"url":1,
-"doc":"Item does not exist."
-},
-{
-"ref":"genshinstats.errors.InvalidItemID.type",
-"url":1,
-"doc":""
-},
-{
-"ref":"genshinstats.errors.InvalidItemID.item",
-"url":1,
-"doc":""
-},
-{
-"ref":"genshinstats.errors.InvalidItemID.set_response",
-"url":1,
-"doc":"Adds an optional response object to the error.",
-"func":1
-},
-{
 "ref":"genshinstats.errors.CodeRedeemException",
 "url":1,
 "doc":"Code redemption failed."
