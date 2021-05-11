@@ -267,11 +267,11 @@ def prettify_gacha_details(data: dict):
     } for i in l]
     return {
         &#34;gacha_type&#34;: {
-            &#34;100&#34;:&#34;Novice Wishes&#34;,
-            &#34;200&#34;:&#34;Permanent Wish&#34;,
-            &#34;301&#34;:&#34;Character Event Wish&#34;,
-            &#34;302&#34;:&#34;Weapon Event Wish&#34;
-        }[data[&#34;gacha_type&#34;]],
+            100:&#34;Novice Wishes&#34;,
+            200:&#34;Permanent Wish&#34;,
+            301:&#34;Character Event Wish&#34;,
+            302:&#34;Weapon Event Wish&#34;
+        }[int(data[&#34;gacha_type&#34;])],
         &#34;gacha_type_id&#34;:int(data[&#34;gacha_type&#34;]),
         &#34;banner&#34;: re.sub(r&#39;&lt;.*?&gt;&#39;,&#39;&#39;,data[&#34;title&#34;]).strip(),
         &#34;title&#34;: data[&#34;title&#34;],
@@ -436,11 +436,11 @@ def prettify_gacha_details(data: dict):
     } for i in l]
     return {
         &#34;gacha_type&#34;: {
-            &#34;100&#34;:&#34;Novice Wishes&#34;,
-            &#34;200&#34;:&#34;Permanent Wish&#34;,
-            &#34;301&#34;:&#34;Character Event Wish&#34;,
-            &#34;302&#34;:&#34;Weapon Event Wish&#34;
-        }[data[&#34;gacha_type&#34;]],
+            100:&#34;Novice Wishes&#34;,
+            200:&#34;Permanent Wish&#34;,
+            301:&#34;Character Event Wish&#34;,
+            302:&#34;Weapon Event Wish&#34;
+        }[int(data[&#34;gacha_type&#34;])],
         &#34;gacha_type_id&#34;:int(data[&#34;gacha_type&#34;]),
         &#34;banner&#34;: re.sub(r&#39;&lt;.*?&gt;&#39;,&#39;&#39;,data[&#34;title&#34;]).strip(),
         &#34;title&#34;: data[&#34;title&#34;],
