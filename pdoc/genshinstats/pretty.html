@@ -28,7 +28,7 @@ that were leftover from during development</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\pretty.py#L0-L264" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\pretty.py#L0-L263" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">&#34;&#34;&#34;Prettifiers for genshinstats api returns.
 
@@ -228,7 +228,7 @@ def prettify_gacha_log(data: list, lang: str=&#39;en&#39;):
         &#34;name&#34;: i[&#34;name&#34;],
         &#34;rarity&#34;: int(i[&#34;rank_type&#34;]),
         &#34;time&#34;: i[&#34;time&#34;],
-        &#34;id&#34;: i[&#34;id&#34;],
+        &#34;id&#34;: int(i[&#34;id&#34;]),
         &#34;gacha_type&#34;: i[&#34;gacha_type&#34;],
         &#34;gacha_name&#34;: gachalog.recognize_gacha_type(i[&#39;gacha_type&#39;],lang=lang)[&#39;name&#39;],
     } for i in data]
@@ -242,14 +242,14 @@ def prettify_gacha_items(data: list):
     } for i in data]
 
 def prettify_gacha_details(data: dict):
-    per = lambda p: None if p==&#39;0%&#39; else p[:-1].replace(&#39;,&#39;,&#39;.&#39;)
+    per = lambda p: None if p==&#39;0%&#39; else float(p[:-1].replace(&#39;,&#39;,&#39;.&#39;))
     fprobs = lambda l: [{
         &#34;type&#34;: i[&#34;item_type&#34;],
         &#34;name&#34;: i[&#34;item_name&#34;],
         &#34;rarity&#34;: int(i[&#34;rank&#34;]),
         &#34;is_up&#34;: bool(i[&#34;is_up&#34;]),
         &#34;order_value&#34;: i[&#34;order_value&#34;],
-    } for i in l]
+    } for i in l] if l else []
     fitems = lambda l: [{
         &#34;type&#34;: i[&#34;item_type&#34;],
         &#34;name&#34;: i[&#34;item_name&#34;],
@@ -264,7 +264,7 @@ def prettify_gacha_details(data: dict):
             &#34;&#34;:None
         }[i[&#34;item_attr&#34;]],
         &#34;icon&#34;: i[&#34;item_img&#34;],
-    } for i in l]
+    } for i in l] if l else []
     return {
         &#34;gacha_type&#34;: {
             100:&#34;Novice Wishes&#34;,
@@ -277,7 +277,6 @@ def prettify_gacha_details(data: dict):
         &#34;title&#34;: data[&#34;title&#34;],
         &#34;content&#34;: data[&#34;content&#34;],
         &#34;date_range&#34;:data[&#34;date_range&#34;],
-        &#34;permanent&#34;: data[&#34;gacha_type&#34;]==&#34;200&#34;,
         &#34;r5_up_prob&#34;: per(data[&#34;r5_up_prob&#34;]), # probability for rate-up 5*
         &#34;r4_up_prob&#34;: per(data[&#34;r4_up_prob&#34;]), # probability for rate-up 4*
         &#34;r5_prob&#34;: per(data[&#34;r5_prob&#34;]), # probability for 5*
@@ -291,9 +290,9 @@ def prettify_gacha_details(data: dict):
         &#34;r5_items&#34;: fprobs(data[&#34;r5_prob_list&#34;]), # list 5* of items that you can get from banner
         &#34;r4_items&#34;: fprobs(data[&#34;r4_prob_list&#34;]), # list 4* of items that you can get from banner
         &#34;r3_items&#34;: fprobs(data[&#34;r3_prob_list&#34;]), # list 3* of items that you can get from banner
-        &#34;items&#34;: sorted(
-            fprobs(data[&#34;r5_prob_list&#34;])+fprobs(data[&#34;r4_prob_list&#34;])+fprobs(data[&#34;r3_prob_list&#34;]),
-            key=lambda x: x[&#34;order_value&#34;])
+        &#34;items&#34;: fprobs(sorted(
+            data[&#34;r5_prob_list&#34;]+data[&#34;r4_prob_list&#34;]+data[&#34;r3_prob_list&#34;],
+            key=lambda x: x[&#34;order_value&#34;]))
     }</code></pre>
 </details>
 </section>
@@ -408,17 +407,17 @@ def prettify_gacha_details(data: dict):
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\pretty.py#L212-L265" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\pretty.py#L212-L264" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def prettify_gacha_details(data: dict):
-    per = lambda p: None if p==&#39;0%&#39; else p[:-1].replace(&#39;,&#39;,&#39;.&#39;)
+    per = lambda p: None if p==&#39;0%&#39; else float(p[:-1].replace(&#39;,&#39;,&#39;.&#39;))
     fprobs = lambda l: [{
         &#34;type&#34;: i[&#34;item_type&#34;],
         &#34;name&#34;: i[&#34;item_name&#34;],
         &#34;rarity&#34;: int(i[&#34;rank&#34;]),
         &#34;is_up&#34;: bool(i[&#34;is_up&#34;]),
         &#34;order_value&#34;: i[&#34;order_value&#34;],
-    } for i in l]
+    } for i in l] if l else []
     fitems = lambda l: [{
         &#34;type&#34;: i[&#34;item_type&#34;],
         &#34;name&#34;: i[&#34;item_name&#34;],
@@ -433,7 +432,7 @@ def prettify_gacha_details(data: dict):
             &#34;&#34;:None
         }[i[&#34;item_attr&#34;]],
         &#34;icon&#34;: i[&#34;item_img&#34;],
-    } for i in l]
+    } for i in l] if l else []
     return {
         &#34;gacha_type&#34;: {
             100:&#34;Novice Wishes&#34;,
@@ -446,7 +445,6 @@ def prettify_gacha_details(data: dict):
         &#34;title&#34;: data[&#34;title&#34;],
         &#34;content&#34;: data[&#34;content&#34;],
         &#34;date_range&#34;:data[&#34;date_range&#34;],
-        &#34;permanent&#34;: data[&#34;gacha_type&#34;]==&#34;200&#34;,
         &#34;r5_up_prob&#34;: per(data[&#34;r5_up_prob&#34;]), # probability for rate-up 5*
         &#34;r4_up_prob&#34;: per(data[&#34;r4_up_prob&#34;]), # probability for rate-up 4*
         &#34;r5_prob&#34;: per(data[&#34;r5_prob&#34;]), # probability for 5*
@@ -460,9 +458,9 @@ def prettify_gacha_details(data: dict):
         &#34;r5_items&#34;: fprobs(data[&#34;r5_prob_list&#34;]), # list 5* of items that you can get from banner
         &#34;r4_items&#34;: fprobs(data[&#34;r4_prob_list&#34;]), # list 4* of items that you can get from banner
         &#34;r3_items&#34;: fprobs(data[&#34;r3_prob_list&#34;]), # list 3* of items that you can get from banner
-        &#34;items&#34;: sorted(
-            fprobs(data[&#34;r5_prob_list&#34;])+fprobs(data[&#34;r4_prob_list&#34;])+fprobs(data[&#34;r3_prob_list&#34;]),
-            key=lambda x: x[&#34;order_value&#34;])
+        &#34;items&#34;: fprobs(sorted(
+            data[&#34;r5_prob_list&#34;]+data[&#34;r4_prob_list&#34;]+data[&#34;r3_prob_list&#34;],
+            key=lambda x: x[&#34;order_value&#34;]))
     }</code></pre>
 </details>
 </dd>
@@ -501,7 +499,7 @@ def prettify_gacha_details(data: dict):
         &#34;name&#34;: i[&#34;name&#34;],
         &#34;rarity&#34;: int(i[&#34;rank_type&#34;]),
         &#34;time&#34;: i[&#34;time&#34;],
-        &#34;id&#34;: i[&#34;id&#34;],
+        &#34;id&#34;: int(i[&#34;id&#34;]),
         &#34;gacha_type&#34;: i[&#34;gacha_type&#34;],
         &#34;gacha_name&#34;: gachalog.recognize_gacha_type(i[&#39;gacha_type&#39;],lang=lang)[&#39;name&#39;],
     } for i in data]</code></pre>
