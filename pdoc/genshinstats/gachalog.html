@@ -42,7 +42,7 @@ import re
 from functools import lru_cache
 from itertools import islice
 from tempfile import gettempdir
-from typing import Iterator, Optional
+from typing import Any, Iterator, Optional
 from urllib.parse import unquote, urljoin
 
 from requests import Session
@@ -167,7 +167,7 @@ def get_gacha_types(authkey: str=None, lang: str=&#39;en&#39;) -&gt; list:
         params=dict(lang=lang)
     )[&#39;gacha_type_list&#39;]
 
-def recognize_gacha_type(gacha: str, authkey: str=None, lang: str=&#39;en&#39;) -&gt; Optional[dict]:
+def recognize_gacha_type(gacha: Any, authkey: str=None, lang: str=&#39;en&#39;) -&gt; Optional[dict]:
     &#34;&#34;&#34;Recognizes a given gacha type by id, key or name.&#34;&#34;&#34;
     gacha = str(gacha) # everything is a string anyways, just cast here
     for t in get_gacha_types(authkey,lang):
@@ -572,7 +572,7 @@ def get_gacha_types(authkey: str=None, lang: str=&#39;en&#39;) -&gt; list:
 </details>
 </dd>
 <dt id="genshinstats.gachalog.recognize_gacha_type"><code class="name flex">
-<span>def <span class="ident">recognize_gacha_type</span></span>(<span>gacha: str, authkey: str = None, lang: str = 'en') ‑> Optional[dict]</span>
+<span>def <span class="ident">recognize_gacha_type</span></span>(<span>gacha: Any, authkey: str = None, lang: str = 'en') ‑> Optional[dict]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Recognizes a given gacha type by id, key or name.</p></div>
@@ -581,7 +581,7 @@ def get_gacha_types(authkey: str=None, lang: str=&#39;en&#39;) -&gt; list:
 <span>Expand source code</span>
 <a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\gachalog.py#L138-L144" class="git-link">Browse git</a>
 </summary>
-<pre><code class="python">def recognize_gacha_type(gacha: str, authkey: str=None, lang: str=&#39;en&#39;) -&gt; Optional[dict]:
+<pre><code class="python">def recognize_gacha_type(gacha: Any, authkey: str=None, lang: str=&#39;en&#39;) -&gt; Optional[dict]:
     &#34;&#34;&#34;Recognizes a given gacha type by id, key or name.&#34;&#34;&#34;
     gacha = str(gacha) # everything is a string anyways, just cast here
     for t in get_gacha_types(authkey,lang):

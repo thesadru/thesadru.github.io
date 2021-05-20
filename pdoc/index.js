@@ -372,6 +372,12 @@ INDEX=[
 "func":1
 },
 {
+"ref":"genshinstats.genshinstats.get_browser_cookies",
+"url":3,
+"doc":"Gets cookies from your browser for later storing. If a specifc browser is set, gets data from that browser only. Avalible browsers: chrome, chromium, opera, edge, firefox",
+"func":1
+},
+{
 "ref":"genshinstats.genshinstats.set_cookie_auto",
 "url":3,
 "doc":"Like set_cookie, but gets the cookies by itself. Requires the module browser-cookie3 Be aware that this process can take up to 10 seconds, so it should be ran only once. To speed it up select a browser. If a specifc browser is set, gets data from that browser only. Avalible browsers: chrome, chromium, opera, edge, firefox",
