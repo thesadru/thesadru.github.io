@@ -1,0 +1,657 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.9.2" />
+<title>genshinstats.wishes API documentation</title>
+<meta name="description" content="Genshin Impact wish history …" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}#lunr-search{width:100%;font-size:1em;padding:6px 9px 5px 9px;border:1px solid silver}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>genshinstats.wishes</code></h1>
+</header>
+<section id="section-intro">
+<p>Genshin Impact wish history.</p>
+<p>Gets wish history from the current banners in a clean api.
+Requires an authkey that is fetched automatically from a logfile.</p>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\wishes.py#L0-L227" class="git-link">Browse git</a>
+</summary>
+<pre><code class="python">&#34;&#34;&#34;Genshin Impact wish history.
+
+Gets wish history from the current banners in a clean api.
+Requires an authkey that is fetched automatically from a logfile.
+&#34;&#34;&#34;
+import heapq
+import os
+import re
+from functools import lru_cache
+from itertools import chain, islice
+from tempfile import gettempdir
+from typing import Any, Dict, Iterator, List, Optional
+from urllib.parse import unquote, urljoin
+
+from requests import Session
+
+from .errors import MissingAuthKey, raise_for_error
+from .pretty import *
+from .utils import USER_AGENT, get_output_log
+
+__all__ = [
+    &#39;extract_authkey&#39;, &#39;get_authkey&#39;, &#39;set_authkey&#39;, &#39;get_banner_ids&#39;,
+    &#39;fetch_gacha_endpoint&#39;, &#39;get_banner_types&#39;, &#39;get_wish_history&#39;,
+    &#39;get_gacha_items&#39;, &#39;get_banner_details&#39;, &#39;get_uid_from_authkey&#39;
+]
+
+GENSHIN_LOG = get_output_log()
+GACHA_INFO_URL = &#34;https://hk4e-api.mihoyo.com/event/gacha_info/api/&#34;
+AUTHKEY_FILE = os.path.join(gettempdir(), &#39;genshinstats_authkey.txt&#39;)
+
+session = Session()
+session.headers.update({
+    # recommended header
+    &#34;user-agent&#34;: USER_AGENT
+})
+session.params = {
+    # required params
+    &#34;authkey_ver&#34;: &#34;1&#34;,
+    &#34;lang&#34;: &#34;en&#34;,
+    # authentications params
+    &#34;authkey&#34;: &#34;&#34;,
+}
+static_session = Session()  # extra session for static resources
+
+def _get_short_lang_code(lang: str) -&gt; str:
+    &#34;&#34;&#34;Returns an alternative short lang code&#34;&#34;&#34;
+    return lang if &#39;zh&#39; in lang else lang.split(&#39;-&#39;)[0]
+
+def _read_logfile(logfile: str = None) -&gt; str:
+    &#34;&#34;&#34;Returns the contents of a logfile&#34;&#34;&#34;
+    if GENSHIN_LOG is None:
+        raise FileNotFoundError(&#39;No Genshin Installation was found, could not get gacha data.&#39;)
+    with open(logfile or GENSHIN_LOG) as file:
+        return file.read()
+
+def extract_authkey(string: str) -&gt; Optional[str]:
+    &#34;&#34;&#34;Extracts an authkey from the provided string. Returns None if not found.&#34;&#34;&#34;
+    match = re.search(r&#39;https://.+?authkey=([^&amp;]+)&#39;, string, re.MULTILINE)
+    if match is not None:
+        return unquote(match.group(1))
+    return None
+
+def get_authkey(logfile: str = None) -&gt; str:
+    &#34;&#34;&#34;Gets the query for log requests.
+
+    This will either be done from the logs or from a tempfile.
+    &#34;&#34;&#34;
+    # first try the log
+    authkey = extract_authkey(_read_logfile(logfile))
+    if authkey is not None:
+        with open(AUTHKEY_FILE, &#39;w&#39;) as file:
+            file.write(authkey)
+        return authkey
+    # otherwise try the tempfile (may be expired!)
+    if os.path.isfile(AUTHKEY_FILE):
+        with open(AUTHKEY_FILE) as file:
+            return file.read()
+
+    raise MissingAuthKey(&#39;No authkey could be found in the logs or in a tempfile. &#39;
+                         &#39;Open the history in-game first before attempting to request it.&#39;)
+
+def set_authkey(authkey: str = None, url: str = None, logfile: str = None) -&gt; None:
+    &#34;&#34;&#34;Sets an authkey for log requests.
+
+    passing in authkey will simply save it, 
+    passing in a url will take the authkey out of it,
+    passing in a logfile will search it,
+    otherwise searches the logs and a tempfile.
+    &#34;&#34;&#34;
+    if authkey is not None:
+        pass
+    elif url is not None:
+        authkey = extract_authkey(url) # type: ignore
+        if authkey is None:
+            raise ValueError(&#34;url does not have an authkey parameter&#34;)
+    else:
+        authkey = get_authkey(logfile)
+    session.params[&#39;authkey&#39;] = authkey
+
+def get_banner_ids(logfile: str = None) -&gt; List[str]:
+    &#34;&#34;&#34;Gets all banner ids from a log file.
+
+    You need to open the details of all banners for this to work.
+    &#34;&#34;&#34;
+    log = _read_logfile(logfile)
+    ids = re.findall(r&#39;OnGetWebViewPageFinish:https://.+?gacha_id=([^&amp;]+)&#39;, log)
+    return list(set(ids))
+
+def fetch_gacha_endpoint(endpoint: str, authkey: str = None, **kwargs) -&gt; Dict[str, Any]:
+    &#34;&#34;&#34;Fetch an enpoint from mihoyo&#39;s gacha info.
+
+    Takes in an endpoint url which is joined with the base url.
+    If an authkey is provided, it uses that authkey specifically.
+    A request is then sent and returns a parsed response.
+    Includes error handling and getting the authkey.
+    &#34;&#34;&#34;
+    if authkey is None:
+        session.params[&#39;authkey&#39;] = session.params[&#39;authkey&#39;] or get_authkey()
+    else:
+        kwargs[&#39;params&#39;][&#39;authkey&#39;] = authkey
+    method = kwargs.pop(&#39;method&#39;, &#39;get&#39;)
+    url = urljoin(GACHA_INFO_URL, endpoint)
+
+    r = session.request(method, url, **kwargs)
+    r.raise_for_status()
+
+    data = r.json()
+    if data[&#39;retcode&#39;] == 0:
+        return data[&#39;data&#39;]
+
+    raise_for_error(data)
+
+@lru_cache()
+def get_banner_types(authkey: str = None, lang: str = &#39;en&#39;) -&gt; Dict[int, str]:
+    &#34;&#34;&#34;Gets ids for all banners and their names&#34;&#34;&#34;
+    banners = fetch_gacha_endpoint(
+        &#34;getConfigList&#34;,
+        authkey=authkey,
+        params=dict(lang=_get_short_lang_code(lang))
+    )[&#39;gacha_type_list&#39;]
+    return {int(i[&#39;key&#39;]): i[&#39;name&#39;] for i in banners}
+
+def get_wish_history(
+    banner_type: int = None, size: int = None, 
+    authkey: str = None, end_id: int = 0, lang: str = &#39;en&#39;
+) -&gt; Iterator[dict]:
+    &#34;&#34;&#34;Gets wish history.
+    
+    Note that pulls are yielded and not returned to account for pagination.
+    
+    When a banner_type is set, only data from that banner type is retuned.
+    You can get banner types and their names from get_banner_types.
+    
+    If a size is set the total returned amount of pulls will be equal to or lower than the size.
+
+    To be able to get history starting from somewhere other than the last pull
+    you may pass in the id of the pull right chronologically after the one you want to start from as end_id.
+    &#34;&#34;&#34;
+    if size is not None and size &lt;= 0:
+        return
+    
+    if banner_type is None:
+        # we get data from all banners by getting data from every individual banner
+        # and then sorting it by pull date with heapq.merge
+        gens = [get_wish_history(banner_type, None, authkey, end_id)
+                for banner_type in get_banner_types(authkey)]
+        yield from islice(heapq.merge(*gens, key=lambda x: x[&#39;time&#39;], reverse=True), size)
+        return
+
+    # we create banner_name outside prettify so we don&#39;t make extra requests
+    banner_name = get_banner_types(authkey, lang)[banner_type]
+    lang = _get_short_lang_code(lang)
+    page_size = 20  # max size per page is 20
+    
+    while True:
+        data = fetch_gacha_endpoint(
+            &#34;getGachaLog&#34;,
+            authkey=authkey,
+            params=dict(gacha_type=banner_type, size=page_size, end_id=end_id, lang=lang)
+        )[&#39;list&#39;]
+        data = prettify_wish_history(data, banner_name)
+        yield from data
+
+        if len(data) &lt; page_size:
+            return  # return if reached the end
+        if size is not None:
+            size -= page_size
+            page_size = min(size, 20)
+            if size &lt;= 0:
+                return
+
+        end_id = data[-1][&#39;id&#39;]
+
+
+def get_gacha_items(lang: str = &#39;en-us&#39;) -&gt; list:
+    &#34;&#34;&#34;Gets the list of characters and weapons that can be gotten from the gacha.&#34;&#34;&#34;
+    r = static_session.get(
+        f&#34;https://webstatic-sea.mihoyo.com/hk4e/gacha_info/os_asia/items/{lang}.json&#34;
+    )
+    r.raise_for_status()
+    return prettify_gacha_items(r.json())
+
+def get_banner_details(banner_id: str, lang: str = &#39;en-us&#39;) -&gt; dict:
+    &#34;&#34;&#34;Gets details of a specific banner.
+
+    This requires the banner&#39;s id.
+    These keep rotating so you need to get them with get_banner_ids().
+    example standard wish: &#34;a37a19624270b092e7250edfabce541a3435c2&#34;
+    
+    The newbie gacha has no json resource tied to it so you can&#39;t get info about it.
+    &#34;&#34;&#34;
+    r = static_session.get(
+        f&#34;https://webstatic-sea.mihoyo.com/hk4e/gacha_info/os_asia/{banner_id}/{lang}.json&#34;
+    )
+    r.raise_for_status()
+    return prettify_banner_details(r.json())
+
+def get_uid_from_authkey(authkey: str = None) -&gt; int:
+    &#34;&#34;&#34;Gets a uid from an authkey. 
+
+    If an authkey is not passed in the function uses the currently set authkey.
+    &#34;&#34;&#34;
+    # for safety we use all banners, probably overkill
+    histories = [get_wish_history(i, 1, authkey) for i in get_banner_types(authkey)]
+    pull = next(chain(*histories), None)
+    if pull is None: # very rare but possible
+        raise Exception(&#39;User has never made a wish&#39;)
+    return pull[&#39;uid&#39;]</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="genshinstats.wishes.extract_authkey"><code class="name flex">
+<span>def <span class="ident">extract_authkey</span></span>(<span>string: str) ‑> Optional[str]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Extracts an authkey from the provided string. Returns None if not found.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\wishes.py#L56-L61" class="git-link">Browse git</a>
+</summary>
+<pre><code class="python">def extract_authkey(string: str) -&gt; Optional[str]:
+    &#34;&#34;&#34;Extracts an authkey from the provided string. Returns None if not found.&#34;&#34;&#34;
+    match = re.search(r&#39;https://.+?authkey=([^&amp;]+)&#39;, string, re.MULTILINE)
+    if match is not None:
+        return unquote(match.group(1))
+    return None</code></pre>
+</details>
+</dd>
+<dt id="genshinstats.wishes.fetch_gacha_endpoint"><code class="name flex">
+<span>def <span class="ident">fetch_gacha_endpoint</span></span>(<span>endpoint: str, authkey: str = None, **kwargs) ‑> Dict[str, Any]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Fetch an enpoint from mihoyo's gacha info.</p>
+<p>Takes in an endpoint url which is joined with the base url.
+If an authkey is provided, it uses that authkey specifically.
+A request is then sent and returns a parsed response.
+Includes error handling and getting the authkey.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\wishes.py#L109-L131" class="git-link">Browse git</a>
+</summary>
+<pre><code class="python">def fetch_gacha_endpoint(endpoint: str, authkey: str = None, **kwargs) -&gt; Dict[str, Any]:
+    &#34;&#34;&#34;Fetch an enpoint from mihoyo&#39;s gacha info.
+
+    Takes in an endpoint url which is joined with the base url.
+    If an authkey is provided, it uses that authkey specifically.
+    A request is then sent and returns a parsed response.
+    Includes error handling and getting the authkey.
+    &#34;&#34;&#34;
+    if authkey is None:
+        session.params[&#39;authkey&#39;] = session.params[&#39;authkey&#39;] or get_authkey()
+    else:
+        kwargs[&#39;params&#39;][&#39;authkey&#39;] = authkey
+    method = kwargs.pop(&#39;method&#39;, &#39;get&#39;)
+    url = urljoin(GACHA_INFO_URL, endpoint)
+
+    r = session.request(method, url, **kwargs)
+    r.raise_for_status()
+
+    data = r.json()
+    if data[&#39;retcode&#39;] == 0:
+        return data[&#39;data&#39;]
+
+    raise_for_error(data)</code></pre>
+</details>
+</dd>
+<dt id="genshinstats.wishes.get_authkey"><code class="name flex">
+<span>def <span class="ident">get_authkey</span></span>(<span>logfile: str = None) ‑> str</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Gets the query for log requests.</p>
+<p>This will either be done from the logs or from a tempfile.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\wishes.py#L63-L80" class="git-link">Browse git</a>
+</summary>
+<pre><code class="python">def get_authkey(logfile: str = None) -&gt; str:
+    &#34;&#34;&#34;Gets the query for log requests.
+
+    This will either be done from the logs or from a tempfile.
+    &#34;&#34;&#34;
+    # first try the log
+    authkey = extract_authkey(_read_logfile(logfile))
+    if authkey is not None:
+        with open(AUTHKEY_FILE, &#39;w&#39;) as file:
+            file.write(authkey)
+        return authkey
+    # otherwise try the tempfile (may be expired!)
+    if os.path.isfile(AUTHKEY_FILE):
+        with open(AUTHKEY_FILE) as file:
+            return file.read()
+
+    raise MissingAuthKey(&#39;No authkey could be found in the logs or in a tempfile. &#39;
+                         &#39;Open the history in-game first before attempting to request it.&#39;)</code></pre>
+</details>
+</dd>
+<dt id="genshinstats.wishes.get_banner_details"><code class="name flex">
+<span>def <span class="ident">get_banner_details</span></span>(<span>banner_id: str, lang: str = 'en-us') ‑> dict</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Gets details of a specific banner.</p>
+<p>This requires the banner's id.
+These keep rotating so you need to get them with get_banner_ids().
+example standard wish: "a37a19624270b092e7250edfabce541a3435c2"</p>
+<p>The newbie gacha has no json resource tied to it so you can't get info about it.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\wishes.py#L203-L216" class="git-link">Browse git</a>
+</summary>
+<pre><code class="python">def get_banner_details(banner_id: str, lang: str = &#39;en-us&#39;) -&gt; dict:
+    &#34;&#34;&#34;Gets details of a specific banner.
+
+    This requires the banner&#39;s id.
+    These keep rotating so you need to get them with get_banner_ids().
+    example standard wish: &#34;a37a19624270b092e7250edfabce541a3435c2&#34;
+    
+    The newbie gacha has no json resource tied to it so you can&#39;t get info about it.
+    &#34;&#34;&#34;
+    r = static_session.get(
+        f&#34;https://webstatic-sea.mihoyo.com/hk4e/gacha_info/os_asia/{banner_id}/{lang}.json&#34;
+    )
+    r.raise_for_status()
+    return prettify_banner_details(r.json())</code></pre>
+</details>
+</dd>
+<dt id="genshinstats.wishes.get_banner_ids"><code class="name flex">
+<span>def <span class="ident">get_banner_ids</span></span>(<span>logfile: str = None) ‑> List[str]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Gets all banner ids from a log file.</p>
+<p>You need to open the details of all banners for this to work.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\wishes.py#L100-L107" class="git-link">Browse git</a>
+</summary>
+<pre><code class="python">def get_banner_ids(logfile: str = None) -&gt; List[str]:
+    &#34;&#34;&#34;Gets all banner ids from a log file.
+
+    You need to open the details of all banners for this to work.
+    &#34;&#34;&#34;
+    log = _read_logfile(logfile)
+    ids = re.findall(r&#39;OnGetWebViewPageFinish:https://.+?gacha_id=([^&amp;]+)&#39;, log)
+    return list(set(ids))</code></pre>
+</details>
+</dd>
+<dt id="genshinstats.wishes.get_banner_types"><code class="name flex">
+<span>def <span class="ident">get_banner_types</span></span>(<span>authkey: str = None, lang: str = 'en') ‑> Dict[int, str]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Gets ids for all banners and their names</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\wishes.py#L133-L141" class="git-link">Browse git</a>
+</summary>
+<pre><code class="python">@lru_cache()
+def get_banner_types(authkey: str = None, lang: str = &#39;en&#39;) -&gt; Dict[int, str]:
+    &#34;&#34;&#34;Gets ids for all banners and their names&#34;&#34;&#34;
+    banners = fetch_gacha_endpoint(
+        &#34;getConfigList&#34;,
+        authkey=authkey,
+        params=dict(lang=_get_short_lang_code(lang))
+    )[&#39;gacha_type_list&#39;]
+    return {int(i[&#39;key&#39;]): i[&#39;name&#39;] for i in banners}</code></pre>
+</details>
+</dd>
+<dt id="genshinstats.wishes.get_gacha_items"><code class="name flex">
+<span>def <span class="ident">get_gacha_items</span></span>(<span>lang: str = 'en-us') ‑> list</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Gets the list of characters and weapons that can be gotten from the gacha.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\wishes.py#L195-L201" class="git-link">Browse git</a>
+</summary>
+<pre><code class="python">def get_gacha_items(lang: str = &#39;en-us&#39;) -&gt; list:
+    &#34;&#34;&#34;Gets the list of characters and weapons that can be gotten from the gacha.&#34;&#34;&#34;
+    r = static_session.get(
+        f&#34;https://webstatic-sea.mihoyo.com/hk4e/gacha_info/os_asia/items/{lang}.json&#34;
+    )
+    r.raise_for_status()
+    return prettify_gacha_items(r.json())</code></pre>
+</details>
+</dd>
+<dt id="genshinstats.wishes.get_uid_from_authkey"><code class="name flex">
+<span>def <span class="ident">get_uid_from_authkey</span></span>(<span>authkey: str = None) ‑> int</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Gets a uid from an authkey. </p>
+<p>If an authkey is not passed in the function uses the currently set authkey.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\wishes.py#L218-L228" class="git-link">Browse git</a>
+</summary>
+<pre><code class="python">def get_uid_from_authkey(authkey: str = None) -&gt; int:
+    &#34;&#34;&#34;Gets a uid from an authkey. 
+
+    If an authkey is not passed in the function uses the currently set authkey.
+    &#34;&#34;&#34;
+    # for safety we use all banners, probably overkill
+    histories = [get_wish_history(i, 1, authkey) for i in get_banner_types(authkey)]
+    pull = next(chain(*histories), None)
+    if pull is None: # very rare but possible
+        raise Exception(&#39;User has never made a wish&#39;)
+    return pull[&#39;uid&#39;]</code></pre>
+</details>
+</dd>
+<dt id="genshinstats.wishes.get_wish_history"><code class="name flex">
+<span>def <span class="ident">get_wish_history</span></span>(<span>banner_type: int = None, size: int = None, authkey: str = None, end_id: int = 0, lang: str = 'en') ‑> Iterator[dict]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Gets wish history.</p>
+<p>Note that pulls are yielded and not returned to account for pagination.</p>
+<p>When a banner_type is set, only data from that banner type is retuned.
+You can get banner types and their names from get_banner_types.</p>
+<p>If a size is set the total returned amount of pulls will be equal to or lower than the size.</p>
+<p>To be able to get history starting from somewhere other than the last pull
+you may pass in the id of the pull right chronologically after the one you want to start from as end_id.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\wishes.py#L143-L192" class="git-link">Browse git</a>
+</summary>
+<pre><code class="python">def get_wish_history(
+    banner_type: int = None, size: int = None, 
+    authkey: str = None, end_id: int = 0, lang: str = &#39;en&#39;
+) -&gt; Iterator[dict]:
+    &#34;&#34;&#34;Gets wish history.
+    
+    Note that pulls are yielded and not returned to account for pagination.
+    
+    When a banner_type is set, only data from that banner type is retuned.
+    You can get banner types and their names from get_banner_types.
+    
+    If a size is set the total returned amount of pulls will be equal to or lower than the size.
+
+    To be able to get history starting from somewhere other than the last pull
+    you may pass in the id of the pull right chronologically after the one you want to start from as end_id.
+    &#34;&#34;&#34;
+    if size is not None and size &lt;= 0:
+        return
+    
+    if banner_type is None:
+        # we get data from all banners by getting data from every individual banner
+        # and then sorting it by pull date with heapq.merge
+        gens = [get_wish_history(banner_type, None, authkey, end_id)
+                for banner_type in get_banner_types(authkey)]
+        yield from islice(heapq.merge(*gens, key=lambda x: x[&#39;time&#39;], reverse=True), size)
+        return
+
+    # we create banner_name outside prettify so we don&#39;t make extra requests
+    banner_name = get_banner_types(authkey, lang)[banner_type]
+    lang = _get_short_lang_code(lang)
+    page_size = 20  # max size per page is 20
+    
+    while True:
+        data = fetch_gacha_endpoint(
+            &#34;getGachaLog&#34;,
+            authkey=authkey,
+            params=dict(gacha_type=banner_type, size=page_size, end_id=end_id, lang=lang)
+        )[&#39;list&#39;]
+        data = prettify_wish_history(data, banner_name)
+        yield from data
+
+        if len(data) &lt; page_size:
+            return  # return if reached the end
+        if size is not None:
+            size -= page_size
+            page_size = min(size, 20)
+            if size &lt;= 0:
+                return
+
+        end_id = data[-1][&#39;id&#39;]</code></pre>
+</details>
+</dd>
+<dt id="genshinstats.wishes.set_authkey"><code class="name flex">
+<span>def <span class="ident">set_authkey</span></span>(<span>authkey: str = None, url: str = None, logfile: str = None) ‑> NoneType</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Sets an authkey for log requests.</p>
+<p>passing in authkey will simply save it,
+passing in a url will take the authkey out of it,
+passing in a logfile will search it,
+otherwise searches the logs and a tempfile.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\wishes.py#L82-L98" class="git-link">Browse git</a>
+</summary>
+<pre><code class="python">def set_authkey(authkey: str = None, url: str = None, logfile: str = None) -&gt; None:
+    &#34;&#34;&#34;Sets an authkey for log requests.
+
+    passing in authkey will simply save it, 
+    passing in a url will take the authkey out of it,
+    passing in a logfile will search it,
+    otherwise searches the logs and a tempfile.
+    &#34;&#34;&#34;
+    if authkey is not None:
+        pass
+    elif url is not None:
+        authkey = extract_authkey(url) # type: ignore
+        if authkey is None:
+            raise ValueError(&#34;url does not have an authkey parameter&#34;)
+    else:
+        authkey = get_authkey(logfile)
+    session.params[&#39;authkey&#39;] = authkey</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+</section>
+</article>
+<nav id="sidebar">
+<form>
+<input id="lunr-search" name="q" placeholder="🔎 Search ..." aria-label="Search"
+disabled minlength="2">
+</form>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/tingle/0.15.3/tingle.min.css" integrity="sha512-j1u8eUJ4f23xPPxwOrLUPQaCD2dwzNqqmDDcWS4deWsMv2ohLqmXXuP3hU7g8TyzbMSakP/mMqoNBYWj8AEIFg==" crossorigin>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tingle/0.15.3/tingle.min.js" integrity="sha512-plGUER9JkeEWPPqQBE4sdLqBoQug5Ap+BCGMc7bJ8BXkm+VVj6QzkpBz5Yv2yPkkq+cqg9IpkBaGCas6uDbW8g==" crossorigin></script>
+<style>
+.modal-dialog iframe {
+width: 100vw;
+height: calc(100vh - 80px);
+}
+@media screen and (min-width: 700px) {
+.modal-dialog iframe {
+width: 70vw;
+height: 80vh;
+}
+}
+.modal-dialog .tingle-modal-box {width: auto;}
+.modal-dialog .tingle-modal-box__content {padding: 0;}
+</style>
+<script>
+const input = document.getElementById('lunr-search');
+input.disabled = false;
+input.form.addEventListener('submit', (ev) => {
+ev.preventDefault();
+const url = new URL(window.location);
+url.searchParams.set('q', input.value);
+history.replaceState({}, null, url.toString());
+search(input.value);
+});
+const query = new URL(window.location).searchParams.get('q');
+if (query)
+search(query);
+function search(query) {
+const url = '../doc-search.html#' + encodeURIComponent(query);
+new tingle.modal({
+cssClass: ['modal-dialog'],
+onClose: () => {
+const url = new URL(window.location);
+url.searchParams.delete('q');
+history.replaceState({}, null, url.toString());
+setTimeout(() => input.focus(), 100);
+}
+}).setContent('<iframe src="' + url + '"></iframe>').open();
+}
+</script>
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="genshinstats" href="index.html">genshinstats</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="genshinstats.wishes.extract_authkey" href="#genshinstats.wishes.extract_authkey">extract_authkey</a></code></li>
+<li><code><a title="genshinstats.wishes.fetch_gacha_endpoint" href="#genshinstats.wishes.fetch_gacha_endpoint">fetch_gacha_endpoint</a></code></li>
+<li><code><a title="genshinstats.wishes.get_authkey" href="#genshinstats.wishes.get_authkey">get_authkey</a></code></li>
+<li><code><a title="genshinstats.wishes.get_banner_details" href="#genshinstats.wishes.get_banner_details">get_banner_details</a></code></li>
+<li><code><a title="genshinstats.wishes.get_banner_ids" href="#genshinstats.wishes.get_banner_ids">get_banner_ids</a></code></li>
+<li><code><a title="genshinstats.wishes.get_banner_types" href="#genshinstats.wishes.get_banner_types">get_banner_types</a></code></li>
+<li><code><a title="genshinstats.wishes.get_gacha_items" href="#genshinstats.wishes.get_gacha_items">get_gacha_items</a></code></li>
+<li><code><a title="genshinstats.wishes.get_uid_from_authkey" href="#genshinstats.wishes.get_uid_from_authkey">get_uid_from_authkey</a></code></li>
+<li><code><a title="genshinstats.wishes.get_wish_history" href="#genshinstats.wishes.get_wish_history">get_wish_history</a></code></li>
+<li><code><a title="genshinstats.wishes.set_authkey" href="#genshinstats.wishes.set_authkey">set_authkey</a></code></li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.9.2</a>.</p>
+</footer>
+</body>
+</html>
