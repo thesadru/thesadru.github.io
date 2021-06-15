@@ -23,44 +23,42 @@
 </header>
 <section id="section-intro">
 <p>Wrapper for the Genshin Impact's api.</p>
-<p>This is an unofficial wrapper for the Genshin Impact's api.
+<p>This is an unofficial wrapper for the Genshin Impact gameRecord and wish history api.
 Majority of the endpoints are implemented, documented and typehinted.</p>
-<p>Majority of the endpoints require a cookie and a ds token, look at README.md for more info.
-(Some functions may have a raw parameter, this prettifies the output to a readable version.)</p>
+<p>All endpoints require to be logged in with either a cookie or an authkey, read the README.md for more info.</p>
 <p><a href="https://github.com/thesadru/genshinstats">https://github.com/thesadru/genshinstats</a></p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\__init__.py#L0-L15" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\__init__.py#L0-L14" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">&#34;&#34;&#34;Wrapper for the Genshin Impact&#39;s api.
 
-This is an unofficial wrapper for the Genshin Impact&#39;s api. 
+This is an unofficial wrapper for the Genshin Impact gameRecord and wish history api. 
 Majority of the endpoints are implemented, documented and typehinted.
 
-Majority of the endpoints require a cookie and a ds token, look at README.md for more info.
-(Some functions may have a raw parameter, this prettifies the output to a readable version.)
+All endpoints require to be logged in with either a cookie or an authkey, read the README.md for more info.
 
 https://github.com/thesadru/genshinstats
 &#34;&#34;&#34;
 from .errors import *
-from .gachalog import *
+from .wishes import *
 from .genshinstats import *
 from .hoyolab import *
-from .signin import *
+from .daily import *
 from .utils import *</code></pre>
 </details>
 </section>
 <section>
 <h2 class="section-title" id="header-submodules">Sub-modules</h2>
 <dl>
+<dt><code class="name"><a title="genshinstats.daily" href="daily.html">genshinstats.daily</a></code></dt>
+<dd>
+<div class="desc"><p>Automatic sign-in for hoyolab's daily rewards …</p></div>
+</dd>
 <dt><code class="name"><a title="genshinstats.errors" href="errors.html">genshinstats.errors</a></code></dt>
 <dd>
 <div class="desc"><p>Genshinstats errors …</p></div>
-</dd>
-<dt><code class="name"><a title="genshinstats.gachalog" href="gachalog.html">genshinstats.gachalog</a></code></dt>
-<dd>
-<div class="desc"><p>Genshin Impact gacha pulls log …</p></div>
 </dd>
 <dt><code class="name"><a title="genshinstats.genshinstats" href="genshinstats.html">genshinstats.genshinstats</a></code></dt>
 <dd>
@@ -74,13 +72,13 @@ from .utils import *</code></pre>
 <dd>
 <div class="desc"><p>Prettifiers for genshinstats api returns …</p></div>
 </dd>
-<dt><code class="name"><a title="genshinstats.signin" href="signin.html">genshinstats.signin</a></code></dt>
-<dd>
-<div class="desc"><p>Automatic sign-in for hoyolab's daily rewards …</p></div>
-</dd>
 <dt><code class="name"><a title="genshinstats.utils" href="utils.html">genshinstats.utils</a></code></dt>
 <dd>
 <div class="desc"><p>Various utility functions for genshinstats.</p></div>
+</dd>
+<dt><code class="name"><a title="genshinstats.wishes" href="wishes.html">genshinstats.wishes</a></code></dt>
+<dd>
+<div class="desc"><p>Genshin Impact wish history …</p></div>
 </dd>
 </dl>
 </section>
@@ -145,13 +143,13 @@ setTimeout(() => input.focus(), 100);
 <ul id="index">
 <li><h3><a href="#header-submodules">Sub-modules</a></h3>
 <ul>
+<li><code><a title="genshinstats.daily" href="daily.html">genshinstats.daily</a></code></li>
 <li><code><a title="genshinstats.errors" href="errors.html">genshinstats.errors</a></code></li>
-<li><code><a title="genshinstats.gachalog" href="gachalog.html">genshinstats.gachalog</a></code></li>
 <li><code><a title="genshinstats.genshinstats" href="genshinstats.html">genshinstats.genshinstats</a></code></li>
 <li><code><a title="genshinstats.hoyolab" href="hoyolab.html">genshinstats.hoyolab</a></code></li>
 <li><code><a title="genshinstats.pretty" href="pretty.html">genshinstats.pretty</a></code></li>
-<li><code><a title="genshinstats.signin" href="signin.html">genshinstats.signin</a></code></li>
 <li><code><a title="genshinstats.utils" href="utils.html">genshinstats.utils</a></code></li>
+<li><code><a title="genshinstats.wishes" href="wishes.html">genshinstats.wishes</a></code></li>
 </ul>
 </li>
 </ul>

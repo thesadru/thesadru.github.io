@@ -26,14 +26,19 @@
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\utils.py#L0-L39" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\utils.py#L0-L51" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">&#34;&#34;&#34;Various utility functions for genshinstats.&#34;&#34;&#34;
+import asyncio
 import os.path
 import re
-from typing import Optional
+from typing import Awaitable, Callable, Optional, TypeVar, Union
 
 from .errors import AccountNotFound
+
+__all__ = [
+    &#39;USER_AGENT&#39;, &#39;recognize_server&#39;, &#39;is_game_uid&#39;, &#39;is_chinese&#39;, &#39;get_output_log&#39;, &#39;asyncify&#39;
+]
 
 USER_AGENT = &#34;Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36&#34;
 
@@ -56,7 +61,7 @@ def is_game_uid(uid: int) -&gt; bool:
     &#34;&#34;&#34;Recognizes whether the uid is a game uid.&#34;&#34;&#34;
     return bool(re.fullmatch(r&#39;[6789]\d{8}&#39;,str(uid)))
 
-def is_chinese(x) -&gt; bool:
+def is_chinese(x: Union[int, str]) -&gt; bool:
     &#34;&#34;&#34;Recognizes whether the server/uid is chinese.&#34;&#34;&#34;
     return str(x).startswith((&#39;cn&#39;,&#39;1&#39;,&#39;5&#39;))
 
@@ -67,7 +72,14 @@ def get_output_log() -&gt; Optional[str]:
         output_log = os.path.join(mihoyo_dir,name,&#39;output_log.txt&#39;)
         if os.path.isfile(output_log):
             return output_log
-    return None # no genshin installation</code></pre>
+    return None # no genshin installation
+
+T = TypeVar(&#39;T&#39;)
+def asyncify(func: Callable[..., T], *args, **kwargs) -&gt; Awaitable[T]:
+    &#34;&#34;&#34;Wraps a function as an awaitable so it can be used in asyncio projects.&#34;&#34;&#34;
+    loop = asyncio.get_event_loop()
+    # use run_in_executor so we don&#39;t have to create our own
+    return loop.run_in_executor(None, lambda: func(*args, **kwargs))</code></pre>
 </details>
 </section>
 <section>
@@ -77,6 +89,23 @@ def get_output_log() -&gt; Optional[str]:
 <section>
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
+<dt id="genshinstats.utils.asyncify"><code class="name flex">
+<span>def <span class="ident">asyncify</span></span>(<span>func: Callable[..., ~T], *args, **kwargs) ‑> Awaitable[~T]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Wraps a function as an awaitable so it can be used in asyncio projects.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\utils.py#L48-L52" class="git-link">Browse git</a>
+</summary>
+<pre><code class="python">def asyncify(func: Callable[..., T], *args, **kwargs) -&gt; Awaitable[T]:
+    &#34;&#34;&#34;Wraps a function as an awaitable so it can be used in asyncio projects.&#34;&#34;&#34;
+    loop = asyncio.get_event_loop()
+    # use run_in_executor so we don&#39;t have to create our own
+    return loop.run_in_executor(None, lambda: func(*args, **kwargs))</code></pre>
+</details>
+</dd>
 <dt id="genshinstats.utils.get_output_log"><code class="name flex">
 <span>def <span class="ident">get_output_log</span></span>(<span>) ‑> Optional[str]</span>
 </code></dt>
@@ -85,7 +114,7 @@ def get_output_log() -&gt; Optional[str]:
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\utils.py#L33-L40" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\utils.py#L38-L45" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def get_output_log() -&gt; Optional[str]:
     &#34;&#34;&#34;Find and return the Genshin Impact output log. None if not found.&#34;&#34;&#34;
@@ -98,16 +127,16 @@ def get_output_log() -&gt; Optional[str]:
 </details>
 </dd>
 <dt id="genshinstats.utils.is_chinese"><code class="name flex">
-<span>def <span class="ident">is_chinese</span></span>(<span>x) ‑> bool</span>
+<span>def <span class="ident">is_chinese</span></span>(<span>x: Union[int, str]) ‑> bool</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Recognizes whether the server/uid is chinese.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\utils.py#L29-L31" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\utils.py#L34-L36" class="git-link">Browse git</a>
 </summary>
-<pre><code class="python">def is_chinese(x) -&gt; bool:
+<pre><code class="python">def is_chinese(x: Union[int, str]) -&gt; bool:
     &#34;&#34;&#34;Recognizes whether the server/uid is chinese.&#34;&#34;&#34;
     return str(x).startswith((&#39;cn&#39;,&#39;1&#39;,&#39;5&#39;))</code></pre>
 </details>
@@ -120,7 +149,7 @@ def get_output_log() -&gt; Optional[str]:
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\utils.py#L25-L27" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\utils.py#L30-L32" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def is_game_uid(uid: int) -&gt; bool:
     &#34;&#34;&#34;Recognizes whether the uid is a game uid.&#34;&#34;&#34;
@@ -135,7 +164,7 @@ def get_output_log() -&gt; Optional[str]:
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\utils.py#L10-L23" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\utils.py#L15-L28" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def recognize_server(uid: int) -&gt; str:
     &#34;&#34;&#34;Recognizes which server a UID is from.&#34;&#34;&#34;
@@ -217,6 +246,7 @@ setTimeout(() => input.focus(), 100);
 </li>
 <li><h3><a href="#header-functions">Functions</a></h3>
 <ul class="">
+<li><code><a title="genshinstats.utils.asyncify" href="#genshinstats.utils.asyncify">asyncify</a></code></li>
 <li><code><a title="genshinstats.utils.get_output_log" href="#genshinstats.utils.get_output_log">get_output_log</a></code></li>
 <li><code><a title="genshinstats.utils.is_chinese" href="#genshinstats.utils.is_chinese">is_chinese</a></code></li>
 <li><code><a title="genshinstats.utils.is_game_uid" href="#genshinstats.utils.is_game_uid">is_game_uid</a></code></li>

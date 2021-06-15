@@ -28,16 +28,13 @@ It's possible to add retcodes and the original api response message with <code>.
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\errors.py#L0-L87" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\errors.py#L0-L78" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">&#34;&#34;&#34;Genshinstats errors.
 
 These take in only a single argument: msg.
 It&#39;s possible to add retcodes and the original api response message with `.set_reponse()`.
 &#34;&#34;&#34;
-import re
-from typing import NoReturn
-
 class GenshinStatsException(Exception):
     &#34;&#34;&#34;Base Exception for all genshinstats errors.&#34;&#34;&#34;
     retcode: int = 0
@@ -59,6 +56,8 @@ class GenshinStatsException(Exception):
     def msg(self, msg):
         self.args = (msg,)
 
+class TooManyRequests(GenshinStatsException):
+    &#34;&#34;&#34;Made too many requests and got ratelimited&#34;&#34;&#34;
 class NotLoggedIn(GenshinStatsException):
     &#34;&#34;&#34;Cookies have not been provided.&#34;&#34;&#34;
 class AccountNotFound(GenshinStatsException):
@@ -68,18 +67,8 @@ class DataNotPublic(GenshinStatsException):
 
 class CodeRedeemException(GenshinStatsException):
     &#34;&#34;&#34;Code redemption failed.&#34;&#34;&#34;
-class RedeemCooldown(CodeRedeemException):
-    &#34;&#34;&#34;Can claim codes only every 5 seconds.&#34;&#34;&#34;
-    cooldown: int = 5
-    def set_response(self, response: dict):
-        super().set_response(response)
-        self.cooldown = int(re.search(r&#39;\d+&#39;,self.orig_msg).group())
-        self.msg = self.msg.format(self.cooldown)
-
 class SignInException(GenshinStatsException):
     &#34;&#34;&#34;Sign-in failed&#34;&#34;&#34;
-class AlreadySignedIn(SignInException):
-    &#34;&#34;&#34;Already signed in, cannot sign in again.&#34;&#34;&#34;
 
 class GachaLogException(GenshinStatsException):
     &#34;&#34;&#34;Base GachaLog Exception.&#34;&#34;&#34;
@@ -90,27 +79,29 @@ class AuthKeyTimeout(GachaLogException):
 class MissingAuthKey(GachaLogException):
     &#34;&#34;&#34;No gacha authkey was found.&#34;&#34;&#34;
 
-def raise_for_error(response: dict) -&gt; NoReturn:
+def raise_for_error(response: dict):
     &#34;&#34;&#34;Raises a custom genshinstats error from a response.&#34;&#34;&#34;
     # every error uses a different response code and message, 
     # but the codes are not unique so we must check the message at some points too.
     error = {
         # general
+        10101: TooManyRequests(&#34;Cannnot get data for more than 30 accounts per cookie per day.&#34;),
         -100:  NotLoggedIn(&#39;Login cookies have not been provided or are incorrect.&#39;),
+        10001: NotLoggedIn(&#39;Login cookies have not been provided or are incorrect.&#39;),
         10102: DataNotPublic(&#39;User\&#39;s data is not public&#39;),
         1009:  AccountNotFound(&#39;Could not find user; uid may not be valid.&#39;),
         -1:    AccountNotFound(&#39;Could not find user; uid may not be valid.&#39;),
         -10002:AccountNotFound(&#39;Cannot get rewards info. Account has no game account binded to it.&#39;),
+        -108:  GenshinStatsException(&#39;Language is not valid.&#39;),
         # code redemption
         -2003: CodeRedeemException(&#39;Invalid redemption code&#39;),
         -2017: CodeRedeemException(&#39;Redemption code has been claimed already.&#39;),
         -2001: CodeRedeemException(&#39;Redemption code has expired.&#39;),
         -2021: CodeRedeemException(&#39;Cannot claim codes for account with adventure rank lower than 10.&#39;),
         -1073: CodeRedeemException(&#39;Cannot claim code. Account has no game account bound to it.&#39;),
-        -2016: RedeemCooldown(&#39;Redemption in cooldown. Please try again in {} second(s).&#39;),
         # sign in
-        -5003: AlreadySignedIn(&#39;Already claimed daily reward, try again tomorrow.&#39;),
-        2001:  AlreadySignedIn(&#39;Already checked in today, wait at least a day before checking-in again.&#39;),
+        -5003: SignInException(&#39;Already claimed daily reward, try again tomorrow.&#39;),
+        2001:  SignInException(&#39;Already checked in today, wait at least a day before checking-in again.&#39;),
         # gacha log
         -100:  InvalidAuthkey(&#39;Authkey is not valid.&#39;) if response[&#39;message&#39;]==&#39;authkey error&#39; else 
                 NotLoggedIn(&#39;Login cookies have not been provided or are incorrect.&#39;),
@@ -128,36 +119,38 @@ def raise_for_error(response: dict) -&gt; NoReturn:
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
 <dt id="genshinstats.errors.raise_for_error"><code class="name flex">
-<span>def <span class="ident">raise_for_error</span></span>(<span>response: dict) ‑> NoReturn</span>
+<span>def <span class="ident">raise_for_error</span></span>(<span>response: dict)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Raises a custom genshinstats error from a response.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\errors.py#L61-L88" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\errors.py#L50-L79" class="git-link">Browse git</a>
 </summary>
-<pre><code class="python">def raise_for_error(response: dict) -&gt; NoReturn:
+<pre><code class="python">def raise_for_error(response: dict):
     &#34;&#34;&#34;Raises a custom genshinstats error from a response.&#34;&#34;&#34;
     # every error uses a different response code and message, 
     # but the codes are not unique so we must check the message at some points too.
     error = {
         # general
+        10101: TooManyRequests(&#34;Cannnot get data for more than 30 accounts per cookie per day.&#34;),
         -100:  NotLoggedIn(&#39;Login cookies have not been provided or are incorrect.&#39;),
+        10001: NotLoggedIn(&#39;Login cookies have not been provided or are incorrect.&#39;),
         10102: DataNotPublic(&#39;User\&#39;s data is not public&#39;),
         1009:  AccountNotFound(&#39;Could not find user; uid may not be valid.&#39;),
         -1:    AccountNotFound(&#39;Could not find user; uid may not be valid.&#39;),
         -10002:AccountNotFound(&#39;Cannot get rewards info. Account has no game account binded to it.&#39;),
+        -108:  GenshinStatsException(&#39;Language is not valid.&#39;),
         # code redemption
         -2003: CodeRedeemException(&#39;Invalid redemption code&#39;),
         -2017: CodeRedeemException(&#39;Redemption code has been claimed already.&#39;),
         -2001: CodeRedeemException(&#39;Redemption code has expired.&#39;),
         -2021: CodeRedeemException(&#39;Cannot claim codes for account with adventure rank lower than 10.&#39;),
         -1073: CodeRedeemException(&#39;Cannot claim code. Account has no game account bound to it.&#39;),
-        -2016: RedeemCooldown(&#39;Redemption in cooldown. Please try again in {} second(s).&#39;),
         # sign in
-        -5003: AlreadySignedIn(&#39;Already claimed daily reward, try again tomorrow.&#39;),
-        2001:  AlreadySignedIn(&#39;Already checked in today, wait at least a day before checking-in again.&#39;),
+        -5003: SignInException(&#39;Already claimed daily reward, try again tomorrow.&#39;),
+        2001:  SignInException(&#39;Already checked in today, wait at least a day before checking-in again.&#39;),
         # gacha log
         -100:  InvalidAuthkey(&#39;Authkey is not valid.&#39;) if response[&#39;message&#39;]==&#39;authkey error&#39; else 
                 NotLoggedIn(&#39;Login cookies have not been provided or are incorrect.&#39;),
@@ -181,7 +174,7 @@ def raise_for_error(response: dict) -&gt; NoReturn:
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\errors.py#L32-L33" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\errors.py#L31-L32" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">class AccountNotFound(GenshinStatsException):
     &#34;&#34;&#34;Tried to get data with an invalid uid.&#34;&#34;&#34;</code></pre>
@@ -212,47 +205,6 @@ def raise_for_error(response: dict) -&gt; NoReturn:
 </li>
 </ul>
 </dd>
-<dt id="genshinstats.errors.AlreadySignedIn"><code class="flex name class">
-<span>class <span class="ident">AlreadySignedIn</span></span>
-<span>(</span><span>msg: str)</span>
-</code></dt>
-<dd>
-<div class="desc"><p>Already signed in, cannot sign in again.</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\errors.py#L49-L50" class="git-link">Browse git</a>
-</summary>
-<pre><code class="python">class AlreadySignedIn(SignInException):
-    &#34;&#34;&#34;Already signed in, cannot sign in again.&#34;&#34;&#34;</code></pre>
-</details>
-<h3>Ancestors</h3>
-<ul class="hlist">
-<li><a title="genshinstats.errors.SignInException" href="#genshinstats.errors.SignInException">SignInException</a></li>
-<li><a title="genshinstats.errors.GenshinStatsException" href="#genshinstats.errors.GenshinStatsException">GenshinStatsException</a></li>
-<li>builtins.Exception</li>
-<li>builtins.BaseException</li>
-</ul>
-<h3>Class variables</h3>
-<dl>
-<dt id="genshinstats.errors.AlreadySignedIn.orig_msg"><code class="name">var <span class="ident">orig_msg</span> : str</code></dt>
-<dd>
-<div class="desc"></div>
-</dd>
-<dt id="genshinstats.errors.AlreadySignedIn.retcode"><code class="name">var <span class="ident">retcode</span> : int</code></dt>
-<dd>
-<div class="desc"></div>
-</dd>
-</dl>
-<h3>Inherited members</h3>
-<ul class="hlist">
-<li><code><b><a title="genshinstats.errors.SignInException" href="#genshinstats.errors.SignInException">SignInException</a></b></code>:
-<ul class="hlist">
-<li><code><a title="genshinstats.errors.SignInException.set_response" href="#genshinstats.errors.GenshinStatsException.set_response">set_response</a></code></li>
-</ul>
-</li>
-</ul>
-</dd>
 <dt id="genshinstats.errors.AuthKeyTimeout"><code class="flex name class">
 <span>class <span class="ident">AuthKeyTimeout</span></span>
 <span>(</span><span>msg: str)</span>
@@ -262,7 +214,7 @@ def raise_for_error(response: dict) -&gt; NoReturn:
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\errors.py#L56-L57" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\errors.py#L45-L46" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">class AuthKeyTimeout(GachaLogException):
     &#34;&#34;&#34;An authkey has timed out.&#34;&#34;&#34;</code></pre>
@@ -303,7 +255,7 @@ def raise_for_error(response: dict) -&gt; NoReturn:
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\errors.py#L37-L38" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\errors.py#L36-L37" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">class CodeRedeemException(GenshinStatsException):
     &#34;&#34;&#34;Code redemption failed.&#34;&#34;&#34;</code></pre>
@@ -313,10 +265,6 @@ def raise_for_error(response: dict) -&gt; NoReturn:
 <li><a title="genshinstats.errors.GenshinStatsException" href="#genshinstats.errors.GenshinStatsException">GenshinStatsException</a></li>
 <li>builtins.Exception</li>
 <li>builtins.BaseException</li>
-</ul>
-<h3>Subclasses</h3>
-<ul class="hlist">
-<li><a title="genshinstats.errors.RedeemCooldown" href="#genshinstats.errors.RedeemCooldown">RedeemCooldown</a></li>
 </ul>
 <h3>Class variables</h3>
 <dl>
@@ -347,7 +295,7 @@ def raise_for_error(response: dict) -&gt; NoReturn:
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\errors.py#L34-L35" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\errors.py#L33-L34" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">class DataNotPublic(GenshinStatsException):
     &#34;&#34;&#34;User hasn&#39;t set their data to public.&#34;&#34;&#34;</code></pre>
@@ -387,7 +335,7 @@ def raise_for_error(response: dict) -&gt; NoReturn:
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\errors.py#L52-L53" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\errors.py#L41-L42" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">class GachaLogException(GenshinStatsException):
     &#34;&#34;&#34;Base GachaLog Exception.&#34;&#34;&#34;</code></pre>
@@ -433,7 +381,7 @@ def raise_for_error(response: dict) -&gt; NoReturn:
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\errors.py#L9-L28" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\errors.py#L6-L25" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">class GenshinStatsException(Exception):
     &#34;&#34;&#34;Base Exception for all genshinstats errors.&#34;&#34;&#34;
@@ -469,6 +417,7 @@ def raise_for_error(response: dict) -&gt; NoReturn:
 <li><a title="genshinstats.errors.GachaLogException" href="#genshinstats.errors.GachaLogException">GachaLogException</a></li>
 <li><a title="genshinstats.errors.NotLoggedIn" href="#genshinstats.errors.NotLoggedIn">NotLoggedIn</a></li>
 <li><a title="genshinstats.errors.SignInException" href="#genshinstats.errors.SignInException">SignInException</a></li>
+<li><a title="genshinstats.errors.TooManyRequests" href="#genshinstats.errors.TooManyRequests">TooManyRequests</a></li>
 </ul>
 <h3>Class variables</h3>
 <dl>
@@ -489,7 +438,7 @@ def raise_for_error(response: dict) -&gt; NoReturn:
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\errors.py#L23-L25" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\errors.py#L20-L22" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">@property
 def msg(self):
@@ -507,7 +456,7 @@ def msg(self):
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\errors.py#L16-L21" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\errors.py#L13-L18" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def set_response(self, response: dict):
     &#34;&#34;&#34;Adds an optional response object to the error.&#34;&#34;&#34;
@@ -528,7 +477,7 @@ def msg(self):
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\errors.py#L54-L55" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\errors.py#L43-L44" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">class InvalidAuthkey(GachaLogException):
     &#34;&#34;&#34;An authkey is invalid.&#34;&#34;&#34;</code></pre>
@@ -569,7 +518,7 @@ def msg(self):
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\errors.py#L58-L59" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\errors.py#L47-L48" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">class MissingAuthKey(GachaLogException):
     &#34;&#34;&#34;No gacha authkey was found.&#34;&#34;&#34;</code></pre>
@@ -610,7 +559,7 @@ def msg(self):
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\errors.py#L30-L31" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\errors.py#L29-L30" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">class NotLoggedIn(GenshinStatsException):
     &#34;&#34;&#34;Cookies have not been provided.&#34;&#34;&#34;</code></pre>
@@ -641,48 +590,6 @@ def msg(self):
 </li>
 </ul>
 </dd>
-<dt id="genshinstats.errors.RedeemCooldown"><code class="flex name class">
-<span>class <span class="ident">RedeemCooldown</span></span>
-<span>(</span><span>msg: str)</span>
-</code></dt>
-<dd>
-<div class="desc"><p>Can claim codes only every 5 seconds.</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\errors.py#L39-L45" class="git-link">Browse git</a>
-</summary>
-<pre><code class="python">class RedeemCooldown(CodeRedeemException):
-    &#34;&#34;&#34;Can claim codes only every 5 seconds.&#34;&#34;&#34;
-    cooldown: int = 5
-    def set_response(self, response: dict):
-        super().set_response(response)
-        self.cooldown = int(re.search(r&#39;\d+&#39;,self.orig_msg).group())
-        self.msg = self.msg.format(self.cooldown)</code></pre>
-</details>
-<h3>Ancestors</h3>
-<ul class="hlist">
-<li><a title="genshinstats.errors.CodeRedeemException" href="#genshinstats.errors.CodeRedeemException">CodeRedeemException</a></li>
-<li><a title="genshinstats.errors.GenshinStatsException" href="#genshinstats.errors.GenshinStatsException">GenshinStatsException</a></li>
-<li>builtins.Exception</li>
-<li>builtins.BaseException</li>
-</ul>
-<h3>Class variables</h3>
-<dl>
-<dt id="genshinstats.errors.RedeemCooldown.cooldown"><code class="name">var <span class="ident">cooldown</span> : int</code></dt>
-<dd>
-<div class="desc"></div>
-</dd>
-</dl>
-<h3>Inherited members</h3>
-<ul class="hlist">
-<li><code><b><a title="genshinstats.errors.CodeRedeemException" href="#genshinstats.errors.CodeRedeemException">CodeRedeemException</a></b></code>:
-<ul class="hlist">
-<li><code><a title="genshinstats.errors.CodeRedeemException.set_response" href="#genshinstats.errors.GenshinStatsException.set_response">set_response</a></code></li>
-</ul>
-</li>
-</ul>
-</dd>
 <dt id="genshinstats.errors.SignInException"><code class="flex name class">
 <span>class <span class="ident">SignInException</span></span>
 <span>(</span><span>msg: str)</span>
@@ -692,7 +599,7 @@ def msg(self):
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\errors.py#L47-L48" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\errors.py#L38-L39" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">class SignInException(GenshinStatsException):
     &#34;&#34;&#34;Sign-in failed&#34;&#34;&#34;</code></pre>
@@ -703,10 +610,6 @@ def msg(self):
 <li>builtins.Exception</li>
 <li>builtins.BaseException</li>
 </ul>
-<h3>Subclasses</h3>
-<ul class="hlist">
-<li><a title="genshinstats.errors.AlreadySignedIn" href="#genshinstats.errors.AlreadySignedIn">AlreadySignedIn</a></li>
-</ul>
 <h3>Class variables</h3>
 <dl>
 <dt id="genshinstats.errors.SignInException.orig_msg"><code class="name">var <span class="ident">orig_msg</span> : str</code></dt>
@@ -714,6 +617,46 @@ def msg(self):
 <div class="desc"></div>
 </dd>
 <dt id="genshinstats.errors.SignInException.retcode"><code class="name">var <span class="ident">retcode</span> : int</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="genshinstats.errors.GenshinStatsException" href="#genshinstats.errors.GenshinStatsException">GenshinStatsException</a></b></code>:
+<ul class="hlist">
+<li><code><a title="genshinstats.errors.GenshinStatsException.set_response" href="#genshinstats.errors.GenshinStatsException.set_response">set_response</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="genshinstats.errors.TooManyRequests"><code class="flex name class">
+<span>class <span class="ident">TooManyRequests</span></span>
+<span>(</span><span>msg: str)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Made too many requests and got ratelimited</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\errors.py#L27-L28" class="git-link">Browse git</a>
+</summary>
+<pre><code class="python">class TooManyRequests(GenshinStatsException):
+    &#34;&#34;&#34;Made too many requests and got ratelimited&#34;&#34;&#34;</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="genshinstats.errors.GenshinStatsException" href="#genshinstats.errors.GenshinStatsException">GenshinStatsException</a></li>
+<li>builtins.Exception</li>
+<li>builtins.BaseException</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="genshinstats.errors.TooManyRequests.orig_msg"><code class="name">var <span class="ident">orig_msg</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="genshinstats.errors.TooManyRequests.retcode"><code class="name">var <span class="ident">retcode</span> : int</code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
@@ -802,13 +745,6 @@ setTimeout(() => input.focus(), 100);
 </ul>
 </li>
 <li>
-<h4><code><a title="genshinstats.errors.AlreadySignedIn" href="#genshinstats.errors.AlreadySignedIn">AlreadySignedIn</a></code></h4>
-<ul class="">
-<li><code><a title="genshinstats.errors.AlreadySignedIn.orig_msg" href="#genshinstats.errors.AlreadySignedIn.orig_msg">orig_msg</a></code></li>
-<li><code><a title="genshinstats.errors.AlreadySignedIn.retcode" href="#genshinstats.errors.AlreadySignedIn.retcode">retcode</a></code></li>
-</ul>
-</li>
-<li>
 <h4><code><a title="genshinstats.errors.AuthKeyTimeout" href="#genshinstats.errors.AuthKeyTimeout">AuthKeyTimeout</a></code></h4>
 <ul class="">
 <li><code><a title="genshinstats.errors.AuthKeyTimeout.orig_msg" href="#genshinstats.errors.AuthKeyTimeout.orig_msg">orig_msg</a></code></li>
@@ -867,16 +803,17 @@ setTimeout(() => input.focus(), 100);
 </ul>
 </li>
 <li>
-<h4><code><a title="genshinstats.errors.RedeemCooldown" href="#genshinstats.errors.RedeemCooldown">RedeemCooldown</a></code></h4>
-<ul class="">
-<li><code><a title="genshinstats.errors.RedeemCooldown.cooldown" href="#genshinstats.errors.RedeemCooldown.cooldown">cooldown</a></code></li>
-</ul>
-</li>
-<li>
 <h4><code><a title="genshinstats.errors.SignInException" href="#genshinstats.errors.SignInException">SignInException</a></code></h4>
 <ul class="">
 <li><code><a title="genshinstats.errors.SignInException.orig_msg" href="#genshinstats.errors.SignInException.orig_msg">orig_msg</a></code></li>
 <li><code><a title="genshinstats.errors.SignInException.retcode" href="#genshinstats.errors.SignInException.retcode">retcode</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="genshinstats.errors.TooManyRequests" href="#genshinstats.errors.TooManyRequests">TooManyRequests</a></code></h4>
+<ul class="">
+<li><code><a title="genshinstats.errors.TooManyRequests.orig_msg" href="#genshinstats.errors.TooManyRequests.orig_msg">orig_msg</a></code></li>
+<li><code><a title="genshinstats.errors.TooManyRequests.retcode" href="#genshinstats.errors.TooManyRequests.retcode">retcode</a></code></li>
 </ul>
 </li>
 </ul>
