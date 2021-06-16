@@ -415,6 +415,18 @@ INDEX=[
 "func":1
 },
 {
+"ref":"genshinstats.hoyolab.get_recommended_users",
+"url":4,
+"doc":"Gets a list of recommended active users",
+"func":1
+},
+{
+"ref":"genshinstats.hoyolab.get_hot_posts",
+"url":4,
+"doc":"Fetches hot posts from the front page of hoyolabs Posts are split into different forums set by ids 1-5. There may be less posts returned than size.",
+"func":1
+},
+{
 "ref":"genshinstats.pretty",
 "url":5,
 "doc":"Prettifiers for genshinstats api returns. Fixes the huge problem of outdated field names in the api, that were leftover from during development"
