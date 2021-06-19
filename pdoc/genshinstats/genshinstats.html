@@ -27,7 +27,7 @@
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\genshinstats.py#L0-L215" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\genshinstats.py#L0-L213" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">&#34;&#34;&#34;Wrapper for the hoyolab.com gameRecord api.
 
@@ -38,11 +38,10 @@ import random
 import string
 import time
 from http.cookies import SimpleCookie
-from http.cookiejar import Cookie, CookieJar, CookiePolicy, DefaultCookiePolicy
 from typing import Any, Dict, List, Mapping, Union
 from urllib.parse import urljoin
 
-from requests.sessions import Session, RequestsCookieJar
+from requests.sessions import RequestsCookieJar, Session
 
 from .errors import NotLoggedIn, TooManyRequests, raise_for_error
 from .pretty import *
@@ -93,9 +92,8 @@ def set_cookies(*args: Union[Mapping[str, Any], str], clear: bool = True) -&gt; 
     
     If clear is set to False the previously set cookies won&#39;t be cleared.
     &#34;&#34;&#34;
-    global cookies
     if clear:
-        cookies = []
+        cookies.clear()
     
     for cookie in args:
         if isinstance(cookie, Mapping):
@@ -112,7 +110,7 @@ def get_browser_cookies(browser: str = None) -&gt; Dict[str, str]:
     If a specifc browser is set, gets data from that browser only.
     Avalible browsers: chrome, chromium, opera, edge, firefox
     &#34;&#34;&#34;
-    import browser_cookie3 # optional library
+    import browser_cookie3  # optional library
     load = getattr(browser_cookie3, browser.lower()) if browser else browser_cookie3.load
     # For backwards compatibility we also get account_id and cookie_token
     # however we can&#39;t just get every cookie because there&#39;s sensitive information
@@ -268,7 +266,7 @@ but that requires being logged in as that user.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\genshinstats.py#L117-L160" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\genshinstats.py#L115-L158" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def fetch_endpoint(endpoint: str, chinese: bool = False, **kwargs) -&gt; Dict[str, Any]:
     &#34;&#34;&#34;Fetch an enpoint from the API.
@@ -326,7 +324,7 @@ However that makes it fairly slow so it's not recommended to use it outside cach
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\genshinstats.py#L207-L216" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\genshinstats.py#L205-L214" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def get_all_user_data(uid: int, lang: str = &#39;en-us&#39;) -&gt; dict:
     &#34;&#34;&#34;Fetches all data a user can has. Very slow.
@@ -350,7 +348,7 @@ Avalible browsers: chrome, chromium, opera, edge, firefox</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\genshinstats.py#L78-L94" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\genshinstats.py#L76-L92" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def get_browser_cookies(browser: str = None) -&gt; Dict[str, str]:
     &#34;&#34;&#34;Gets cookies from your browser for later storing.
@@ -358,7 +356,7 @@ Avalible browsers: chrome, chromium, opera, edge, firefox</p></div>
     If a specifc browser is set, gets data from that browser only.
     Avalible browsers: chrome, chromium, opera, edge, firefox
     &#34;&#34;&#34;
-    import browser_cookie3 # optional library
+    import browser_cookie3  # optional library
     load = getattr(browser_cookie3, browser.lower()) if browser else browser_cookie3.load
     # For backwards compatibility we also get account_id and cookie_token
     # however we can&#39;t just get every cookie because there&#39;s sensitive information
@@ -382,7 +380,7 @@ Talents are not included.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\genshinstats.py#L172-L191" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\genshinstats.py#L170-L189" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def get_characters(uid: int, character_ids: List[int] = None, lang: str = &#39;en-us&#39;) -&gt; list:
     &#34;&#34;&#34;Gets characters of a user.
@@ -414,7 +412,7 @@ Talents are not included.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\genshinstats.py#L110-L115" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\genshinstats.py#L108-L113" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def get_ds_token(salt: str = DS_SALT) -&gt; str:
     &#34;&#34;&#34;Creates a new ds token for authentication.&#34;&#34;&#34;
@@ -433,7 +431,7 @@ Talents are not included.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\genshinstats.py#L193-L205" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\genshinstats.py#L191-L203" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def get_spiral_abyss(uid: int, previous: bool = False) -&gt; dict:
     &#34;&#34;&#34;Gets spiral abyss runs of a user and details about them.
@@ -458,7 +456,7 @@ Talents are not included.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\genshinstats.py#L162-L170" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\genshinstats.py#L160-L168" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def get_user_stats(uid: int) -&gt; dict:
     &#34;&#34;&#34;Gets basic user information and stats.&#34;&#34;&#34;
@@ -485,7 +483,7 @@ Talents are not included.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\genshinstats.py#L43-L55" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\genshinstats.py#L42-L54" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def set_cookie(cookie: Union[Mapping[str, Any], str] = None, **kwargs: Any) -&gt; None:
     &#34;&#34;&#34;Logs-in using a cookie.
@@ -515,7 +513,7 @@ Avalible browsers: chrome, chromium, opera, edge, firefox</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\genshinstats.py#L96-L106" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\genshinstats.py#L94-L104" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def set_cookie_auto(browser: str = None) -&gt; None:
     &#34;&#34;&#34;Like set_cookie, but gets the cookies by itself from your browser.
@@ -541,7 +539,7 @@ This is so far the only way to circumvent the rate limit.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\genshinstats.py#L57-L76" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\genshinstats.py#L56-L74" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def set_cookies(*args: Union[Mapping[str, Any], str], clear: bool = True) -&gt; None:
     &#34;&#34;&#34;Sets multiple cookies at once to cycle between. Takes same arguments as set_cookie.
@@ -551,9 +549,8 @@ This is so far the only way to circumvent the rate limit.</p>
     
     If clear is set to False the previously set cookies won&#39;t be cleared.
     &#34;&#34;&#34;
-    global cookies
     if clear:
-        cookies = []
+        cookies.clear()
     
     for cookie in args:
         if isinstance(cookie, Mapping):
@@ -578,7 +575,7 @@ Avalible browsers: chrome, chromium, opera, edge, firefox</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\genshinstats.py#L96-L106" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\genshinstats.py#L94-L104" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def set_cookie_auto(browser: str = None) -&gt; None:
     &#34;&#34;&#34;Like set_cookie, but gets the cookies by itself from your browser.

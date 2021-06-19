@@ -28,7 +28,7 @@ Requires an authkey that is fetched automatically from a logfile.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\wishes.py#L0-L227" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\wishes.py#L0-L221" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">&#34;&#34;&#34;Genshin Impact wish history.
 
@@ -111,22 +111,16 @@ def get_authkey(logfile: str = None) -&gt; str:
     raise MissingAuthKey(&#39;No authkey could be found in the logs or in a tempfile. &#39;
                          &#39;Open the history in-game first before attempting to request it.&#39;)
 
-def set_authkey(authkey: str = None, url: str = None, logfile: str = None) -&gt; None:
+def set_authkey(authkey: str = None) -&gt; None:
     &#34;&#34;&#34;Sets an authkey for log requests.
 
-    passing in authkey will simply save it, 
-    passing in a url will take the authkey out of it,
-    passing in a logfile will search it,
-    otherwise searches the logs and a tempfile.
+    You may pass in an authkey, a url with an authkey 
+    or a path to a logfile with the authkey.
     &#34;&#34;&#34;
-    if authkey is not None:
-        pass
-    elif url is not None:
-        authkey = extract_authkey(url) # type: ignore
-        if authkey is None:
-            raise ValueError(&#34;url does not have an authkey parameter&#34;)
+    if authkey is None or os.path.isfile(authkey):
+        authkey = get_authkey(authkey)
     else:
-        authkey = get_authkey(logfile)
+        authkey = extract_authkey(authkey) or authkey
     session.params[&#39;authkey&#39;] = authkey
 
 def get_banner_ids(logfile: str = None) -&gt; List[str]:
@@ -297,7 +291,7 @@ Includes error handling and getting the authkey.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\wishes.py#L109-L131" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\wishes.py#L103-L125" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def fetch_gacha_endpoint(endpoint: str, authkey: str = None, **kwargs) -&gt; Dict[str, Any]:
     &#34;&#34;&#34;Fetch an enpoint from mihoyo&#39;s gacha info.
@@ -367,7 +361,7 @@ example standard wish: "a37a19624270b092e7250edfabce541a3435c2"</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\wishes.py#L203-L216" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\wishes.py#L197-L210" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def get_banner_details(banner_id: str, lang: str = &#39;en-us&#39;) -&gt; dict:
     &#34;&#34;&#34;Gets details of a specific banner.
@@ -394,7 +388,7 @@ example standard wish: "a37a19624270b092e7250edfabce541a3435c2"</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\wishes.py#L100-L107" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\wishes.py#L94-L101" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def get_banner_ids(logfile: str = None) -&gt; List[str]:
     &#34;&#34;&#34;Gets all banner ids from a log file.
@@ -414,7 +408,7 @@ example standard wish: "a37a19624270b092e7250edfabce541a3435c2"</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\wishes.py#L133-L141" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\wishes.py#L127-L135" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">@lru_cache()
 def get_banner_types(authkey: str = None, lang: str = &#39;en&#39;) -&gt; Dict[int, str]:
@@ -435,7 +429,7 @@ def get_banner_types(authkey: str = None, lang: str = &#39;en&#39;) -&gt; Dict[i
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\wishes.py#L195-L201" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\wishes.py#L189-L195" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def get_gacha_items(lang: str = &#39;en-us&#39;) -&gt; list:
     &#34;&#34;&#34;Gets the list of characters and weapons that can be gotten from the gacha.&#34;&#34;&#34;
@@ -455,7 +449,7 @@ def get_banner_types(authkey: str = None, lang: str = &#39;en&#39;) -&gt; Dict[i
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\wishes.py#L218-L228" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\wishes.py#L212-L222" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def get_uid_from_authkey(authkey: str = None) -&gt; int:
     &#34;&#34;&#34;Gets a uid from an authkey. 
@@ -484,7 +478,7 @@ you may pass in the id of the pull right chronologically after the one you want 
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\wishes.py#L143-L192" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\wishes.py#L137-L186" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def get_wish_history(
     banner_type: int = None, size: int = None, 
@@ -539,35 +533,27 @@ you may pass in the id of the pull right chronologically after the one you want 
 </details>
 </dd>
 <dt id="genshinstats.wishes.set_authkey"><code class="name flex">
-<span>def <span class="ident">set_authkey</span></span>(<span>authkey: str = None, url: str = None, logfile: str = None) ‑> NoneType</span>
+<span>def <span class="ident">set_authkey</span></span>(<span>authkey: str = None) ‑> NoneType</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Sets an authkey for log requests.</p>
-<p>passing in authkey will simply save it,
-passing in a url will take the authkey out of it,
-passing in a logfile will search it,
-otherwise searches the logs and a tempfile.</p></div>
+<p>You may pass in an authkey, a url with an authkey
+or a path to a logfile with the authkey.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\wishes.py#L82-L98" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\wishes.py#L82-L92" class="git-link">Browse git</a>
 </summary>
-<pre><code class="python">def set_authkey(authkey: str = None, url: str = None, logfile: str = None) -&gt; None:
+<pre><code class="python">def set_authkey(authkey: str = None) -&gt; None:
     &#34;&#34;&#34;Sets an authkey for log requests.
 
-    passing in authkey will simply save it, 
-    passing in a url will take the authkey out of it,
-    passing in a logfile will search it,
-    otherwise searches the logs and a tempfile.
+    You may pass in an authkey, a url with an authkey 
+    or a path to a logfile with the authkey.
     &#34;&#34;&#34;
-    if authkey is not None:
-        pass
-    elif url is not None:
-        authkey = extract_authkey(url) # type: ignore
-        if authkey is None:
-            raise ValueError(&#34;url does not have an authkey parameter&#34;)
+    if authkey is None or os.path.isfile(authkey):
+        authkey = get_authkey(authkey)
     else:
-        authkey = get_authkey(logfile)
+        authkey = extract_authkey(authkey) or authkey
     session.params[&#39;authkey&#39;] = authkey</code></pre>
 </details>
 </dd>

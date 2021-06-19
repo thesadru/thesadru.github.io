@@ -105,7 +105,7 @@ def claim_daily_reward(chinese: bool=False, lang: str = &#39;en-us&#39;) -&gt; O
         params=dict(uid=account[&#39;game_uid&#39;], region=account[&#39;region&#39;])
     )
     rewards = get_monthly_rewards(chinese, lang=lang)
-    return rewards[claimed_rewards + 1]</code></pre>
+    return rewards[claimed_rewards]</code></pre>
 </details>
 </section>
 <section>
@@ -147,7 +147,7 @@ so you must specify whether you want to claim rewards for chinese accounts.</p>
         params=dict(uid=account[&#39;game_uid&#39;], region=account[&#39;region&#39;])
     )
     rewards = get_monthly_rewards(chinese, lang=lang)
-    return rewards[claimed_rewards + 1]</code></pre>
+    return rewards[claimed_rewards]</code></pre>
 </details>
 </dd>
 <dt id="genshinstats.daily.fetch_daily_endpoint"><code class="name flex">

@@ -522,7 +522,7 @@ INDEX=[
 {
 "ref":"genshinstats.wishes.set_authkey",
 "url":7,
-"doc":"Sets an authkey for log requests. passing in authkey will simply save it, passing in a url will take the authkey out of it, passing in a logfile will search it, otherwise searches the logs and a tempfile.",
+"doc":"Sets an authkey for log requests. You may pass in an authkey, a url with an authkey or a path to a logfile with the authkey.",
 "func":1
 },
 {
