@@ -46,7 +46,7 @@ INDEX=[
 {
 "ref":"genshinstats.daily.claim_daily_reward",
 "url":1,
-"doc":"Signs into hoyolab and claims the daily rewards. Chinese and overseas servers work a bit differently, so you must specify whether you want to claim rewards for chinese accounts. Returns the claimed reward or None if the reward cannot be claimed yet.",
+"doc":"Signs into hoyolab and claims the daily rewards. Chinese and overseas servers work a bit differently, so you must specify whether you want to claim rewards for chinese accounts. When claiming rewards for other users you may add a cookie argument. Returns the claimed reward or None if the reward cannot be claimed yet.",
 "func":1
 },
 {
@@ -304,7 +304,7 @@ INDEX=[
 {
 "ref":"genshinstats.genshinstats.set_cookie",
 "url":3,
-"doc":"Logs-in using a cookie. Usage: >>> set_cookie(ltuid= ., ltoken= .) >>> set_cookie(account_id= ., cookie_token= .) >>> set_cookie({'ltuid':  ., 'ltoken':  .}) >>> set_cookie(\"ltuid= ., ltoken= .\")",
+"doc":"Logs-in using a cookie. Usage: >>> set_cookie(ltuid= ., ltoken= .) >>> set_cookie(account_id= ., cookie_token= .) >>> set_cookie({'ltuid':  ., 'ltoken':  .}) >>> set_cookie(\"ltuid= .; ltoken= .\")",
 "func":1
 },
 {

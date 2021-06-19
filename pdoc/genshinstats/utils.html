@@ -26,7 +26,7 @@
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\utils.py#L0-L51" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\utils.py#L0-L50" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">&#34;&#34;&#34;Various utility functions for genshinstats.&#34;&#34;&#34;
 import asyncio
@@ -78,7 +78,6 @@ T = TypeVar(&#39;T&#39;)
 def asyncify(func: Callable[..., T], *args, **kwargs) -&gt; Awaitable[T]:
     &#34;&#34;&#34;Wraps a function as an awaitable so it can be used in asyncio projects.&#34;&#34;&#34;
     loop = asyncio.get_event_loop()
-    # use run_in_executor so we don&#39;t have to create our own
     return loop.run_in_executor(None, lambda: func(*args, **kwargs))</code></pre>
 </details>
 </section>
@@ -97,12 +96,11 @@ def asyncify(func: Callable[..., T], *args, **kwargs) -&gt; Awaitable[T]:
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\utils.py#L48-L52" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\utils.py#L48-L51" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def asyncify(func: Callable[..., T], *args, **kwargs) -&gt; Awaitable[T]:
     &#34;&#34;&#34;Wraps a function as an awaitable so it can be used in asyncio projects.&#34;&#34;&#34;
     loop = asyncio.get_event_loop()
-    # use run_in_executor so we don&#39;t have to create our own
     return loop.run_in_executor(None, lambda: func(*args, **kwargs))</code></pre>
 </details>
 </dd>

@@ -27,7 +27,7 @@
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\genshinstats.py#L0-L213" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\genshinstats.py#L0-L217" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">&#34;&#34;&#34;Wrapper for the hoyolab.com gameRecord api.
 
@@ -77,7 +77,7 @@ def set_cookie(cookie: Union[Mapping[str, Any], str] = None, **kwargs: Any) -&gt
     &gt;&gt;&gt; set_cookie(ltuid=..., ltoken=...)
     &gt;&gt;&gt; set_cookie(account_id=..., cookie_token=...)
     &gt;&gt;&gt; set_cookie({&#39;ltuid&#39;: ..., &#39;ltoken&#39;: ...})
-    &gt;&gt;&gt; set_cookie(&#34;ltuid=..., ltoken=...&#34;)
+    &gt;&gt;&gt; set_cookie(&#34;ltuid=...; ltoken=...&#34;)
     &#34;&#34;&#34;
     if bool(cookie) == bool(kwargs):
         raise ValueError(&#34;Cannot use both positional and keyword arguments at once&#34;)
@@ -143,7 +143,16 @@ def get_ds_token(salt: str = DS_SALT) -&gt; str:
     h = hashlib.md5(f&#34;salt={salt}&amp;t={t}&amp;r={r}&#34;.encode()).hexdigest()  # hash and get hex
     return f&#39;{t},{r},{h}&#39;
 
-def fetch_endpoint(endpoint: str, chinese: bool = False, **kwargs) -&gt; Dict[str, Any]:
+def _request(*args, **kwargs):
+    &#34;&#34;&#34;Fancy requests.request&#34;&#34;&#34;
+    r = session.request(*args, **kwargs)
+    r.raise_for_status()
+    data = r.json()
+    if data[&#39;retcode&#39;] == 0:
+        return data[&#39;data&#39;]
+    raise_for_error(data)
+
+def fetch_endpoint(endpoint: str, chinese: bool = False, cookie: Mapping[str, Any] = None, **kwargs) -&gt; Dict[str, Any]:
     &#34;&#34;&#34;Fetch an enpoint from the API.
 
     Takes in an endpoint url which is joined with the base url.
@@ -155,35 +164,30 @@ def fetch_endpoint(endpoint: str, chinese: bool = False, **kwargs) -&gt; Dict[st
     
     Supports handling ratelimits if multiple cookies are set with `set_cookies`
     &#34;&#34;&#34;
+    
     # parse the arguments for requests.request
     session.headers[&#39;ds&#39;] = get_ds_token()
     method = kwargs.pop(&#39;method&#39;, &#39;get&#39;)
     url = urljoin(CN_TAKUMI_URL if chinese else OS_BBS_URL, endpoint)
     
-    # go through every single avalible cookie to avoid ratelimits
+    if cookie is not None:
+        cookie = {k: str(v) for k, v in cookie.items()}
+        return _request(method, url, cookies=cookie, **kwargs)
+    elif len(cookies) == 0:
+        raise NotLoggedIn(&#39;Login cookies have not been provided&#39;)
+    
     for cookie in cookies.copy():
-        
-        r = session.request(method, url, cookies=cookie, **kwargs)
-        r.raise_for_status()
-        
-        # update the chosen cookies but clear the session cookies
-        cookie.update(r.cookies)
-        session.cookies.clear()
-        
-        data = r.json() # valid json is always returned no matter what
-        if data[&#39;retcode&#39;] == 0:
-            return data[&#39;data&#39;]
-        
         try:
-            raise_for_error(data)
+            return _request(method, url, cookies=cookie, **kwargs)
         except TooManyRequests:
             # move the ratelimited cookie to the end to let the ratelimit wear off
             cookies.append(cookies.pop(0))
+        finally:
+            cookie.update(session.cookies)
+            session.cookies.clear()
     
     # if we&#39;re here it means we used up all our cookies so we must handle that
-    if len(cookies) == 0:
-        raise NotLoggedIn(&#39;Login cookies have not been provided&#39;)
-    elif len(cookies) == 1:
+    if len(cookies) == 1:
         raise TooManyRequests(&#34;Cannnot get data for more than 30 accounts per day.&#34;)
     else:
         raise TooManyRequests(&#34;All cookies have hit their request limit of 30 accounts per day.&#34;)
@@ -253,7 +257,7 @@ def get_all_user_data(uid: int, lang: str = &#39;en-us&#39;) -&gt; dict:
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
 <dt id="genshinstats.genshinstats.fetch_endpoint"><code class="name flex">
-<span>def <span class="ident">fetch_endpoint</span></span>(<span>endpoint: str, chinese: bool = False, **kwargs) ‑> Dict[str, Any]</span>
+<span>def <span class="ident">fetch_endpoint</span></span>(<span>endpoint: str, chinese: bool = False, cookie: Mapping[str, Any] = None, **kwargs) ‑> Dict[str, Any]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Fetch an enpoint from the API.</p>
@@ -266,9 +270,9 @@ but that requires being logged in as that user.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\genshinstats.py#L115-L158" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\genshinstats.py#L124-L162" class="git-link">Browse git</a>
 </summary>
-<pre><code class="python">def fetch_endpoint(endpoint: str, chinese: bool = False, **kwargs) -&gt; Dict[str, Any]:
+<pre><code class="python">def fetch_endpoint(endpoint: str, chinese: bool = False, cookie: Mapping[str, Any] = None, **kwargs) -&gt; Dict[str, Any]:
     &#34;&#34;&#34;Fetch an enpoint from the API.
 
     Takes in an endpoint url which is joined with the base url.
@@ -280,35 +284,30 @@ but that requires being logged in as that user.</p>
     
     Supports handling ratelimits if multiple cookies are set with `set_cookies`
     &#34;&#34;&#34;
+    
     # parse the arguments for requests.request
     session.headers[&#39;ds&#39;] = get_ds_token()
     method = kwargs.pop(&#39;method&#39;, &#39;get&#39;)
     url = urljoin(CN_TAKUMI_URL if chinese else OS_BBS_URL, endpoint)
     
-    # go through every single avalible cookie to avoid ratelimits
+    if cookie is not None:
+        cookie = {k: str(v) for k, v in cookie.items()}
+        return _request(method, url, cookies=cookie, **kwargs)
+    elif len(cookies) == 0:
+        raise NotLoggedIn(&#39;Login cookies have not been provided&#39;)
+    
     for cookie in cookies.copy():
-        
-        r = session.request(method, url, cookies=cookie, **kwargs)
-        r.raise_for_status()
-        
-        # update the chosen cookies but clear the session cookies
-        cookie.update(r.cookies)
-        session.cookies.clear()
-        
-        data = r.json() # valid json is always returned no matter what
-        if data[&#39;retcode&#39;] == 0:
-            return data[&#39;data&#39;]
-        
         try:
-            raise_for_error(data)
+            return _request(method, url, cookies=cookie, **kwargs)
         except TooManyRequests:
             # move the ratelimited cookie to the end to let the ratelimit wear off
             cookies.append(cookies.pop(0))
+        finally:
+            cookie.update(session.cookies)
+            session.cookies.clear()
     
     # if we&#39;re here it means we used up all our cookies so we must handle that
-    if len(cookies) == 0:
-        raise NotLoggedIn(&#39;Login cookies have not been provided&#39;)
-    elif len(cookies) == 1:
+    if len(cookies) == 1:
         raise TooManyRequests(&#34;Cannnot get data for more than 30 accounts per day.&#34;)
     else:
         raise TooManyRequests(&#34;All cookies have hit their request limit of 30 accounts per day.&#34;)</code></pre>
@@ -324,7 +323,7 @@ However that makes it fairly slow so it's not recommended to use it outside cach
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\genshinstats.py#L205-L214" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\genshinstats.py#L209-L218" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def get_all_user_data(uid: int, lang: str = &#39;en-us&#39;) -&gt; dict:
     &#34;&#34;&#34;Fetches all data a user can has. Very slow.
@@ -380,7 +379,7 @@ Talents are not included.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\genshinstats.py#L170-L189" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\genshinstats.py#L174-L193" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def get_characters(uid: int, character_ids: List[int] = None, lang: str = &#39;en-us&#39;) -&gt; list:
     &#34;&#34;&#34;Gets characters of a user.
@@ -431,7 +430,7 @@ Talents are not included.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\genshinstats.py#L191-L203" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\genshinstats.py#L195-L207" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def get_spiral_abyss(uid: int, previous: bool = False) -&gt; dict:
     &#34;&#34;&#34;Gets spiral abyss runs of a user and details about them.
@@ -456,7 +455,7 @@ Talents are not included.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\genshinstats.py#L160-L168" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\genshinstats.py#L164-L172" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def get_user_stats(uid: int) -&gt; dict:
     &#34;&#34;&#34;Gets basic user information and stats.&#34;&#34;&#34;
@@ -478,7 +477,7 @@ Talents are not included.</p>
 <pre><code class="language-python-repl">&gt;&gt;&gt; set_cookie(ltuid=..., ltoken=...)
 &gt;&gt;&gt; set_cookie(account_id=..., cookie_token=...)
 &gt;&gt;&gt; set_cookie({'ltuid': ..., 'ltoken': ...})
-&gt;&gt;&gt; set_cookie(&quot;ltuid=..., ltoken=...&quot;)
+&gt;&gt;&gt; set_cookie(&quot;ltuid=...; ltoken=...&quot;)
 </code></pre></div>
 <details class="source">
 <summary>
@@ -492,7 +491,7 @@ Talents are not included.</p>
     &gt;&gt;&gt; set_cookie(ltuid=..., ltoken=...)
     &gt;&gt;&gt; set_cookie(account_id=..., cookie_token=...)
     &gt;&gt;&gt; set_cookie({&#39;ltuid&#39;: ..., &#39;ltoken&#39;: ...})
-    &gt;&gt;&gt; set_cookie(&#34;ltuid=..., ltoken=...&#34;)
+    &gt;&gt;&gt; set_cookie(&#34;ltuid=...; ltoken=...&#34;)
     &#34;&#34;&#34;
     if bool(cookie) == bool(kwargs):
         raise ValueError(&#34;Cannot use both positional and keyword arguments at once&#34;)
