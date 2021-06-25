@@ -46,7 +46,7 @@ class GenshinStatsException(Exception):
         &#34;&#34;&#34;Adds an optional response object to the error.&#34;&#34;&#34;
         self.retcode = response[&#39;retcode&#39;]
         self.orig_msg = response[&#39;message&#39;]
-        if type(self) == GenshinStatsException: # for exceptions without a type
+        if type(self) is GenshinStatsException: # for exceptions without a type
             self.msg = self.msg.format(self.retcode,self.orig_msg)
 
     @property
@@ -394,7 +394,7 @@ def raise_for_error(response: dict):
         &#34;&#34;&#34;Adds an optional response object to the error.&#34;&#34;&#34;
         self.retcode = response[&#39;retcode&#39;]
         self.orig_msg = response[&#39;message&#39;]
-        if type(self) == GenshinStatsException: # for exceptions without a type
+        if type(self) is GenshinStatsException: # for exceptions without a type
             self.msg = self.msg.format(self.retcode,self.orig_msg)
 
     @property
@@ -462,7 +462,7 @@ def msg(self):
     &#34;&#34;&#34;Adds an optional response object to the error.&#34;&#34;&#34;
     self.retcode = response[&#39;retcode&#39;]
     self.orig_msg = response[&#39;message&#39;]
-    if type(self) == GenshinStatsException: # for exceptions without a type
+    if type(self) is GenshinStatsException: # for exceptions without a type
         self.msg = self.msg.format(self.retcode,self.orig_msg)</code></pre>
 </details>
 </dd>

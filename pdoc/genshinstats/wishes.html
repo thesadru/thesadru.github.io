@@ -57,7 +57,7 @@ __all__ = [
 ]
 
 GENSHIN_LOG = get_output_log()
-GACHA_INFO_URL = &#34;https://hk4e-api.mihoyo.com/event/gacha_info/api/&#34;
+GACHA_INFO_URL = &#34;https://hk4e-api-os.mihoyo.com/event/gacha_info/api/&#34;
 AUTHKEY_FILE = os.path.join(gettempdir(), &#39;genshinstats_authkey.txt&#39;)
 
 session = Session()
@@ -87,7 +87,7 @@ def _read_logfile(logfile: str = None) -&gt; str:
 
 def extract_authkey(string: str) -&gt; Optional[str]:
     &#34;&#34;&#34;Extracts an authkey from the provided string. Returns None if not found.&#34;&#34;&#34;
-    match = re.search(r&#39;https://.+?authkey=([^&amp;]+)&#39;, string, re.MULTILINE)
+    match = re.search(r&#39;https://.+?authkey=([^&amp;#]+)&#39;, string, re.MULTILINE)
     if match is not None:
         return unquote(match.group(1))
     return None
@@ -129,7 +129,7 @@ def get_banner_ids(logfile: str = None) -&gt; List[str]:
     You need to open the details of all banners for this to work.
     &#34;&#34;&#34;
     log = _read_logfile(logfile)
-    ids = re.findall(r&#39;OnGetWebViewPageFinish:https://.+?gacha_id=([^&amp;]+)&#39;, log)
+    ids = re.findall(r&#39;OnGetWebViewPageFinish:https://.+?gacha_id=([^&amp;#]+)&#39;, log)
     return list(set(ids))
 
 def fetch_gacha_endpoint(endpoint: str, authkey: str = None, **kwargs) -&gt; Dict[str, Any]:
@@ -273,7 +273,7 @@ def get_uid_from_authkey(authkey: str = None) -&gt; int:
 </summary>
 <pre><code class="python">def extract_authkey(string: str) -&gt; Optional[str]:
     &#34;&#34;&#34;Extracts an authkey from the provided string. Returns None if not found.&#34;&#34;&#34;
-    match = re.search(r&#39;https://.+?authkey=([^&amp;]+)&#39;, string, re.MULTILINE)
+    match = re.search(r&#39;https://.+?authkey=([^&amp;#]+)&#39;, string, re.MULTILINE)
     if match is not None:
         return unquote(match.group(1))
     return None</code></pre>
@@ -396,7 +396,7 @@ example standard wish: "a37a19624270b092e7250edfabce541a3435c2"</p>
     You need to open the details of all banners for this to work.
     &#34;&#34;&#34;
     log = _read_logfile(logfile)
-    ids = re.findall(r&#39;OnGetWebViewPageFinish:https://.+?gacha_id=([^&amp;]+)&#39;, log)
+    ids = re.findall(r&#39;OnGetWebViewPageFinish:https://.+?gacha_id=([^&amp;#]+)&#39;, log)
     return list(set(ids))</code></pre>
 </details>
 </dd>

@@ -27,7 +27,7 @@
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\hoyolab.py#L0-L132" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\hoyolab.py#L0-L146" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">&#34;&#34;&#34;Wrapper for the hoyolab.com community api.
 
@@ -41,9 +41,9 @@ from .genshinstats import fetch_endpoint
 from .utils import recognize_server
 
 __all__ = [
-    &#39;search&#39;, &#39;hoyolab_check_in&#39;, &#39;get_langs&#39;, &#39;get_game_accounts&#39;,
-    &#39;get_record_card&#39;, &#39;get_uid_from_hoyolab_uid&#39;, &#39;redeem_code&#39;,
-    &#39;get_recommended_users&#39;, &#39;get_hot_posts&#39;
+    &#39;get_langs&#39;, &#39;set_visibility&#39;, &#39;search&#39;, &#39;hoyolab_check_in&#39;, 
+    &#39;get_game_accounts&#39;, &#39;get_record_card&#39;, &#39;get_uid_from_hoyolab_uid&#39;, 
+    &#39;redeem_code&#39;, &#39;get_recommended_users&#39;, &#39;get_hot_posts&#39;
 ]
 
 
@@ -52,6 +52,7 @@ def get_langs() -&gt; Dict[str, str]:
     &#34;&#34;&#34;Gets codes of all languages and their names&#34;&#34;&#34;
     data = fetch_endpoint(
         &#34;community/misc/wapi/langs&#34;,
+        cookie={},
         params=dict(gids=2)
     )[&#39;langs&#39;]
     return {i[&#39;value&#39;]: i[&#39;name&#39;] for i in data}
@@ -63,8 +64,19 @@ def search(keyword: str, size: int = 20) -&gt; list:
     &#34;&#34;&#34;
     return fetch_endpoint(
         &#34;community/apihub/wapi/search&#34;,
+        cookie={}, # this endpoint does not require cookies
         params=dict(keyword=keyword, size=size, gids=2)
     )[&#39;users&#39;]
+
+def set_visibility(public: bool, cookie: Mapping[str, Any] = None) -&gt; None:
+    &#34;&#34;&#34;Sets your data to public or private.&#34;&#34;&#34;
+    fetch_endpoint(
+        &#34;game_record/card/wapi/publishGameRecord&#34;,
+        cookie=cookie,
+        method=&#39;POST&#39;, 
+        # what&#39;s game_id about???
+        json=dict(is_public=public, game_id=2)
+    )
 
 def hoyolab_check_in(cookie: Mapping[str, Any] = None) -&gt; None:
     &#34;&#34;&#34;Checks in the currently logged-in user to hoyolab.
@@ -86,28 +98,29 @@ def get_game_accounts(chinese: bool = False, cookie: Mapping[str, Any] = None) -
     url = &#34;https://api-takumi.mihoyo.com/&#34; if chinese else &#34;https://api-os-takumi.mihoyo.com/&#34;
     return fetch_endpoint(url+&#34;binding/api/getUserGameRolesByCookie&#34;, cookie=cookie)[&#39;list&#39;]
 
-def get_record_card(hoyolab_uid: int) -&gt; Optional[dict]:
+def get_record_card(hoyolab_uid: int, cookie: Mapping[str, Any] = None) -&gt; Optional[dict]:
     &#34;&#34;&#34;Gets a game record card of a user based on their hoyolab uid.
 
     A record card contains data regarding the stats of a user for their displayed server.
     Their uid for a given server is also included.
-    In case the user hasn&#39;t set their data to public the function returns None.
+    In case the user hasn&#39;t set their data to public or you are ratelimited the function returns None.
 
     You can get a hoyolab id with `search`.
     &#34;&#34;&#34;
     cards = fetch_endpoint(
         &#34;game_record/card/wapi/getGameRecordCard&#34;,
+        cookie=cookie,
         params=dict(uid=hoyolab_uid, gids=2)
     )[&#39;list&#39;]
     return cards[0] if cards else None
 
-def get_uid_from_hoyolab_uid(hoyolab_uid: int) -&gt; Optional[int]:
+def get_uid_from_hoyolab_uid(hoyolab_uid: int, cookie: Mapping[str, Any] = None) -&gt; Optional[int]:
     &#34;&#34;&#34;Gets a uid with a community uid.
 
     This is so it&#39;s possible to search a user and then directly get the uid.
     In case the uid is private, returns None.
     &#34;&#34;&#34;
-    card = get_record_card(hoyolab_uid)
+    card = get_record_card(hoyolab_uid, cookie)
     return int(card[&#39;game_role_id&#39;]) if card else None
 
 def redeem_code(code: str, uid: int = None, cookie: Mapping[str, Any] = None) -&gt; None:
@@ -134,16 +147,18 @@ def redeem_code(code: str, uid: int = None, cookie: Mapping[str, Any] = None) -&
                         cdkey=code, game_biz=&#39;hk4e_global&#39;, lang=&#39;en&#39;)
         )
     else:
-        for account in get_game_accounts():
-            if account[&#39;level&#39;] &lt; 10:
-                continue # Cannot claim codes for account with adventure rank lower than 10.
-            redeem_code(code, account[&#39;game_uid&#39;])
-            time.sleep(5) # there&#39;s a ratelimit of 1 request every 5 seconds
+        # cannot claim codes for accounts with ar lower than 10
+        accounts = [account for account in get_game_accounts(cookie=cookie) 
+                    if account[&#39;level&#39;] &gt;= 10]
+        for i, account in enumerate(accounts):
+            if i: time.sleep(5) # there&#39;s a ratelimit of 1 request every 5 seconds
+            redeem_code(code, account[&#39;game_uid&#39;], cookie)
 
 def get_recommended_users(page_size: int = None) -&gt; List[dict]:
     &#34;&#34;&#34;Gets a list of recommended active users&#34;&#34;&#34;
     return fetch_endpoint(
         &#34;community/user/wapi/recommendActive&#34;,
+        cookie={},
         params=dict(page_size=page_size or 0x10000, offset=0, gids=2)
     )[&#39;list&#39;]
 
@@ -158,10 +173,9 @@ def get_hot_posts(forum_id: int = 1, size: int = 100, lang: str = &#39;en-us&#39
     # the user shouldn&#39;t be getting that many posts in the first place
     return fetch_endpoint(
         &#34;community/post/api/forumHotPostFullList&#34;,
+        cookie={},
         params=dict(forum_id=forum_id, page_size=min(size, 0x4000), lang=lang)
-    )[&#39;posts&#39;]
-
-    </code></pre>
+    )[&#39;posts&#39;]</code></pre>
 </details>
 </section>
 <section>
@@ -180,7 +194,7 @@ def get_hot_posts(forum_id: int = 1, size: int = 100, lang: str = &#39;en-us&#39
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\hoyolab.py#L50-L56" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\hoyolab.py#L62-L68" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def get_game_accounts(chinese: bool = False, cookie: Mapping[str, Any] = None) -&gt; List[dict]:
     &#34;&#34;&#34;Gets all game accounts of the currently signed in player.
@@ -201,7 +215,7 @@ There may be less posts returned than size.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\hoyolab.py#L119-L131" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\hoyolab.py#L134-L147" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def get_hot_posts(forum_id: int = 1, size: int = 100, lang: str = &#39;en-us&#39;) -&gt; List[dict]:
     &#34;&#34;&#34;Fetches hot posts from the front page of hoyolabs
@@ -214,6 +228,7 @@ There may be less posts returned than size.</p></div>
     # the user shouldn&#39;t be getting that many posts in the first place
     return fetch_endpoint(
         &#34;community/post/api/forumHotPostFullList&#34;,
+        cookie={},
         params=dict(forum_id=forum_id, page_size=min(size, 0x4000), lang=lang)
     )[&#39;posts&#39;]</code></pre>
 </details>
@@ -226,13 +241,14 @@ There may be less posts returned than size.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\hoyolab.py#L19-L26" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\hoyolab.py#L19-L27" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">@lru_cache()
 def get_langs() -&gt; Dict[str, str]:
     &#34;&#34;&#34;Gets codes of all languages and their names&#34;&#34;&#34;
     data = fetch_endpoint(
         &#34;community/misc/wapi/langs&#34;,
+        cookie={},
         params=dict(gids=2)
     )[&#39;langs&#39;]
     return {i[&#39;value&#39;]: i[&#39;name&#39;] for i in data}</code></pre>
@@ -246,48 +262,50 @@ def get_langs() -&gt; Dict[str, str]:
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\hoyolab.py#L112-L117" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\hoyolab.py#L126-L132" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def get_recommended_users(page_size: int = None) -&gt; List[dict]:
     &#34;&#34;&#34;Gets a list of recommended active users&#34;&#34;&#34;
     return fetch_endpoint(
         &#34;community/user/wapi/recommendActive&#34;,
+        cookie={},
         params=dict(page_size=page_size or 0x10000, offset=0, gids=2)
     )[&#39;list&#39;]</code></pre>
 </details>
 </dd>
 <dt id="genshinstats.hoyolab.get_record_card"><code class="name flex">
-<span>def <span class="ident">get_record_card</span></span>(<span>hoyolab_uid: int) ‑> Optional[dict]</span>
+<span>def <span class="ident">get_record_card</span></span>(<span>hoyolab_uid: int, cookie: Mapping[str, Any] = None) ‑> Optional[dict]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Gets a game record card of a user based on their hoyolab uid.</p>
 <p>A record card contains data regarding the stats of a user for their displayed server.
 Their uid for a given server is also included.
-In case the user hasn't set their data to public the function returns None.</p>
+In case the user hasn't set their data to public or you are ratelimited the function returns None.</p>
 <p>You can get a hoyolab id with <code><a title="genshinstats.hoyolab.search" href="#genshinstats.hoyolab.search">search()</a></code>.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\hoyolab.py#L58-L71" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\hoyolab.py#L70-L84" class="git-link">Browse git</a>
 </summary>
-<pre><code class="python">def get_record_card(hoyolab_uid: int) -&gt; Optional[dict]:
+<pre><code class="python">def get_record_card(hoyolab_uid: int, cookie: Mapping[str, Any] = None) -&gt; Optional[dict]:
     &#34;&#34;&#34;Gets a game record card of a user based on their hoyolab uid.
 
     A record card contains data regarding the stats of a user for their displayed server.
     Their uid for a given server is also included.
-    In case the user hasn&#39;t set their data to public the function returns None.
+    In case the user hasn&#39;t set their data to public or you are ratelimited the function returns None.
 
     You can get a hoyolab id with `search`.
     &#34;&#34;&#34;
     cards = fetch_endpoint(
         &#34;game_record/card/wapi/getGameRecordCard&#34;,
+        cookie=cookie,
         params=dict(uid=hoyolab_uid, gids=2)
     )[&#39;list&#39;]
     return cards[0] if cards else None</code></pre>
 </details>
 </dd>
 <dt id="genshinstats.hoyolab.get_uid_from_hoyolab_uid"><code class="name flex">
-<span>def <span class="ident">get_uid_from_hoyolab_uid</span></span>(<span>hoyolab_uid: int) ‑> Optional[int]</span>
+<span>def <span class="ident">get_uid_from_hoyolab_uid</span></span>(<span>hoyolab_uid: int, cookie: Mapping[str, Any] = None) ‑> Optional[int]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Gets a uid with a community uid.</p>
@@ -296,15 +314,15 @@ In case the uid is private, returns None.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\hoyolab.py#L73-L80" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\hoyolab.py#L86-L93" class="git-link">Browse git</a>
 </summary>
-<pre><code class="python">def get_uid_from_hoyolab_uid(hoyolab_uid: int) -&gt; Optional[int]:
+<pre><code class="python">def get_uid_from_hoyolab_uid(hoyolab_uid: int, cookie: Mapping[str, Any] = None) -&gt; Optional[int]:
     &#34;&#34;&#34;Gets a uid with a community uid.
 
     This is so it&#39;s possible to search a user and then directly get the uid.
     In case the uid is private, returns None.
     &#34;&#34;&#34;
-    card = get_record_card(hoyolab_uid)
+    card = get_record_card(hoyolab_uid, cookie)
     return int(card[&#39;game_role_id&#39;]) if card else None</code></pre>
 </details>
 </dd>
@@ -317,7 +335,7 @@ In case the uid is private, returns None.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\hoyolab.py#L38-L48" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\hoyolab.py#L50-L60" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def hoyolab_check_in(cookie: Mapping[str, Any] = None) -&gt; None:
     &#34;&#34;&#34;Checks in the currently logged-in user to hoyolab.
@@ -349,7 +367,7 @@ but you must sleep yourself when passing in a uid or when an error is encountere
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\hoyolab.py#L82-L110" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\hoyolab.py#L95-L124" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def redeem_code(code: str, uid: int = None, cookie: Mapping[str, Any] = None) -&gt; None:
     &#34;&#34;&#34;Redeems a gift code for the currently signed in user.
@@ -375,11 +393,12 @@ but you must sleep yourself when passing in a uid or when an error is encountere
                         cdkey=code, game_biz=&#39;hk4e_global&#39;, lang=&#39;en&#39;)
         )
     else:
-        for account in get_game_accounts():
-            if account[&#39;level&#39;] &lt; 10:
-                continue # Cannot claim codes for account with adventure rank lower than 10.
-            redeem_code(code, account[&#39;game_uid&#39;])
-            time.sleep(5) # there&#39;s a ratelimit of 1 request every 5 seconds</code></pre>
+        # cannot claim codes for accounts with ar lower than 10
+        accounts = [account for account in get_game_accounts(cookie=cookie) 
+                    if account[&#39;level&#39;] &gt;= 10]
+        for i, account in enumerate(accounts):
+            if i: time.sleep(5) # there&#39;s a ratelimit of 1 request every 5 seconds
+            redeem_code(code, account[&#39;game_uid&#39;], cookie)</code></pre>
 </details>
 </dd>
 <dt id="genshinstats.hoyolab.search"><code class="name flex">
@@ -391,7 +410,7 @@ but you must sleep yourself when passing in a uid or when an error is encountere
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\hoyolab.py#L28-L36" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\hoyolab.py#L29-L38" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def search(keyword: str, size: int = 20) -&gt; list:
     &#34;&#34;&#34;Searches all users.
@@ -400,8 +419,30 @@ but you must sleep yourself when passing in a uid or when an error is encountere
     &#34;&#34;&#34;
     return fetch_endpoint(
         &#34;community/apihub/wapi/search&#34;,
+        cookie={}, # this endpoint does not require cookies
         params=dict(keyword=keyword, size=size, gids=2)
     )[&#39;users&#39;]</code></pre>
+</details>
+</dd>
+<dt id="genshinstats.hoyolab.set_visibility"><code class="name flex">
+<span>def <span class="ident">set_visibility</span></span>(<span>public: bool, cookie: Mapping[str, Any] = None) ‑> NoneType</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Sets your data to public or private.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\hoyolab.py#L40-L48" class="git-link">Browse git</a>
+</summary>
+<pre><code class="python">def set_visibility(public: bool, cookie: Mapping[str, Any] = None) -&gt; None:
+    &#34;&#34;&#34;Sets your data to public or private.&#34;&#34;&#34;
+    fetch_endpoint(
+        &#34;game_record/card/wapi/publishGameRecord&#34;,
+        cookie=cookie,
+        method=&#39;POST&#39;, 
+        # what&#39;s game_id about???
+        json=dict(is_public=public, game_id=2)
+    )</code></pre>
 </details>
 </dd>
 </dl>
@@ -477,6 +518,7 @@ setTimeout(() => input.focus(), 100);
 <li><code><a title="genshinstats.hoyolab.hoyolab_check_in" href="#genshinstats.hoyolab.hoyolab_check_in">hoyolab_check_in</a></code></li>
 <li><code><a title="genshinstats.hoyolab.redeem_code" href="#genshinstats.hoyolab.redeem_code">redeem_code</a></code></li>
 <li><code><a title="genshinstats.hoyolab.search" href="#genshinstats.hoyolab.search">search</a></code></li>
+<li><code><a title="genshinstats.hoyolab.set_visibility" href="#genshinstats.hoyolab.set_visibility">set_visibility</a></code></li>
 </ul>
 </li>
 </ul>

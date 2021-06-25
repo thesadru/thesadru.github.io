@@ -316,25 +316,19 @@ INDEX=[
 {
 "ref":"genshinstats.genshinstats.get_browser_cookies",
 "url":3,
-"doc":"Gets cookies from your browser for later storing. If a specifc browser is set, gets data from that browser only. Avalible browsers: chrome, chromium, opera, edge, firefox",
+"doc":"Gets cookies from your browser for later storing. If a specific browser is set, gets data from that browser only. Avalible browsers: chrome, chromium, opera, edge, firefox",
 "func":1
 },
 {
 "ref":"genshinstats.genshinstats.set_cookies_auto",
 "url":3,
-"doc":"Like set_cookie, but gets the cookies by itself from your browser. Requires the module browser-cookie3 Be aware that this process can take up to 10 seconds. To speed it up you may select a browser. If a specifc browser is set, gets data from that browser only. Avalible browsers: chrome, chromium, opera, edge, firefox",
+"doc":"Like set_cookie, but gets the cookies by itself from your browser. Requires the module browser-cookie3 Be aware that this process can take up to 10 seconds. To speed it up you may select a browser. If a specific browser is set, gets data from that browser only. Avalible browsers: chrome, chromium, opera, edge, firefox",
 "func":1
 },
 {
 "ref":"genshinstats.genshinstats.set_cookie_auto",
 "url":3,
-"doc":"Like set_cookie, but gets the cookies by itself from your browser. Requires the module browser-cookie3 Be aware that this process can take up to 10 seconds. To speed it up you may select a browser. If a specifc browser is set, gets data from that browser only. Avalible browsers: chrome, chromium, opera, edge, firefox",
-"func":1
-},
-{
-"ref":"genshinstats.genshinstats.get_ds_token",
-"url":3,
-"doc":"Creates a new ds token for authentication.",
+"doc":"Like set_cookie, but gets the cookies by itself from your browser. Requires the module browser-cookie3 Be aware that this process can take up to 10 seconds. To speed it up you may select a browser. If a specific browser is set, gets data from that browser only. Avalible browsers: chrome, chromium, opera, edge, firefox",
 "func":1
 },
 {
@@ -373,6 +367,18 @@ INDEX=[
 "doc":"Wrapper for the hoyolab.com community api. Can search users, get record cards, redeem codes ."
 },
 {
+"ref":"genshinstats.hoyolab.get_langs",
+"url":4,
+"doc":"Gets codes of all languages and their names",
+"func":1
+},
+{
+"ref":"genshinstats.hoyolab.set_visibility",
+"url":4,
+"doc":"Sets your data to public or private.",
+"func":1
+},
+{
 "ref":"genshinstats.hoyolab.search",
 "url":4,
 "doc":"Searches all users. Can return up to 20 results, based on size.",
@@ -385,12 +391,6 @@ INDEX=[
 "func":1
 },
 {
-"ref":"genshinstats.hoyolab.get_langs",
-"url":4,
-"doc":"Gets codes of all languages and their names",
-"func":1
-},
-{
 "ref":"genshinstats.hoyolab.get_game_accounts",
 "url":4,
 "doc":"Gets all game accounts of the currently signed in player. Can get accounts both for overseas and china.",
@@ -399,7 +399,7 @@ INDEX=[
 {
 "ref":"genshinstats.hoyolab.get_record_card",
 "url":4,
-"doc":"Gets a game record card of a user based on their hoyolab uid. A record card contains data regarding the stats of a user for their displayed server. Their uid for a given server is also included. In case the user hasn't set their data to public the function returns None. You can get a hoyolab id with  search .",
+"doc":"Gets a game record card of a user based on their hoyolab uid. A record card contains data regarding the stats of a user for their displayed server. Their uid for a given server is also included. In case the user hasn't set their data to public or you are ratelimited the function returns None. You can get a hoyolab id with  search .",
 "func":1
 },
 {

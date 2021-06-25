@@ -27,7 +27,7 @@
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\genshinstats.py#L0-L217" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\genshinstats.py#L0-L218" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">&#34;&#34;&#34;Wrapper for the hoyolab.com gameRecord api.
 
@@ -48,7 +48,7 @@ from .pretty import *
 from .utils import USER_AGENT, is_chinese, recognize_server
 
 __all__ = [
-    &#39;set_cookie&#39;, &#39;set_cookies&#39;, &#39;get_browser_cookies&#39;, &#39;set_cookies_auto&#39;, &#39;set_cookie_auto&#39;, &#39;get_ds_token&#39;, 
+    &#39;set_cookie&#39;, &#39;set_cookies&#39;, &#39;get_browser_cookies&#39;, &#39;set_cookies_auto&#39;, &#39;set_cookie_auto&#39;,
     &#39;fetch_endpoint&#39;, &#39;get_user_stats&#39;, &#39;get_characters&#39;, &#39;get_spiral_abyss&#39;, &#39;get_all_user_data&#39;
 ]
 
@@ -107,7 +107,7 @@ def set_cookies(*args: Union[Mapping[str, Any], str], clear: bool = True) -&gt; 
 def get_browser_cookies(browser: str = None) -&gt; Dict[str, str]:
     &#34;&#34;&#34;Gets cookies from your browser for later storing.
     
-    If a specifc browser is set, gets data from that browser only.
+    If a specific browser is set, gets data from that browser only.
     Avalible browsers: chrome, chromium, opera, edge, firefox
     &#34;&#34;&#34;
     import browser_cookie3  # optional library
@@ -129,14 +129,14 @@ def set_cookie_auto(browser: str = None) -&gt; None:
     Be aware that this process can take up to 10 seconds.
     To speed it up you may select a browser.
     
-    If a specifc browser is set, gets data from that browser only.
+    If a specific browser is set, gets data from that browser only.
     Avalible browsers: chrome, chromium, opera, edge, firefox
     &#34;&#34;&#34;
     set_cookies(get_browser_cookies(browser), clear=True)
 set_cookies_auto = set_cookie_auto # alias
 
 
-def get_ds_token(salt: str = DS_SALT) -&gt; str:
+def generate_ds_token(salt: str = DS_SALT) -&gt; str:
     &#34;&#34;&#34;Creates a new ds token for authentication.&#34;&#34;&#34;
     t = int(time.time())  # current seconds
     r = &#39;&#39;.join(random.choices(string.ascii_letters, k=6))  # 6 random chars
@@ -147,6 +147,8 @@ def _request(*args, **kwargs):
     &#34;&#34;&#34;Fancy requests.request&#34;&#34;&#34;
     r = session.request(*args, **kwargs)
     r.raise_for_status()
+    kwargs[&#39;cookies&#39;].update(session.cookies)
+    session.cookies.clear()
     data = r.json()
     if data[&#39;retcode&#39;] == 0:
         return data[&#39;data&#39;]
@@ -164,9 +166,8 @@ def fetch_endpoint(endpoint: str, chinese: bool = False, cookie: Mapping[str, An
     
     Supports handling ratelimits if multiple cookies are set with `set_cookies`
     &#34;&#34;&#34;
-    
     # parse the arguments for requests.request
-    session.headers[&#39;ds&#39;] = get_ds_token()
+    session.headers[&#39;ds&#39;] = generate_ds_token()
     method = kwargs.pop(&#39;method&#39;, &#39;get&#39;)
     url = urljoin(CN_TAKUMI_URL if chinese else OS_BBS_URL, endpoint)
     
@@ -182,9 +183,6 @@ def fetch_endpoint(endpoint: str, chinese: bool = False, cookie: Mapping[str, An
         except TooManyRequests:
             # move the ratelimited cookie to the end to let the ratelimit wear off
             cookies.append(cookies.pop(0))
-        finally:
-            cookie.update(session.cookies)
-            session.cookies.clear()
     
     # if we&#39;re here it means we used up all our cookies so we must handle that
     if len(cookies) == 1:
@@ -192,17 +190,18 @@ def fetch_endpoint(endpoint: str, chinese: bool = False, cookie: Mapping[str, An
     else:
         raise TooManyRequests(&#34;All cookies have hit their request limit of 30 accounts per day.&#34;)
 
-def get_user_stats(uid: int) -&gt; dict:
+def get_user_stats(uid: int, cookie: Mapping[str, Any] = None) -&gt; dict:
     &#34;&#34;&#34;Gets basic user information and stats.&#34;&#34;&#34;
     server = recognize_server(uid)
     data = fetch_endpoint(
         &#34;game_record/genshin/api/index&#34;,
         chinese=is_chinese(uid),
+        cookie=cookie,
         params=dict(server=server, role_id=uid)
     )
     return prettify_user_stats(data)
 
-def get_characters(uid: int, character_ids: List[int] = None, lang: str = &#39;en-us&#39;) -&gt; list:
+def get_characters(uid: int, character_ids: List[int] = None, lang: str = &#39;en-us&#39;, cookie: Mapping[str, Any] = None) -&gt; list:
     &#34;&#34;&#34;Gets characters of a user.
     
     Characters contain info about their level, constellation, weapon, and artifacts.
@@ -217,13 +216,14 @@ def get_characters(uid: int, character_ids: List[int] = None, lang: str = &#39;e
     data = fetch_endpoint(
         &#34;game_record/genshin/api/character&#34;,
         chinese=is_chinese(uid),
+        cookie=cookie,
         method=&#39;POST&#39;,
         json=dict(character_ids=character_ids, role_id=uid, server=server),  # POST uses the body instead
         headers={&#39;x-rpc-language&#39;: lang},
     )[&#34;avatars&#34;]
     return prettify_characters(data)
 
-def get_spiral_abyss(uid: int, previous: bool = False) -&gt; dict:
+def get_spiral_abyss(uid: int, previous: bool = False, cookie: Mapping[str, Any] = None) -&gt; dict:
     &#34;&#34;&#34;Gets spiral abyss runs of a user and details about them.
     
     Every season these stats refresh and you can get the previous stats with `previous`.
@@ -233,19 +233,20 @@ def get_spiral_abyss(uid: int, previous: bool = False) -&gt; dict:
     data = fetch_endpoint(
         &#34;game_record/genshin/api/spiralAbyss&#34;,
         chinese=is_chinese(uid),
+        cookie=cookie,
         params=dict(server=server, role_id=uid, schedule_type=schedule_type)
     )
     return prettify_spiral_abyss(data)
 
-def get_all_user_data(uid: int, lang: str = &#39;en-us&#39;) -&gt; dict:
+def get_all_user_data(uid: int, lang: str = &#39;en-us&#39;, cookie: Mapping[str, Any] = None) -&gt; dict:
     &#34;&#34;&#34;Fetches all data a user can has. Very slow.
     
     A helper function that gets all avalible data for a user and returns it as one dict.
     However that makes it fairly slow so it&#39;s not recommended to use it outside caching.
     &#34;&#34;&#34;
-    data = get_user_stats(uid)
-    data[&#39;characters&#39;] = get_characters(uid, [i[&#39;id&#39;] for i in data[&#39;characters&#39;]], lang=lang)
-    data[&#39;spiral_abyss&#39;] = [get_spiral_abyss(uid), get_spiral_abyss(uid, previous=True)]
+    data = get_user_stats(uid, cookie)
+    data[&#39;characters&#39;] = get_characters(uid, [i[&#39;id&#39;] for i in data[&#39;characters&#39;]], lang, cookie)
+    data[&#39;spiral_abyss&#39;] = [get_spiral_abyss(uid, previous, cookie) for previous in [False, True]]
     return data</code></pre>
 </details>
 </section>
@@ -270,7 +271,7 @@ but that requires being logged in as that user.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\genshinstats.py#L124-L162" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\genshinstats.py#L126-L160" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def fetch_endpoint(endpoint: str, chinese: bool = False, cookie: Mapping[str, Any] = None, **kwargs) -&gt; Dict[str, Any]:
     &#34;&#34;&#34;Fetch an enpoint from the API.
@@ -284,9 +285,8 @@ but that requires being logged in as that user.</p>
     
     Supports handling ratelimits if multiple cookies are set with `set_cookies`
     &#34;&#34;&#34;
-    
     # parse the arguments for requests.request
-    session.headers[&#39;ds&#39;] = get_ds_token()
+    session.headers[&#39;ds&#39;] = generate_ds_token()
     method = kwargs.pop(&#39;method&#39;, &#39;get&#39;)
     url = urljoin(CN_TAKUMI_URL if chinese else OS_BBS_URL, endpoint)
     
@@ -302,9 +302,6 @@ but that requires being logged in as that user.</p>
         except TooManyRequests:
             # move the ratelimited cookie to the end to let the ratelimit wear off
             cookies.append(cookies.pop(0))
-        finally:
-            cookie.update(session.cookies)
-            session.cookies.clear()
     
     # if we&#39;re here it means we used up all our cookies so we must handle that
     if len(cookies) == 1:
@@ -314,7 +311,7 @@ but that requires being logged in as that user.</p>
 </details>
 </dd>
 <dt id="genshinstats.genshinstats.get_all_user_data"><code class="name flex">
-<span>def <span class="ident">get_all_user_data</span></span>(<span>uid: int, lang: str = 'en-us') ‑> dict</span>
+<span>def <span class="ident">get_all_user_data</span></span>(<span>uid: int, lang: str = 'en-us', cookie: Mapping[str, Any] = None) ‑> dict</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Fetches all data a user can has. Very slow.</p>
@@ -323,17 +320,17 @@ However that makes it fairly slow so it's not recommended to use it outside cach
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\genshinstats.py#L209-L218" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\genshinstats.py#L210-L219" class="git-link">Browse git</a>
 </summary>
-<pre><code class="python">def get_all_user_data(uid: int, lang: str = &#39;en-us&#39;) -&gt; dict:
+<pre><code class="python">def get_all_user_data(uid: int, lang: str = &#39;en-us&#39;, cookie: Mapping[str, Any] = None) -&gt; dict:
     &#34;&#34;&#34;Fetches all data a user can has. Very slow.
     
     A helper function that gets all avalible data for a user and returns it as one dict.
     However that makes it fairly slow so it&#39;s not recommended to use it outside caching.
     &#34;&#34;&#34;
-    data = get_user_stats(uid)
-    data[&#39;characters&#39;] = get_characters(uid, [i[&#39;id&#39;] for i in data[&#39;characters&#39;]], lang=lang)
-    data[&#39;spiral_abyss&#39;] = [get_spiral_abyss(uid), get_spiral_abyss(uid, previous=True)]
+    data = get_user_stats(uid, cookie)
+    data[&#39;characters&#39;] = get_characters(uid, [i[&#39;id&#39;] for i in data[&#39;characters&#39;]], lang, cookie)
+    data[&#39;spiral_abyss&#39;] = [get_spiral_abyss(uid, previous, cookie) for previous in [False, True]]
     return data</code></pre>
 </details>
 </dd>
@@ -342,7 +339,7 @@ However that makes it fairly slow so it's not recommended to use it outside cach
 </code></dt>
 <dd>
 <div class="desc"><p>Gets cookies from your browser for later storing.</p>
-<p>If a specifc browser is set, gets data from that browser only.
+<p>If a specific browser is set, gets data from that browser only.
 Avalible browsers: chrome, chromium, opera, edge, firefox</p></div>
 <details class="source">
 <summary>
@@ -352,7 +349,7 @@ Avalible browsers: chrome, chromium, opera, edge, firefox</p></div>
 <pre><code class="python">def get_browser_cookies(browser: str = None) -&gt; Dict[str, str]:
     &#34;&#34;&#34;Gets cookies from your browser for later storing.
     
-    If a specifc browser is set, gets data from that browser only.
+    If a specific browser is set, gets data from that browser only.
     Avalible browsers: chrome, chromium, opera, edge, firefox
     &#34;&#34;&#34;
     import browser_cookie3  # optional library
@@ -369,7 +366,7 @@ Avalible browsers: chrome, chromium, opera, edge, firefox</p></div>
 </details>
 </dd>
 <dt id="genshinstats.genshinstats.get_characters"><code class="name flex">
-<span>def <span class="ident">get_characters</span></span>(<span>uid: int, character_ids: List[int] = None, lang: str = 'en-us') ‑> list</span>
+<span>def <span class="ident">get_characters</span></span>(<span>uid: int, character_ids: List[int] = None, lang: str = 'en-us', cookie: Mapping[str, Any] = None) ‑> list</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Gets characters of a user.</p>
@@ -379,9 +376,9 @@ Talents are not included.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\genshinstats.py#L174-L193" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\genshinstats.py#L173-L193" class="git-link">Browse git</a>
 </summary>
-<pre><code class="python">def get_characters(uid: int, character_ids: List[int] = None, lang: str = &#39;en-us&#39;) -&gt; list:
+<pre><code class="python">def get_characters(uid: int, character_ids: List[int] = None, lang: str = &#39;en-us&#39;, cookie: Mapping[str, Any] = None) -&gt; list:
     &#34;&#34;&#34;Gets characters of a user.
     
     Characters contain info about their level, constellation, weapon, and artifacts.
@@ -396,6 +393,7 @@ Talents are not included.</p>
     data = fetch_endpoint(
         &#34;game_record/genshin/api/character&#34;,
         chinese=is_chinese(uid),
+        cookie=cookie,
         method=&#39;POST&#39;,
         json=dict(character_ids=character_ids, role_id=uid, server=server),  # POST uses the body instead
         headers={&#39;x-rpc-language&#39;: lang},
@@ -403,26 +401,8 @@ Talents are not included.</p>
     return prettify_characters(data)</code></pre>
 </details>
 </dd>
-<dt id="genshinstats.genshinstats.get_ds_token"><code class="name flex">
-<span>def <span class="ident">get_ds_token</span></span>(<span>salt: str = '6cqshh5dhw73bzxn20oexa9k516chk7s') ‑> str</span>
-</code></dt>
-<dd>
-<div class="desc"><p>Creates a new ds token for authentication.</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\genshinstats.py#L108-L113" class="git-link">Browse git</a>
-</summary>
-<pre><code class="python">def get_ds_token(salt: str = DS_SALT) -&gt; str:
-    &#34;&#34;&#34;Creates a new ds token for authentication.&#34;&#34;&#34;
-    t = int(time.time())  # current seconds
-    r = &#39;&#39;.join(random.choices(string.ascii_letters, k=6))  # 6 random chars
-    h = hashlib.md5(f&#34;salt={salt}&amp;t={t}&amp;r={r}&#34;.encode()).hexdigest()  # hash and get hex
-    return f&#39;{t},{r},{h}&#39;</code></pre>
-</details>
-</dd>
 <dt id="genshinstats.genshinstats.get_spiral_abyss"><code class="name flex">
-<span>def <span class="ident">get_spiral_abyss</span></span>(<span>uid: int, previous: bool = False) ‑> dict</span>
+<span>def <span class="ident">get_spiral_abyss</span></span>(<span>uid: int, previous: bool = False, cookie: Mapping[str, Any] = None) ‑> dict</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Gets spiral abyss runs of a user and details about them.</p>
@@ -430,9 +410,9 @@ Talents are not included.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\genshinstats.py#L195-L207" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\genshinstats.py#L195-L208" class="git-link">Browse git</a>
 </summary>
-<pre><code class="python">def get_spiral_abyss(uid: int, previous: bool = False) -&gt; dict:
+<pre><code class="python">def get_spiral_abyss(uid: int, previous: bool = False, cookie: Mapping[str, Any] = None) -&gt; dict:
     &#34;&#34;&#34;Gets spiral abyss runs of a user and details about them.
     
     Every season these stats refresh and you can get the previous stats with `previous`.
@@ -442,27 +422,29 @@ Talents are not included.</p>
     data = fetch_endpoint(
         &#34;game_record/genshin/api/spiralAbyss&#34;,
         chinese=is_chinese(uid),
+        cookie=cookie,
         params=dict(server=server, role_id=uid, schedule_type=schedule_type)
     )
     return prettify_spiral_abyss(data)</code></pre>
 </details>
 </dd>
 <dt id="genshinstats.genshinstats.get_user_stats"><code class="name flex">
-<span>def <span class="ident">get_user_stats</span></span>(<span>uid: int) ‑> dict</span>
+<span>def <span class="ident">get_user_stats</span></span>(<span>uid: int, cookie: Mapping[str, Any] = None) ‑> dict</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Gets basic user information and stats.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\genshinstats.py#L164-L172" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\genshinstats.py#L162-L171" class="git-link">Browse git</a>
 </summary>
-<pre><code class="python">def get_user_stats(uid: int) -&gt; dict:
+<pre><code class="python">def get_user_stats(uid: int, cookie: Mapping[str, Any] = None) -&gt; dict:
     &#34;&#34;&#34;Gets basic user information and stats.&#34;&#34;&#34;
     server = recognize_server(uid)
     data = fetch_endpoint(
         &#34;game_record/genshin/api/index&#34;,
         chinese=is_chinese(uid),
+        cookie=cookie,
         params=dict(server=server, role_id=uid)
     )
     return prettify_user_stats(data)</code></pre>
@@ -507,7 +489,7 @@ Talents are not included.</p>
 <p>Requires the module browser-cookie3
 Be aware that this process can take up to 10 seconds.
 To speed it up you may select a browser.</p>
-<p>If a specifc browser is set, gets data from that browser only.
+<p>If a specific browser is set, gets data from that browser only.
 Avalible browsers: chrome, chromium, opera, edge, firefox</p></div>
 <details class="source">
 <summary>
@@ -521,7 +503,7 @@ Avalible browsers: chrome, chromium, opera, edge, firefox</p></div>
     Be aware that this process can take up to 10 seconds.
     To speed it up you may select a browser.
     
-    If a specifc browser is set, gets data from that browser only.
+    If a specific browser is set, gets data from that browser only.
     Avalible browsers: chrome, chromium, opera, edge, firefox
     &#34;&#34;&#34;
     set_cookies(get_browser_cookies(browser), clear=True)</code></pre>
@@ -569,7 +551,7 @@ This is so far the only way to circumvent the rate limit.</p>
 <p>Requires the module browser-cookie3
 Be aware that this process can take up to 10 seconds.
 To speed it up you may select a browser.</p>
-<p>If a specifc browser is set, gets data from that browser only.
+<p>If a specific browser is set, gets data from that browser only.
 Avalible browsers: chrome, chromium, opera, edge, firefox</p></div>
 <details class="source">
 <summary>
@@ -583,7 +565,7 @@ Avalible browsers: chrome, chromium, opera, edge, firefox</p></div>
     Be aware that this process can take up to 10 seconds.
     To speed it up you may select a browser.
     
-    If a specifc browser is set, gets data from that browser only.
+    If a specific browser is set, gets data from that browser only.
     Avalible browsers: chrome, chromium, opera, edge, firefox
     &#34;&#34;&#34;
     set_cookies(get_browser_cookies(browser), clear=True)</code></pre>
@@ -657,7 +639,6 @@ setTimeout(() => input.focus(), 100);
 <li><code><a title="genshinstats.genshinstats.get_all_user_data" href="#genshinstats.genshinstats.get_all_user_data">get_all_user_data</a></code></li>
 <li><code><a title="genshinstats.genshinstats.get_browser_cookies" href="#genshinstats.genshinstats.get_browser_cookies">get_browser_cookies</a></code></li>
 <li><code><a title="genshinstats.genshinstats.get_characters" href="#genshinstats.genshinstats.get_characters">get_characters</a></code></li>
-<li><code><a title="genshinstats.genshinstats.get_ds_token" href="#genshinstats.genshinstats.get_ds_token">get_ds_token</a></code></li>
 <li><code><a title="genshinstats.genshinstats.get_spiral_abyss" href="#genshinstats.genshinstats.get_spiral_abyss">get_spiral_abyss</a></code></li>
 <li><code><a title="genshinstats.genshinstats.get_user_stats" href="#genshinstats.genshinstats.get_user_stats">get_user_stats</a></code></li>
 <li><code><a title="genshinstats.genshinstats.set_cookie" href="#genshinstats.genshinstats.set_cookie">set_cookie</a></code></li>
