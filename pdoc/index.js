@@ -207,22 +207,22 @@ INDEX=[
 "func":1
 },
 {
-"ref":"genshinstats.errors.GachaLogException",
+"ref":"genshinstats.errors.AuthkeyError",
 "url":2,
 "doc":"Base GachaLog Exception."
 },
 {
-"ref":"genshinstats.errors.GachaLogException.retcode",
+"ref":"genshinstats.errors.AuthkeyError.retcode",
 "url":2,
 "doc":""
 },
 {
-"ref":"genshinstats.errors.GachaLogException.orig_msg",
+"ref":"genshinstats.errors.AuthkeyError.orig_msg",
 "url":2,
 "doc":""
 },
 {
-"ref":"genshinstats.errors.GachaLogException.set_response",
+"ref":"genshinstats.errors.AuthkeyError.set_response",
 "url":2,
 "doc":"Adds an optional response object to the error.",
 "func":1
@@ -249,22 +249,22 @@ INDEX=[
 "func":1
 },
 {
-"ref":"genshinstats.errors.AuthKeyTimeout",
+"ref":"genshinstats.errors.AuthkeyTimeout",
 "url":2,
 "doc":"An authkey has timed out."
 },
 {
-"ref":"genshinstats.errors.AuthKeyTimeout.retcode",
+"ref":"genshinstats.errors.AuthkeyTimeout.retcode",
 "url":2,
 "doc":""
 },
 {
-"ref":"genshinstats.errors.AuthKeyTimeout.orig_msg",
+"ref":"genshinstats.errors.AuthkeyTimeout.orig_msg",
 "url":2,
 "doc":""
 },
 {
-"ref":"genshinstats.errors.AuthKeyTimeout.set_response",
+"ref":"genshinstats.errors.AuthkeyTimeout.set_response",
 "url":2,
 "doc":"Adds an optional response object to the error.",
 "func":1
@@ -497,12 +497,6 @@ INDEX=[
 "func":1
 },
 {
-"ref":"genshinstats.utils.asyncify",
-"url":6,
-"doc":"Wraps a function as an awaitable so it can be used in asyncio projects.",
-"func":1
-},
-{
 "ref":"genshinstats.wishes",
 "url":7,
 "doc":"Genshin Impact wish history. Gets wish history from the current banners in a clean api. Requires an authkey that is fetched automatically from a logfile."
@@ -565,6 +559,12 @@ INDEX=[
 "ref":"genshinstats.wishes.get_uid_from_authkey",
 "url":7,
 "doc":"Gets a uid from an authkey. If an authkey is not passed in the function uses the currently set authkey.",
+"func":1
+},
+{
+"ref":"genshinstats.wishes.validate_authkey",
+"url":7,
+"doc":"Checks whether an authkey is valid by sending a request If a previous authkey is provided the function also checks if the authkey belongs to the same person as the previous one.",
 "func":1
 }
 ]
