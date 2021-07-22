@@ -26,17 +26,18 @@
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\utils.py#L0-L43" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\utils.py#L0-L64" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">&#34;&#34;&#34;Various utility functions for genshinstats.&#34;&#34;&#34;
 import os.path
 import re
-from typing import Optional, Union
+import inspect
+from typing import Callable, Optional, TypeVar, Union
 
 from .errors import AccountNotFound
 
 __all__ = [
-    &#39;USER_AGENT&#39;, &#39;recognize_server&#39;, &#39;is_game_uid&#39;, &#39;is_chinese&#39;, &#39;get_output_log&#39;
+    &#39;USER_AGENT&#39;, &#39;recognize_server&#39;, &#39;is_game_uid&#39;, &#39;is_chinese&#39;, &#39;get_output_log&#39;, &#39;permanent_cache&#39;
 ]
 
 USER_AGENT = &#34;Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36&#34;
@@ -71,7 +72,27 @@ def get_output_log() -&gt; Optional[str]:
         output_log = os.path.join(mihoyo_dir,name,&#39;output_log.txt&#39;)
         if os.path.isfile(output_log):
             return output_log
-    return None # no genshin installation</code></pre>
+    return None # no genshin installation
+
+T = TypeVar(&#39;T&#39;, bound=Callable)
+def permanent_cache(*params: str) -&gt; Callable[[T], T]:
+    &#34;&#34;&#34;Like lru_cache except permanent and only caches based on some parameters&#34;&#34;&#34;
+    cache = {}
+    
+    def wrapper(func):
+        sig = inspect.signature(func)
+        
+        def inner(*args, **kwargs):
+            bound = tuple(v for k,v in sig.bind(*args, **kwargs).arguments.items() if k in params)
+            if bound in cache:
+                return cache[bound]
+            r =  func(*args, **kwargs)
+            cache[bound] = r
+            return r
+        
+        inner.cache = cache
+        return inner
+    return wrapper # type: ignore</code></pre>
 </details>
 </section>
 <section>
@@ -89,7 +110,7 @@ def get_output_log() -&gt; Optional[str]:
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\utils.py#L37-L44" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\utils.py#L38-L45" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def get_output_log() -&gt; Optional[str]:
     &#34;&#34;&#34;Find and return the Genshin Impact output log. None if not found.&#34;&#34;&#34;
@@ -109,7 +130,7 @@ def get_output_log() -&gt; Optional[str]:
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\utils.py#L33-L35" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\utils.py#L34-L36" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def is_chinese(x: Union[int, str]) -&gt; bool:
     &#34;&#34;&#34;Recognizes whether the server/uid is chinese.&#34;&#34;&#34;
@@ -124,11 +145,41 @@ def get_output_log() -&gt; Optional[str]:
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\utils.py#L29-L31" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\utils.py#L30-L32" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def is_game_uid(uid: int) -&gt; bool:
     &#34;&#34;&#34;Recognizes whether the uid is a game uid.&#34;&#34;&#34;
     return bool(re.fullmatch(r&#39;[6789]\d{8}&#39;,str(uid)))</code></pre>
+</details>
+</dd>
+<dt id="genshinstats.utils.permanent_cache"><code class="name flex">
+<span>def <span class="ident">permanent_cache</span></span>(<span>*params: str) ‑> Callable[[~T], ~T]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Like lru_cache except permanent and only caches based on some parameters</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\utils.py#L48-L65" class="git-link">Browse git</a>
+</summary>
+<pre><code class="python">def permanent_cache(*params: str) -&gt; Callable[[T], T]:
+    &#34;&#34;&#34;Like lru_cache except permanent and only caches based on some parameters&#34;&#34;&#34;
+    cache = {}
+    
+    def wrapper(func):
+        sig = inspect.signature(func)
+        
+        def inner(*args, **kwargs):
+            bound = tuple(v for k,v in sig.bind(*args, **kwargs).arguments.items() if k in params)
+            if bound in cache:
+                return cache[bound]
+            r =  func(*args, **kwargs)
+            cache[bound] = r
+            return r
+        
+        inner.cache = cache
+        return inner
+    return wrapper # type: ignore</code></pre>
 </details>
 </dd>
 <dt id="genshinstats.utils.recognize_server"><code class="name flex">
@@ -139,7 +190,7 @@ def get_output_log() -&gt; Optional[str]:
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\utils.py#L14-L27" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\utils.py#L15-L28" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def recognize_server(uid: int) -&gt; str:
     &#34;&#34;&#34;Recognizes which server a UID is from.&#34;&#34;&#34;
@@ -224,6 +275,7 @@ setTimeout(() => input.focus(), 100);
 <li><code><a title="genshinstats.utils.get_output_log" href="#genshinstats.utils.get_output_log">get_output_log</a></code></li>
 <li><code><a title="genshinstats.utils.is_chinese" href="#genshinstats.utils.is_chinese">is_chinese</a></code></li>
 <li><code><a title="genshinstats.utils.is_game_uid" href="#genshinstats.utils.is_game_uid">is_game_uid</a></code></li>
+<li><code><a title="genshinstats.utils.permanent_cache" href="#genshinstats.utils.permanent_cache">permanent_cache</a></code></li>
 <li><code><a title="genshinstats.utils.recognize_server" href="#genshinstats.utils.recognize_server">recognize_server</a></code></li>
 </ul>
 </li>

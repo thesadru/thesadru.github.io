@@ -28,7 +28,7 @@ that were leftover from during development</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\pretty.py#L0-L256" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\pretty.py#L0-L257" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">&#34;&#34;&#34;Prettifiers for genshinstats api returns.
 
@@ -103,8 +103,9 @@ def prettify_characters(data):
         }.get(i[&#34;name&#34;],None),
         &#34;rarity&#34;: i[&#34;rarity&#34;],
         &#34;element&#34;: i[&#34;element&#34;] if i[&#34;name&#34;]!=&#34;Traveler&#34; else {
-            71:&#34;Anemo&#34;,
-            91:&#34;Geo&#34;
+            71: &#34;Anemo&#34;,
+            91: &#34;Geo&#34;,
+            101: &#34;Electro&#34;
         }[i[&#34;constellations&#34;][0][&#34;id&#34;]], # traveler elements
         &#34;level&#34;: i[&#34;level&#34;],
         &#34;ascension&#34;: ceil(i[&#34;level&#34;]//10)-1,
@@ -304,7 +305,7 @@ def prettify_banner_details(data):
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\pretty.py#L205-L257" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\pretty.py#L206-L258" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def prettify_banner_details(data):
     per = lambda p: None if p==&#39;0%&#39; else float(p[:-1].replace(&#39;,&#39;,&#39;.&#39;))
@@ -369,7 +370,7 @@ def prettify_banner_details(data):
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\pretty.py#L62-L128" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\pretty.py#L62-L129" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def prettify_characters(data):
     return [{
@@ -383,8 +384,9 @@ def prettify_banner_details(data):
         }.get(i[&#34;name&#34;],None),
         &#34;rarity&#34;: i[&#34;rarity&#34;],
         &#34;element&#34;: i[&#34;element&#34;] if i[&#34;name&#34;]!=&#34;Traveler&#34; else {
-            71:&#34;Anemo&#34;,
-            91:&#34;Geo&#34;
+            71: &#34;Anemo&#34;,
+            91: &#34;Geo&#34;,
+            101: &#34;Electro&#34;
         }[i[&#34;constellations&#34;][0][&#34;id&#34;]], # traveler elements
         &#34;level&#34;: i[&#34;level&#34;],
         &#34;ascension&#34;: ceil(i[&#34;level&#34;]//10)-1,
@@ -448,7 +450,7 @@ def prettify_banner_details(data):
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\pretty.py#L197-L203" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\pretty.py#L198-L204" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def prettify_gacha_items(data):
     return [{
@@ -467,7 +469,7 @@ def prettify_banner_details(data):
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\pretty.py#L130-L183" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\pretty.py#L131-L184" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def prettify_spiral_abyss(data):
     fchars = lambda d: [{
@@ -579,7 +581,7 @@ def prettify_banner_details(data):
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\pretty.py#L185-L195" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\pretty.py#L186-L196" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def prettify_wish_history(data, banner_name = None):
     return [{

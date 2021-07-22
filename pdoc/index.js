@@ -369,7 +369,7 @@ INDEX=[
 {
 "ref":"genshinstats.hoyolab.get_langs",
 "url":4,
-"doc":"Gets codes of all languages and their names",
+"doc":"",
 "func":1
 },
 {
@@ -497,6 +497,12 @@ INDEX=[
 "func":1
 },
 {
+"ref":"genshinstats.utils.permanent_cache",
+"url":6,
+"doc":"Like lru_cache except permanent and only caches based on some parameters",
+"func":1
+},
+{
 "ref":"genshinstats.wishes",
 "url":7,
 "doc":"Genshin Impact wish history. Gets wish history from the current banners in a clean api. Requires an authkey that is fetched automatically from a logfile."
@@ -534,7 +540,7 @@ INDEX=[
 {
 "ref":"genshinstats.wishes.get_banner_types",
 "url":7,
-"doc":"Gets ids for all banners and their names",
+"doc":"",
 "func":1
 },
 {
