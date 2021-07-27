@@ -40,7 +40,7 @@ INDEX=[
 {
 "ref":"genshinstats.daily.get_monthly_rewards",
 "url":1,
-"doc":"Gets a list of avalible rewards for the current month",
+"doc":"",
 "func":1
 },
 {
@@ -476,6 +476,12 @@ INDEX=[
 "ref":"genshinstats.utils.recognize_server",
 "url":6,
 "doc":"Recognizes which server a UID is from.",
+"func":1
+},
+{
+"ref":"genshinstats.utils.recognize_id",
+"url":6,
+"doc":"Attempts to recognize what item type an id is",
 "func":1
 },
 {

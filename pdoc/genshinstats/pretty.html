@@ -28,7 +28,7 @@ that were leftover from during development</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\pretty.py#L0-L257" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\pretty.py#L0-L263" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">&#34;&#34;&#34;Prettifiers for genshinstats api returns.
 
@@ -37,9 +37,9 @@ that were leftover from during development
 &#34;&#34;&#34;
 import re
 from datetime import datetime
-from math import ceil
+from typing import Optional
 
-def _recognize_character_icon(url):
+def _recognize_character_icon(url: str) -&gt; Optional[str]:
     &#34;&#34;&#34;Recognizes a character&#39;s icon url and returns its name.&#34;&#34;&#34;
     exp = r&#39;https://upload-os-bbs.mihoyo.com/game_record/genshin/character_.*_(\w+)(?:@\dx)?.png&#39;
     match = re.fullmatch(exp,url)
@@ -66,6 +66,7 @@ def prettify_user_stats(data):
             &#34;spiral_abyss&#34;: s[&#34;spiral_abyss&#34;],
             &#34;anemoculi&#34;: s[&#34;anemoculus_number&#34;],
             &#34;geoculi&#34;: s[&#34;geoculus_number&#34;],
+            &#34;electroculi&#34;: s[&#34;electroculus_number&#34;],
             &#34;common_chests&#34;: s[&#34;common_chest_number&#34;],
             &#34;exquisite_chests&#34;: s[&#34;exquisite_chest_number&#34;],
             &#34;precious_chests&#34;: s[&#34;precious_chest_number&#34;],
@@ -108,10 +109,10 @@ def prettify_characters(data):
             101: &#34;Electro&#34;
         }[i[&#34;constellations&#34;][0][&#34;id&#34;]], # traveler elements
         &#34;level&#34;: i[&#34;level&#34;],
-        &#34;ascension&#34;: ceil(i[&#34;level&#34;]//10)-1,
         &#34;friendship&#34;: i[&#34;fetter&#34;],
         &#34;constellation&#34;: sum(c[&#34;is_actived&#34;] for c in i[&#34;constellations&#34;]),
-        &#34;icon&#34;: i[&#34;image&#34;],
+        &#34;icon&#34;: i[&#34;icon&#34;],
+        &#34;image&#34;: i[&#34;image&#34;],
         &#34;id&#34;: i[&#34;id&#34;],
         &#34;weapon&#34;: {
             &#34;name&#34;: i[&#34;weapon&#34;][&#34;name&#34;],
@@ -157,7 +158,12 @@ def prettify_characters(data):
             &#34;index&#34;: c[&#34;pos&#34;],
             &#34;icon&#34;: c[&#34;icon&#34;],
             &#34;id&#34;: c[&#34;id&#34;],
-        } for c in i[&#34;constellations&#34;]]
+        } for c in i[&#34;constellations&#34;]],
+        &#34;outfits&#34;:[{
+            &#34;name&#34;: c[&#34;name&#34;],
+            &#34;icon&#34;: c[&#34;icon&#34;],
+            &#34;id&#34;: c[&#34;id&#34;]
+        } for c in i[&#34;costumes&#34;]],
     } for i in data]
 
 def prettify_spiral_abyss(data):
@@ -305,7 +311,7 @@ def prettify_banner_details(data):
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\pretty.py#L206-L258" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\pretty.py#L212-L264" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def prettify_banner_details(data):
     per = lambda p: None if p==&#39;0%&#39; else float(p[:-1].replace(&#39;,&#39;,&#39;.&#39;))
@@ -370,7 +376,7 @@ def prettify_banner_details(data):
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\pretty.py#L62-L129" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\pretty.py#L63-L135" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def prettify_characters(data):
     return [{
@@ -389,10 +395,10 @@ def prettify_banner_details(data):
             101: &#34;Electro&#34;
         }[i[&#34;constellations&#34;][0][&#34;id&#34;]], # traveler elements
         &#34;level&#34;: i[&#34;level&#34;],
-        &#34;ascension&#34;: ceil(i[&#34;level&#34;]//10)-1,
         &#34;friendship&#34;: i[&#34;fetter&#34;],
         &#34;constellation&#34;: sum(c[&#34;is_actived&#34;] for c in i[&#34;constellations&#34;]),
-        &#34;icon&#34;: i[&#34;image&#34;],
+        &#34;icon&#34;: i[&#34;icon&#34;],
+        &#34;image&#34;: i[&#34;image&#34;],
         &#34;id&#34;: i[&#34;id&#34;],
         &#34;weapon&#34;: {
             &#34;name&#34;: i[&#34;weapon&#34;][&#34;name&#34;],
@@ -438,7 +444,12 @@ def prettify_banner_details(data):
             &#34;index&#34;: c[&#34;pos&#34;],
             &#34;icon&#34;: c[&#34;icon&#34;],
             &#34;id&#34;: c[&#34;id&#34;],
-        } for c in i[&#34;constellations&#34;]]
+        } for c in i[&#34;constellations&#34;]],
+        &#34;outfits&#34;:[{
+            &#34;name&#34;: c[&#34;name&#34;],
+            &#34;icon&#34;: c[&#34;icon&#34;],
+            &#34;id&#34;: c[&#34;id&#34;]
+        } for c in i[&#34;costumes&#34;]],
     } for i in data]</code></pre>
 </details>
 </dd>
@@ -450,7 +461,7 @@ def prettify_banner_details(data):
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\pretty.py#L198-L204" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\pretty.py#L204-L210" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def prettify_gacha_items(data):
     return [{
@@ -469,7 +480,7 @@ def prettify_banner_details(data):
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\pretty.py#L131-L184" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\pretty.py#L137-L190" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def prettify_spiral_abyss(data):
     fchars = lambda d: [{
@@ -535,7 +546,7 @@ def prettify_banner_details(data):
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\pretty.py#L27-L60" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\pretty.py#L27-L61" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def prettify_user_stats(data):
     s = data[&#34;stats&#34;]
@@ -547,6 +558,7 @@ def prettify_banner_details(data):
             &#34;spiral_abyss&#34;: s[&#34;spiral_abyss&#34;],
             &#34;anemoculi&#34;: s[&#34;anemoculus_number&#34;],
             &#34;geoculi&#34;: s[&#34;geoculus_number&#34;],
+            &#34;electroculi&#34;: s[&#34;electroculus_number&#34;],
             &#34;common_chests&#34;: s[&#34;common_chest_number&#34;],
             &#34;exquisite_chests&#34;: s[&#34;exquisite_chest_number&#34;],
             &#34;precious_chests&#34;: s[&#34;precious_chest_number&#34;],
@@ -581,7 +593,7 @@ def prettify_banner_details(data):
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\pretty.py#L186-L196" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\pretty.py#L192-L202" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def prettify_wish_history(data, banner_name = None):
     return [{

@@ -28,7 +28,7 @@ Requires an authkey that is fetched automatically from a logfile.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\wishes.py#L0-L247" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\wishes.py#L0-L254" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">&#34;&#34;&#34;Genshin Impact wish history.
 
@@ -51,10 +51,17 @@ from .pretty import *
 from .utils import USER_AGENT, get_output_log, permanent_cache
 
 __all__ = [
-    &#39;extract_authkey&#39;, &#39;get_authkey&#39;, &#39;set_authkey&#39;, &#39;get_banner_ids&#39;,
-    &#39;fetch_gacha_endpoint&#39;, &#39;get_banner_types&#39;, &#39;get_wish_history&#39;,
-    &#39;get_gacha_items&#39;, &#39;get_banner_details&#39;, &#39;get_uid_from_authkey&#39;,
-    &#39;validate_authkey&#39;
+    &#34;extract_authkey&#34;,
+    &#34;get_authkey&#34;,
+    &#34;set_authkey&#34;,
+    &#34;get_banner_ids&#34;,
+    &#34;fetch_gacha_endpoint&#34;,
+    &#34;get_banner_types&#34;,
+    &#34;get_wish_history&#34;,
+    &#34;get_gacha_items&#34;,
+    &#34;get_banner_details&#34;,
+    &#34;get_uid_from_authkey&#34;,
+    &#34;validate_authkey&#34;,
 ]
 
 GENSHIN_LOG = get_output_log()
@@ -219,7 +226,7 @@ def get_wish_history(
         end_id = data[-1][&#39;id&#39;]
 
 
-def get_gacha_items(lang: str = &#39;en-us&#39;) -&gt; list:
+def get_gacha_items(lang: str = &#39;en-us&#39;) -&gt; List[Dict[str, Any]]:
     &#34;&#34;&#34;Gets the list of characters and weapons that can be gotten from the gacha.&#34;&#34;&#34;
     r = static_session.get(
         f&#34;https://webstatic-sea.mihoyo.com/hk4e/gacha_info/os_asia/items/{lang}.json&#34;
@@ -295,7 +302,7 @@ def validate_authkey(authkey: Any, previous_authkey: str = None) -&gt; bool:
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\wishes.py#L57-L62" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\wishes.py#L64-L69" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def extract_authkey(string: str) -&gt; Optional[str]:
     &#34;&#34;&#34;Extracts an authkey from the provided string. Returns None if not found.&#34;&#34;&#34;
@@ -317,7 +324,7 @@ Includes error handling and getting the authkey.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\wishes.py#L104-L126" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\wishes.py#L111-L133" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def fetch_gacha_endpoint(endpoint: str, authkey: str = None, **kwargs) -&gt; Dict[str, Any]:
     &#34;&#34;&#34;Fetch an enpoint from mihoyo&#39;s gacha info.
@@ -353,7 +360,7 @@ Includes error handling and getting the authkey.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\wishes.py#L64-L81" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\wishes.py#L71-L88" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def get_authkey(logfile: str = None) -&gt; str:
     &#34;&#34;&#34;Gets the query for log requests.
@@ -387,7 +394,7 @@ example standard wish: "a37a19624270b092e7250edfabce541a3435c2"</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\wishes.py#L198-L211" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\wishes.py#L205-L218" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def get_banner_details(banner_id: str, lang: str = &#39;en-us&#39;) -&gt; Dict[str, Any]:
     &#34;&#34;&#34;Gets details of a specific banner.
@@ -414,7 +421,7 @@ example standard wish: "a37a19624270b092e7250edfabce541a3435c2"</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\wishes.py#L95-L102" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\wishes.py#L102-L109" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def get_banner_ids(logfile: str = None) -&gt; List[str]:
     &#34;&#34;&#34;Gets all banner ids from a log file.
@@ -434,28 +441,32 @@ example standard wish: "a37a19624270b092e7250edfabce541a3435c2"</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\utils.py#L55-L61" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\utils.py#L78-L88" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def inner(*args, **kwargs):
-    bound = tuple(v for k,v in sig.bind(*args, **kwargs).arguments.items() if k in params)
-    if bound in cache:
-        return cache[bound]
-    r =  func(*args, **kwargs)
-    cache[bound] = r
+    bound = sig.bind(*args, **kwargs)
+    bound.apply_defaults()
+    # since the amount of arguments is constant we can just save the values
+    key = tuple(v for k, v in bound.arguments.items() if k in params)
+
+    if key in cache:
+        return cache[key]
+    r = func(*args, **kwargs)
+    cache[key] = r
     return r</code></pre>
 </details>
 </dd>
 <dt id="genshinstats.wishes.get_gacha_items"><code class="name flex">
-<span>def <span class="ident">get_gacha_items</span></span>(<span>lang: str = 'en-us') ‑> list</span>
+<span>def <span class="ident">get_gacha_items</span></span>(<span>lang: str = 'en-us') ‑> List[Dict[str, Any]]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Gets the list of characters and weapons that can be gotten from the gacha.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\wishes.py#L190-L196" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\wishes.py#L197-L203" class="git-link">Browse git</a>
 </summary>
-<pre><code class="python">def get_gacha_items(lang: str = &#39;en-us&#39;) -&gt; list:
+<pre><code class="python">def get_gacha_items(lang: str = &#39;en-us&#39;) -&gt; List[Dict[str, Any]]:
     &#34;&#34;&#34;Gets the list of characters and weapons that can be gotten from the gacha.&#34;&#34;&#34;
     r = static_session.get(
         f&#34;https://webstatic-sea.mihoyo.com/hk4e/gacha_info/os_asia/items/{lang}.json&#34;
@@ -473,7 +484,7 @@ example standard wish: "a37a19624270b092e7250edfabce541a3435c2"</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\wishes.py#L213-L224" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\wishes.py#L220-L231" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def get_uid_from_authkey(authkey: str = None) -&gt; int:
     &#34;&#34;&#34;Gets a uid from an authkey. 
@@ -503,7 +514,7 @@ you may pass in the id of the pull right chronologically after the one you want 
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\wishes.py#L138-L187" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\wishes.py#L145-L194" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def get_wish_history(
     banner_type: int = None, size: int = None, 
@@ -567,7 +578,7 @@ or a path to a logfile with the authkey.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\wishes.py#L83-L93" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\wishes.py#L90-L100" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def set_authkey(authkey: str = None) -&gt; None:
     &#34;&#34;&#34;Sets an authkey for log requests.
@@ -592,7 +603,7 @@ authkey belongs to the same person as the previous one.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\wishes.py#L226-L248" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\wishes.py#L233-L255" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def validate_authkey(authkey: Any, previous_authkey: str = None) -&gt; bool:
     &#34;&#34;&#34;Checks whether an authkey is valid by sending a request

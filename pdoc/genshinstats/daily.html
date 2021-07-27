@@ -27,22 +27,24 @@
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\daily.py#L0-L86" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\daily.py#L0-L84" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">&#34;&#34;&#34;Automatic sign-in for hoyolab&#39;s daily rewards.
 
 Automatically claims the next daily reward in the daily check-in rewards.
 &#34;&#34;&#34;
-from typing import Any, Dict, Iterator, Mapping, Optional, Tuple
+from genshinstats.utils import permanent_cache
+from typing import Any, Dict, Iterator, List, Mapping, Optional, Tuple
 from urllib.parse import urljoin
 
 from .genshinstats import fetch_endpoint
-from .hoyolab import get_game_accounts
-from .utils import recognize_server
 
 __all__ = [
-    &#39;fetch_daily_endpoint&#39;, &#39;get_daily_reward_info&#39;, &#39;get_claimed_rewards&#39;, 
-    &#39;get_monthly_rewards&#39;, &#39;claim_daily_reward&#39;
+    &#34;fetch_daily_endpoint&#34;,
+    &#34;get_daily_reward_info&#34;,
+    &#34;get_claimed_rewards&#34;,
+    &#34;get_monthly_rewards&#34;,
+    &#34;claim_daily_reward&#34;,
 ]
 
 OS_URL = &#34;https://hk4e-api-os.mihoyo.com/event/sol/&#34; # overseas
@@ -67,18 +69,14 @@ def get_daily_reward_info(chinese: bool = False, cookie: Mapping[str, Any] = Non
     data = fetch_daily_endpoint(&#34;info&#34;, chinese, cookie=cookie)
     return data[&#39;is_sign&#39;], data[&#39;total_sign_day&#39;]
 
-_monthly_rewards = None # homebrew cache, dangerous since it should only last 1 month but who cares
-def get_monthly_rewards(chinese: bool = False, lang: str = &#39;en-us&#39;, cookie: Mapping[str, Any] = None) -&gt; list:
+@permanent_cache(&#39;chinese&#39;, &#39;lang&#39;)
+def get_monthly_rewards(chinese: bool = False, lang: str = &#39;en-us&#39;, cookie: Mapping[str, Any] = None) -&gt; List[Dict[str, Any]]:
     &#34;&#34;&#34;Gets a list of avalible rewards for the current month&#34;&#34;&#34;
-    global _monthly_rewards
-    if _monthly_rewards is None:
-        _monthly_rewards = fetch_daily_endpoint(
-            &#34;home&#34;, chinese,
-            cookie=cookie,
-            params=dict(lang=lang)
-        )[&#39;awards&#39;]
-    
-    return _monthly_rewards
+    return fetch_daily_endpoint(
+        &#34;home&#34;, chinese,
+        cookie=cookie,
+        params=dict(lang=lang)
+    )[&#39;awards&#39;]
 
 def get_claimed_rewards(chinese: bool = False, cookie: Mapping[str, Any] = None) -&gt; Iterator[Dict[str, Any]]:
     &#34;&#34;&#34;Gets all claimed awards for the currently logged-in user&#34;&#34;&#34;
@@ -137,7 +135,7 @@ so you must specify whether you want to claim rewards for chinese accounts.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\daily.py#L66-L87" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\daily.py#L64-L85" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def claim_daily_reward(chinese: bool = False, lang: str = &#39;en-us&#39;, cookie: Mapping[str, Any] = None) -&gt; Optional[Dict[str, Any]]:
     &#34;&#34;&#34;Signs into hoyolab and claims the daily rewards.
@@ -171,7 +169,7 @@ so you must specify whether you want to claim rewards for chinese accounts.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\daily.py#L22-L28" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\daily.py#L24-L30" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def fetch_daily_endpoint(endpoint: str, chinese: bool = False, **kwargs) -&gt; Dict[str, Any]:
     &#34;&#34;&#34;Fetch an enpoint for daily rewards&#34;&#34;&#34;
@@ -190,7 +188,7 @@ so you must specify whether you want to claim rewards for chinese accounts.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\daily.py#L52-L64" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\daily.py#L50-L62" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def get_claimed_rewards(chinese: bool = False, cookie: Mapping[str, Any] = None) -&gt; Iterator[Dict[str, Any]]:
     &#34;&#34;&#34;Gets all claimed awards for the currently logged-in user&#34;&#34;&#34;
@@ -216,7 +214,7 @@ so you must specify whether you want to claim rewards for chinese accounts.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\daily.py#L31-L37" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\daily.py#L33-L39" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def get_daily_reward_info(chinese: bool = False, cookie: Mapping[str, Any] = None) -&gt; Tuple[bool, int]:
     &#34;&#34;&#34;Fetches daily award info for the currently logged-in user.
@@ -228,26 +226,26 @@ so you must specify whether you want to claim rewards for chinese accounts.</p>
 </details>
 </dd>
 <dt id="genshinstats.daily.get_monthly_rewards"><code class="name flex">
-<span>def <span class="ident">get_monthly_rewards</span></span>(<span>chinese: bool = False, lang: str = 'en-us', cookie: Mapping[str, Any] = None) ‑> list</span>
+<span>def <span class="ident">get_monthly_rewards</span></span>(<span>*args, **kwargs)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Gets a list of avalible rewards for the current month</p></div>
+<div class="desc"></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\daily.py#L40-L50" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\utils.py#L78-L88" class="git-link">Browse git</a>
 </summary>
-<pre><code class="python">def get_monthly_rewards(chinese: bool = False, lang: str = &#39;en-us&#39;, cookie: Mapping[str, Any] = None) -&gt; list:
-    &#34;&#34;&#34;Gets a list of avalible rewards for the current month&#34;&#34;&#34;
-    global _monthly_rewards
-    if _monthly_rewards is None:
-        _monthly_rewards = fetch_daily_endpoint(
-            &#34;home&#34;, chinese,
-            cookie=cookie,
-            params=dict(lang=lang)
-        )[&#39;awards&#39;]
-    
-    return _monthly_rewards</code></pre>
+<pre><code class="python">def inner(*args, **kwargs):
+    bound = sig.bind(*args, **kwargs)
+    bound.apply_defaults()
+    # since the amount of arguments is constant we can just save the values
+    key = tuple(v for k, v in bound.arguments.items() if k in params)
+
+    if key in cache:
+        return cache[key]
+    r = func(*args, **kwargs)
+    cache[key] = r
+    return r</code></pre>
 </details>
 </dd>
 </dl>

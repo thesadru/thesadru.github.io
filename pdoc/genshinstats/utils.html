@@ -26,7 +26,7 @@
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\utils.py#L0-L64" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\utils.py#L0-L92" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">&#34;&#34;&#34;Various utility functions for genshinstats.&#34;&#34;&#34;
 import os.path
@@ -37,7 +37,13 @@ from typing import Callable, Optional, TypeVar, Union
 from .errors import AccountNotFound
 
 __all__ = [
-    &#39;USER_AGENT&#39;, &#39;recognize_server&#39;, &#39;is_game_uid&#39;, &#39;is_chinese&#39;, &#39;get_output_log&#39;, &#39;permanent_cache&#39;
+    &#34;USER_AGENT&#34;,
+    &#34;recognize_server&#34;,
+    &#34;recognize_id&#34;,
+    &#34;is_game_uid&#34;,
+    &#34;is_chinese&#34;,
+    &#34;get_output_log&#34;,
+    &#34;permanent_cache&#34;,
 ]
 
 USER_AGENT = &#34;Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36&#34;
@@ -57,41 +63,63 @@ def recognize_server(uid: int) -&gt; str:
     else:
         raise AccountNotFound(f&#34;UID {uid} isn&#39;t associated with any server&#34;)
 
+def recognize_id(id: int) -&gt; Optional[str]:
+    &#34;&#34;&#34;Attempts to recognize what item type an id is&#34;&#34;&#34;
+    if 10000000 &lt; id &lt; 20000000:
+        return &#34;character&#34;
+    elif 1000000 &lt; id &lt; 10000000:
+        return &#34;artifact_set&#34;
+    elif 100000 &lt; id &lt; 1000000:
+        return &#34;outfit&#34;
+    elif 50000 &lt; id &lt; 100000:
+        return &#34;artifact&#34;
+    elif 10000 &lt; id &lt; 50000:
+        return &#34;weapon&#34;
+    elif 100 &lt; id &lt; 1000:
+        return &#34;contellation&#34;
+    elif 10 ** 17 &lt; id &lt; 10 ** 19:
+        return &#34;gacha_pull&#34;
+
 def is_game_uid(uid: int) -&gt; bool:
     &#34;&#34;&#34;Recognizes whether the uid is a game uid.&#34;&#34;&#34;
-    return bool(re.fullmatch(r&#39;[6789]\d{8}&#39;,str(uid)))
+    return bool(re.fullmatch(r&#34;[6789]\d{8}&#34;, str(uid)))
 
 def is_chinese(x: Union[int, str]) -&gt; bool:
     &#34;&#34;&#34;Recognizes whether the server/uid is chinese.&#34;&#34;&#34;
-    return str(x).startswith((&#39;cn&#39;,&#39;1&#39;,&#39;5&#39;))
+    return str(x).startswith((&#34;cn&#34;, &#34;1&#34;, &#34;5&#34;))
 
 def get_output_log() -&gt; Optional[str]:
     &#34;&#34;&#34;Find and return the Genshin Impact output log. None if not found.&#34;&#34;&#34;
-    mihoyo_dir = os.path.expanduser(&#39;~/AppData/LocalLow/miHoYo/&#39;)
-    for name in [&#34;Genshin Impact&#34;,&#34;原神&#34;,&#34;YuanShen&#34;]:
-        output_log = os.path.join(mihoyo_dir,name,&#39;output_log.txt&#39;)
+    mihoyo_dir = os.path.expanduser(&#34;~/AppData/LocalLow/miHoYo/&#34;)
+    for name in [&#34;Genshin Impact&#34;, &#34;原神&#34;, &#34;YuanShen&#34;]:
+        output_log = os.path.join(mihoyo_dir, name, &#34;output_log.txt&#34;)
         if os.path.isfile(output_log):
             return output_log
     return None # no genshin installation
 
-T = TypeVar(&#39;T&#39;, bound=Callable)
+T = TypeVar(&#34;T&#34;, bound=Callable)
 def permanent_cache(*params: str) -&gt; Callable[[T], T]:
     &#34;&#34;&#34;Like lru_cache except permanent and only caches based on some parameters&#34;&#34;&#34;
     cache = {}
-    
+
     def wrapper(func):
         sig = inspect.signature(func)
-        
+
         def inner(*args, **kwargs):
-            bound = tuple(v for k,v in sig.bind(*args, **kwargs).arguments.items() if k in params)
-            if bound in cache:
-                return cache[bound]
-            r =  func(*args, **kwargs)
-            cache[bound] = r
+            bound = sig.bind(*args, **kwargs)
+            bound.apply_defaults()
+            # since the amount of arguments is constant we can just save the values
+            key = tuple(v for k, v in bound.arguments.items() if k in params)
+
+            if key in cache:
+                return cache[key]
+            r = func(*args, **kwargs)
+            cache[key] = r
             return r
-        
+
         inner.cache = cache
         return inner
+
     return wrapper # type: ignore</code></pre>
 </details>
 </section>
@@ -110,13 +138,13 @@ def permanent_cache(*params: str) -&gt; Callable[[T], T]:
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\utils.py#L38-L45" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\utils.py#L61-L68" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def get_output_log() -&gt; Optional[str]:
     &#34;&#34;&#34;Find and return the Genshin Impact output log. None if not found.&#34;&#34;&#34;
-    mihoyo_dir = os.path.expanduser(&#39;~/AppData/LocalLow/miHoYo/&#39;)
-    for name in [&#34;Genshin Impact&#34;,&#34;原神&#34;,&#34;YuanShen&#34;]:
-        output_log = os.path.join(mihoyo_dir,name,&#39;output_log.txt&#39;)
+    mihoyo_dir = os.path.expanduser(&#34;~/AppData/LocalLow/miHoYo/&#34;)
+    for name in [&#34;Genshin Impact&#34;, &#34;原神&#34;, &#34;YuanShen&#34;]:
+        output_log = os.path.join(mihoyo_dir, name, &#34;output_log.txt&#34;)
         if os.path.isfile(output_log):
             return output_log
     return None # no genshin installation</code></pre>
@@ -130,11 +158,11 @@ def permanent_cache(*params: str) -&gt; Callable[[T], T]:
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\utils.py#L34-L36" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\utils.py#L57-L59" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def is_chinese(x: Union[int, str]) -&gt; bool:
     &#34;&#34;&#34;Recognizes whether the server/uid is chinese.&#34;&#34;&#34;
-    return str(x).startswith((&#39;cn&#39;,&#39;1&#39;,&#39;5&#39;))</code></pre>
+    return str(x).startswith((&#34;cn&#34;, &#34;1&#34;, &#34;5&#34;))</code></pre>
 </details>
 </dd>
 <dt id="genshinstats.utils.is_game_uid"><code class="name flex">
@@ -145,11 +173,11 @@ def permanent_cache(*params: str) -&gt; Callable[[T], T]:
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\utils.py#L30-L32" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\utils.py#L53-L55" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def is_game_uid(uid: int) -&gt; bool:
     &#34;&#34;&#34;Recognizes whether the uid is a game uid.&#34;&#34;&#34;
-    return bool(re.fullmatch(r&#39;[6789]\d{8}&#39;,str(uid)))</code></pre>
+    return bool(re.fullmatch(r&#34;[6789]\d{8}&#34;, str(uid)))</code></pre>
 </details>
 </dd>
 <dt id="genshinstats.utils.permanent_cache"><code class="name flex">
@@ -160,26 +188,59 @@ def permanent_cache(*params: str) -&gt; Callable[[T], T]:
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\utils.py#L48-L65" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\utils.py#L71-L93" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def permanent_cache(*params: str) -&gt; Callable[[T], T]:
     &#34;&#34;&#34;Like lru_cache except permanent and only caches based on some parameters&#34;&#34;&#34;
     cache = {}
-    
+
     def wrapper(func):
         sig = inspect.signature(func)
-        
+
         def inner(*args, **kwargs):
-            bound = tuple(v for k,v in sig.bind(*args, **kwargs).arguments.items() if k in params)
-            if bound in cache:
-                return cache[bound]
-            r =  func(*args, **kwargs)
-            cache[bound] = r
+            bound = sig.bind(*args, **kwargs)
+            bound.apply_defaults()
+            # since the amount of arguments is constant we can just save the values
+            key = tuple(v for k, v in bound.arguments.items() if k in params)
+
+            if key in cache:
+                return cache[key]
+            r = func(*args, **kwargs)
+            cache[key] = r
             return r
-        
+
         inner.cache = cache
         return inner
+
     return wrapper # type: ignore</code></pre>
+</details>
+</dd>
+<dt id="genshinstats.utils.recognize_id"><code class="name flex">
+<span>def <span class="ident">recognize_id</span></span>(<span>id: int) ‑> Optional[str]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Attempts to recognize what item type an id is</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\utils.py#L36-L51" class="git-link">Browse git</a>
+</summary>
+<pre><code class="python">def recognize_id(id: int) -&gt; Optional[str]:
+    &#34;&#34;&#34;Attempts to recognize what item type an id is&#34;&#34;&#34;
+    if 10000000 &lt; id &lt; 20000000:
+        return &#34;character&#34;
+    elif 1000000 &lt; id &lt; 10000000:
+        return &#34;artifact_set&#34;
+    elif 100000 &lt; id &lt; 1000000:
+        return &#34;outfit&#34;
+    elif 50000 &lt; id &lt; 100000:
+        return &#34;artifact&#34;
+    elif 10000 &lt; id &lt; 50000:
+        return &#34;weapon&#34;
+    elif 100 &lt; id &lt; 1000:
+        return &#34;contellation&#34;
+    elif 10 ** 17 &lt; id &lt; 10 ** 19:
+        return &#34;gacha_pull&#34;</code></pre>
 </details>
 </dd>
 <dt id="genshinstats.utils.recognize_server"><code class="name flex">
@@ -190,7 +251,7 @@ def permanent_cache(*params: str) -&gt; Callable[[T], T]:
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\utils.py#L15-L28" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\utils.py#L21-L34" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def recognize_server(uid: int) -&gt; str:
     &#34;&#34;&#34;Recognizes which server a UID is from.&#34;&#34;&#34;
@@ -271,11 +332,12 @@ setTimeout(() => input.focus(), 100);
 </ul>
 </li>
 <li><h3><a href="#header-functions">Functions</a></h3>
-<ul class="">
+<ul class="two-column">
 <li><code><a title="genshinstats.utils.get_output_log" href="#genshinstats.utils.get_output_log">get_output_log</a></code></li>
 <li><code><a title="genshinstats.utils.is_chinese" href="#genshinstats.utils.is_chinese">is_chinese</a></code></li>
 <li><code><a title="genshinstats.utils.is_game_uid" href="#genshinstats.utils.is_game_uid">is_game_uid</a></code></li>
 <li><code><a title="genshinstats.utils.permanent_cache" href="#genshinstats.utils.permanent_cache">permanent_cache</a></code></li>
+<li><code><a title="genshinstats.utils.recognize_id" href="#genshinstats.utils.recognize_id">recognize_id</a></code></li>
 <li><code><a title="genshinstats.utils.recognize_server" href="#genshinstats.utils.recognize_server">recognize_server</a></code></li>
 </ul>
 </li>
