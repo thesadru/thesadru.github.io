@@ -243,26 +243,24 @@ There may be less posts returned than size.</p></div>
 </details>
 </dd>
 <dt id="genshinstats.hoyolab.get_langs"><code class="name flex">
-<span>def <span class="ident">get_langs</span></span>(<span>*args, **kwargs)</span>
+<span>def <span class="ident">get_langs</span></span>(<span>) ‑> Dict[str, str]</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Gets codes of all languages and their names</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\utils.py#L81-L91" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\hoyolab.py#L26-L34" class="git-link">Browse git</a>
 </summary>
-<pre><code class="python">def inner(*args, **kwargs):
-    bound = sig.bind(*args, **kwargs)
-    bound.apply_defaults()
-    # since the amount of arguments is constant we can just save the values
-    key = tuple(v for k, v in bound.arguments.items() if k in params)
-
-    if key in cache:
-        return cache[key]
-    r = func(*args, **kwargs)
-    cache[key] = r
-    return r</code></pre>
+<pre><code class="python">@permanent_cache()
+def get_langs() -&gt; Dict[str, str]:
+    &#34;&#34;&#34;Gets codes of all languages and their names&#34;&#34;&#34;
+    data = fetch_endpoint(
+        &#34;community/misc/wapi/langs&#34;,
+        cookie={},
+        params=dict(gids=2)
+    )[&#39;langs&#39;]
+    return {i[&#39;value&#39;]: i[&#39;name&#39;] for i in data}</code></pre>
 </details>
 </dd>
 <dt id="genshinstats.hoyolab.get_recommended_users"><code class="name flex">

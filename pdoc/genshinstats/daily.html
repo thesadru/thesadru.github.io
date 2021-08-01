@@ -226,26 +226,23 @@ so you must specify whether you want to claim rewards for chinese accounts.</p>
 </details>
 </dd>
 <dt id="genshinstats.daily.get_monthly_rewards"><code class="name flex">
-<span>def <span class="ident">get_monthly_rewards</span></span>(<span>*args, **kwargs)</span>
+<span>def <span class="ident">get_monthly_rewards</span></span>(<span>chinese: bool = False, lang: str = 'en-us', cookie: Mapping[str, Any] = None) ‑> List[Dict[str, Any]]</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Gets a list of avalible rewards for the current month</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\utils.py#L81-L91" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\daily.py#L41-L48" class="git-link">Browse git</a>
 </summary>
-<pre><code class="python">def inner(*args, **kwargs):
-    bound = sig.bind(*args, **kwargs)
-    bound.apply_defaults()
-    # since the amount of arguments is constant we can just save the values
-    key = tuple(v for k, v in bound.arguments.items() if k in params)
-
-    if key in cache:
-        return cache[key]
-    r = func(*args, **kwargs)
-    cache[key] = r
-    return r</code></pre>
+<pre><code class="python">@permanent_cache(&#39;chinese&#39;, &#39;lang&#39;)
+def get_monthly_rewards(chinese: bool = False, lang: str = &#39;en-us&#39;, cookie: Mapping[str, Any] = None) -&gt; List[Dict[str, Any]]:
+    &#34;&#34;&#34;Gets a list of avalible rewards for the current month&#34;&#34;&#34;
+    return fetch_daily_endpoint(
+        &#34;home&#34;, chinese,
+        cookie=cookie,
+        params=dict(lang=lang)
+    )[&#39;awards&#39;]</code></pre>
 </details>
 </dd>
 </dl>

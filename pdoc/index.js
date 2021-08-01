@@ -40,7 +40,7 @@ INDEX=[
 {
 "ref":"genshinstats.daily.get_monthly_rewards",
 "url":1,
-"doc":"",
+"doc":"Gets a list of avalible rewards for the current month",
 "func":1
 },
 {
@@ -369,7 +369,7 @@ INDEX=[
 {
 "ref":"genshinstats.hoyolab.get_langs",
 "url":4,
-"doc":"",
+"doc":"Gets codes of all languages and their names",
 "func":1
 },
 {
@@ -552,7 +552,7 @@ INDEX=[
 {
 "ref":"genshinstats.wishes.get_banner_types",
 "url":7,
-"doc":"",
+"doc":"Gets ids for all banners and their names",
 "func":1
 },
 {

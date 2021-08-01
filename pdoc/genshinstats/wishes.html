@@ -434,26 +434,24 @@ example standard wish: "a37a19624270b092e7250edfabce541a3435c2"</p>
 </details>
 </dd>
 <dt id="genshinstats.wishes.get_banner_types"><code class="name flex">
-<span>def <span class="ident">get_banner_types</span></span>(<span>*args, **kwargs)</span>
+<span>def <span class="ident">get_banner_types</span></span>(<span>authkey: str = None, lang: str = 'en') ‑> Dict[int, str]</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Gets ids for all banners and their names</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\utils.py#L81-L91" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\wishes.py#L135-L143" class="git-link">Browse git</a>
 </summary>
-<pre><code class="python">def inner(*args, **kwargs):
-    bound = sig.bind(*args, **kwargs)
-    bound.apply_defaults()
-    # since the amount of arguments is constant we can just save the values
-    key = tuple(v for k, v in bound.arguments.items() if k in params)
-
-    if key in cache:
-        return cache[key]
-    r = func(*args, **kwargs)
-    cache[key] = r
-    return r</code></pre>
+<pre><code class="python">@permanent_cache(&#39;lang&#39;)
+def get_banner_types(authkey: str = None, lang: str = &#39;en&#39;) -&gt; Dict[int, str]:
+    &#34;&#34;&#34;Gets ids for all banners and their names&#34;&#34;&#34;
+    banners = fetch_gacha_endpoint(
+        &#34;getConfigList&#34;,
+        authkey=authkey,
+        params=dict(lang=_get_short_lang_code(lang))
+    )[&#39;gacha_type_list&#39;]
+    return {int(i[&#39;key&#39;]): i[&#39;name&#39;] for i in banners}</code></pre>
 </details>
 </dd>
 <dt id="genshinstats.wishes.get_gacha_items"><code class="name flex">
