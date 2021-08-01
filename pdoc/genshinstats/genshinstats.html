@@ -27,7 +27,7 @@
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\genshinstats.py#L0-L240" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\genshinstats.py#L0-L234" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">&#34;&#34;&#34;Wrapper for the hoyolab.com gameRecord api.
 
@@ -46,7 +46,7 @@ from requests.sessions import RequestsCookieJar, Session
 
 from .errors import NotLoggedIn, TooManyRequests, raise_for_error
 from .pretty import *
-from .utils import USER_AGENT, is_chinese, recognize_server
+from .utils import USER_AGENT, is_chinese, recognize_server, retry
 
 __all__ = [
     &#34;set_cookie&#34;,
@@ -156,17 +156,11 @@ def generate_ds_token(salt: str = DS_SALT) -&gt; str:
     h = hashlib.md5(f&#34;salt={salt}&amp;t={t}&amp;r={r}&#34;.encode()).hexdigest()  # hash and get hex
     return f&#39;{t},{r},{h}&#39;
 
-def _request(*args, **kwargs):
+# sometimes a random connection error can just occur, mihoyo being mihoyo
+@retry(3, requests.ConnectionError)
+def _request(*args: Any, **kwargs: Any) -&gt; Any:
     &#34;&#34;&#34;Fancy requests.request&#34;&#34;&#34;
-    # sometimes a random connection error can just occur, mihoyo being mihoyo
-    for _ in range(3):
-        try:
-            r = session.request(*args, **kwargs)
-            break
-        except requests.ConnectionError as e:
-            exc = e
-    else:
-        raise exc # type: ignore
+    r = session.request(*args, **kwargs)
     
     r.raise_for_status()
     kwargs[&#39;cookies&#39;].update(session.cookies)
@@ -293,7 +287,7 @@ but that requires being logged in as that user.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\genshinstats.py#L148-L182" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\genshinstats.py#L142-L176" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def fetch_endpoint(endpoint: str, chinese: bool = False, cookie: Mapping[str, Any] = None, **kwargs) -&gt; Dict[str, Any]:
     &#34;&#34;&#34;Fetch an enpoint from the API.
@@ -342,7 +336,7 @@ However that makes it fairly slow so it's not recommended to use it outside cach
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\genshinstats.py#L232-L241" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\genshinstats.py#L226-L235" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def get_all_user_data(uid: int, lang: str = &#39;en-us&#39;, cookie: Mapping[str, Any] = None) -&gt; Dict[str, Any]:
     &#34;&#34;&#34;Fetches all data a user can has. Very slow.
@@ -402,7 +396,7 @@ Talents are not included.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\genshinstats.py#L195-L215" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\genshinstats.py#L189-L209" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def get_characters(uid: int, character_ids: List[int] = None, lang: str = &#39;en-us&#39;, cookie: Mapping[str, Any] = None) -&gt; List[Dict[str, Any]]:
     &#34;&#34;&#34;Gets characters of a user.
@@ -436,7 +430,7 @@ Talents are not included.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\genshinstats.py#L217-L230" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\genshinstats.py#L211-L224" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def get_spiral_abyss(uid: int, previous: bool = False, cookie: Mapping[str, Any] = None) -&gt; Dict[str, Any]:
     &#34;&#34;&#34;Gets spiral abyss runs of a user and details about them.
@@ -462,7 +456,7 @@ Talents are not included.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\genshinstats.py#L184-L193" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\genshinstats.py#L178-L187" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def get_user_stats(uid: int, cookie: Mapping[str, Any] = None) -&gt; Dict[str, Any]:
     &#34;&#34;&#34;Gets basic user information and stats.&#34;&#34;&#34;

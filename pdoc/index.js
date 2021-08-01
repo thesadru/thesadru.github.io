@@ -450,6 +450,12 @@ INDEX=[
 "func":1
 },
 {
+"ref":"genshinstats.pretty.prettify_game_accounts",
+"url":5,
+"doc":"",
+"func":1
+},
+{
 "ref":"genshinstats.pretty.prettify_wish_history",
 "url":5,
 "doc":"",

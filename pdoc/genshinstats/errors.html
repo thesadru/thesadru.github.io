@@ -39,20 +39,20 @@ class GenshinStatsException(Exception):
     &#34;&#34;&#34;Base Exception for all genshinstats errors.&#34;&#34;&#34;
     retcode: int = 0
     orig_msg: str = &#39;&#39;
-    def __init__(self, msg: str):
+    def __init__(self, msg: str) -&gt; None:
         self.msg = msg
     
-    def set_response(self, response: dict):
+    def set_response(self, response: dict) -&gt; None:
         &#34;&#34;&#34;Adds an optional response object to the error.&#34;&#34;&#34;
         self.retcode = response[&#39;retcode&#39;]
         self.orig_msg = response[&#39;message&#39;]
         self.msg = self.msg.format(self.retcode, self.orig_msg)
 
     @property
-    def msg(self):
+    def msg(self) -&gt; str:
         return self.args[0]
     @msg.setter
-    def msg(self, msg):
+    def msg(self, msg) -&gt; None:
         self.args = (msg,)
 
 class TooManyRequests(GenshinStatsException):
@@ -386,20 +386,20 @@ def raise_for_error(response: dict):
     &#34;&#34;&#34;Base Exception for all genshinstats errors.&#34;&#34;&#34;
     retcode: int = 0
     orig_msg: str = &#39;&#39;
-    def __init__(self, msg: str):
+    def __init__(self, msg: str) -&gt; None:
         self.msg = msg
     
-    def set_response(self, response: dict):
+    def set_response(self, response: dict) -&gt; None:
         &#34;&#34;&#34;Adds an optional response object to the error.&#34;&#34;&#34;
         self.retcode = response[&#39;retcode&#39;]
         self.orig_msg = response[&#39;message&#39;]
         self.msg = self.msg.format(self.retcode, self.orig_msg)
 
     @property
-    def msg(self):
+    def msg(self) -&gt; str:
         return self.args[0]
     @msg.setter
-    def msg(self, msg):
+    def msg(self, msg) -&gt; None:
         self.args = (msg,)</code></pre>
 </details>
 <h3>Ancestors</h3>
@@ -430,7 +430,7 @@ def raise_for_error(response: dict):
 </dl>
 <h3>Instance variables</h3>
 <dl>
-<dt id="genshinstats.errors.GenshinStatsException.msg"><code class="name">var <span class="ident">msg</span></code></dt>
+<dt id="genshinstats.errors.GenshinStatsException.msg"><code class="name">var <span class="ident">msg</span> : str</code></dt>
 <dd>
 <div class="desc"></div>
 <details class="source">
@@ -439,7 +439,7 @@ def raise_for_error(response: dict):
 <a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\errors.py#L19-L21" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">@property
-def msg(self):
+def msg(self) -&gt; str:
     return self.args[0]</code></pre>
 </details>
 </dd>
@@ -447,7 +447,7 @@ def msg(self):
 <h3>Methods</h3>
 <dl>
 <dt id="genshinstats.errors.GenshinStatsException.set_response"><code class="name flex">
-<span>def <span class="ident">set_response</span></span>(<span>self, response: dict)</span>
+<span>def <span class="ident">set_response</span></span>(<span>self, response: dict) ‑> NoneType</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Adds an optional response object to the error.</p></div>
@@ -456,7 +456,7 @@ def msg(self):
 <span>Expand source code</span>
 <a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\errors.py#L13-L17" class="git-link">Browse git</a>
 </summary>
-<pre><code class="python">def set_response(self, response: dict):
+<pre><code class="python">def set_response(self, response: dict) -&gt; None:
     &#34;&#34;&#34;Adds an optional response object to the error.&#34;&#34;&#34;
     self.retcode = response[&#39;retcode&#39;]
     self.orig_msg = response[&#39;message&#39;]
