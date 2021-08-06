@@ -28,7 +28,7 @@ It's possible to add retcodes and the original api response message with <code>.
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\errors.py#L0-L77" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\errors.py#L0-L79" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">&#34;&#34;&#34;Genshinstats errors.
 
@@ -98,6 +98,8 @@ def raise_for_error(response: dict):
         -2001: CodeRedeemException(&#39;Redemption code has expired.&#39;),
         -2021: CodeRedeemException(&#39;Cannot claim codes for account with adventure rank lower than 10.&#39;),
         -1073: CodeRedeemException(&#39;Cannot claim code. Account has no game account bound to it.&#39;),
+        -1071: NotLoggedIn(&#39;Login cookies from redeem_code() have not been provided or are incorrect. &#39;
+                           &#39;Make sure you use account_id and cookie_token cookies.&#39;),
         # sign in
         -5003: SignInException(&#39;Already claimed daily reward today.&#39;),
         2001:  SignInException(&#39;Already checked into hoyolab today.&#39;),
@@ -125,7 +127,7 @@ def raise_for_error(response: dict):
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\errors.py#L49-L78" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\errors.py#L49-L80" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def raise_for_error(response: dict):
     &#34;&#34;&#34;Raises a custom genshinstats error from a response.&#34;&#34;&#34;
@@ -147,6 +149,8 @@ def raise_for_error(response: dict):
         -2001: CodeRedeemException(&#39;Redemption code has expired.&#39;),
         -2021: CodeRedeemException(&#39;Cannot claim codes for account with adventure rank lower than 10.&#39;),
         -1073: CodeRedeemException(&#39;Cannot claim code. Account has no game account bound to it.&#39;),
+        -1071: NotLoggedIn(&#39;Login cookies from redeem_code() have not been provided or are incorrect. &#39;
+                           &#39;Make sure you use account_id and cookie_token cookies.&#39;),
         # sign in
         -5003: SignInException(&#39;Already claimed daily reward today.&#39;),
         2001:  SignInException(&#39;Already checked into hoyolab today.&#39;),

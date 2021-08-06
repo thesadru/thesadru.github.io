@@ -26,12 +26,13 @@
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\utils.py#L0-L116" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\utils.py#L0-L129" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">&#34;&#34;&#34;Various utility functions for genshinstats.&#34;&#34;&#34;
 import inspect
 import os.path
 import re
+import warnings
 from functools import wraps
 from typing import Callable, Iterable, Optional, Type, TypeVar, Union
 
@@ -47,6 +48,7 @@ __all__ = [
     &#34;permanent_cache&#34;,
 ]
 
+T = TypeVar(&#34;T&#34;, bound=Callable)
 USER_AGENT = &#34;Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36&#34;
 
 def recognize_server(uid: int) -&gt; str:
@@ -101,7 +103,6 @@ def get_output_log() -&gt; Optional[str]:
             return output_log
     return None # no genshin installation
 
-T = TypeVar(&#34;T&#34;, bound=Callable)
 def permanent_cache(*params: str) -&gt; Callable[[T], T]:
     &#34;&#34;&#34;Like lru_cache except permanent and only caches based on some parameters&#34;&#34;&#34;
     cache = {}
@@ -144,6 +145,18 @@ def retry(tries: int = 3, exceptions: Union[Type[BaseException], Iterable[Type[B
         return inner
     
     return wrapper # type: ignore
+
+def deprecated(message: str = &#34;{} is deprecated and will be removed in future versions&#34;) -&gt; Callable[[T], T]:
+    &#34;&#34;&#34;Shows a warning when a function is attempted to be used&#34;&#34;&#34;
+    def wrapper(func):
+        
+        @wraps(func)
+        def inner(*args, **kwargs):
+            warnings.warn(message.format(func.__name__), PendingDeprecationWarning)
+            return func(*args, **kwargs)
+
+        return inner
+    return wrapper # type: ignore
     </code></pre>
 </details>
 </section>
@@ -162,7 +175,7 @@ def retry(tries: int = 3, exceptions: Union[Type[BaseException], Iterable[Type[B
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\utils.py#L65-L72" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\utils.py#L67-L74" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def get_output_log() -&gt; Optional[str]:
     &#34;&#34;&#34;Find and return the Genshin Impact output log. None if not found.&#34;&#34;&#34;
@@ -182,7 +195,7 @@ def retry(tries: int = 3, exceptions: Union[Type[BaseException], Iterable[Type[B
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\utils.py#L61-L63" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\utils.py#L63-L65" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def is_chinese(x: Union[int, str]) -&gt; bool:
     &#34;&#34;&#34;Recognizes whether the server/uid is chinese.&#34;&#34;&#34;
@@ -197,7 +210,7 @@ def retry(tries: int = 3, exceptions: Union[Type[BaseException], Iterable[Type[B
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\utils.py#L57-L59" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\utils.py#L59-L61" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def is_game_uid(uid: int) -&gt; bool:
     &#34;&#34;&#34;Recognizes whether the uid is a game uid.&#34;&#34;&#34;
@@ -212,7 +225,7 @@ def retry(tries: int = 3, exceptions: Union[Type[BaseException], Iterable[Type[B
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\utils.py#L75-L98" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\utils.py#L76-L99" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def permanent_cache(*params: str) -&gt; Callable[[T], T]:
     &#34;&#34;&#34;Like lru_cache except permanent and only caches based on some parameters&#34;&#34;&#34;
@@ -248,7 +261,7 @@ def retry(tries: int = 3, exceptions: Union[Type[BaseException], Iterable[Type[B
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\utils.py#L37-L55" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\utils.py#L39-L57" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def recognize_id(id: int) -&gt; Optional[str]:
     &#34;&#34;&#34;Attempts to recognize what item type an id is&#34;&#34;&#34;
@@ -279,7 +292,7 @@ def retry(tries: int = 3, exceptions: Union[Type[BaseException], Iterable[Type[B
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\utils.py#L22-L35" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\utils.py#L24-L37" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def recognize_server(uid: int) -&gt; str:
     &#34;&#34;&#34;Recognizes which server a UID is from.&#34;&#34;&#34;
