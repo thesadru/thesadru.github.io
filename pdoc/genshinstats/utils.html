@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
-<meta name="generator" content="pdoc 0.9.2" />
+<meta name="generator" content="pdoc 0.10.0" />
 <title>genshinstats.utils API documentation</title>
 <meta name="description" content="Various utility functions for genshinstats." />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
@@ -26,7 +26,7 @@
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\utils.py#L0-L129" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/utils.py#L1-L132" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">&#34;&#34;&#34;Various utility functions for genshinstats.&#34;&#34;&#34;
 import inspect
@@ -34,7 +34,7 @@ import os.path
 import re
 import warnings
 from functools import wraps
-from typing import Callable, Iterable, Optional, Type, TypeVar, Union
+from typing import Any, Callable, Dict, Iterable, Optional, Type, TypeVar, Union
 
 from .errors import AccountNotFound
 
@@ -48,7 +48,8 @@ __all__ = [
     &#34;permanent_cache&#34;,
 ]
 
-T = TypeVar(&#34;T&#34;, bound=Callable)
+T = TypeVar(&#34;T&#34;)
+
 USER_AGENT = &#34;Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36&#34;
 
 def recognize_server(uid: int) -&gt; str:
@@ -81,10 +82,12 @@ def recognize_id(id: int) -&gt; Optional[str]:
     elif 100 &lt; id &lt; 1000:
         return &#34;contellation&#34;
     elif 10 ** 17 &lt; id &lt; 10 ** 19:
-        return &#34;gacha_pull&#34;
+        return &#34;transaction&#34;
     # not sure about these ones:
     elif 1 &lt;= id &lt;= 4:
         return &#34;exploration&#34; 
+    else:
+        return None
 
 def is_game_uid(uid: int) -&gt; bool:
     &#34;&#34;&#34;Recognizes whether the uid is a game uid.&#34;&#34;&#34;
@@ -105,7 +108,7 @@ def get_output_log() -&gt; Optional[str]:
 
 def permanent_cache(*params: str) -&gt; Callable[[T], T]:
     &#34;&#34;&#34;Like lru_cache except permanent and only caches based on some parameters&#34;&#34;&#34;
-    cache = {}
+    cache: Dict[Any, Any] = {}
 
     def wrapper(func):
         sig = inspect.signature(func)
@@ -156,8 +159,7 @@ def deprecated(message: str = &#34;{} is deprecated and will be removed in futur
             return func(*args, **kwargs)
 
         return inner
-    return wrapper # type: ignore
-    </code></pre>
+    return wrapper # type: ignore</code></pre>
 </details>
 </section>
 <section>
@@ -175,7 +177,7 @@ def deprecated(message: str = &#34;{} is deprecated and will be removed in futur
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\utils.py#L67-L74" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/utils.py#L70-L77" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def get_output_log() -&gt; Optional[str]:
     &#34;&#34;&#34;Find and return the Genshin Impact output log. None if not found.&#34;&#34;&#34;
@@ -195,7 +197,7 @@ def deprecated(message: str = &#34;{} is deprecated and will be removed in futur
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\utils.py#L63-L65" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/utils.py#L66-L68" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def is_chinese(x: Union[int, str]) -&gt; bool:
     &#34;&#34;&#34;Recognizes whether the server/uid is chinese.&#34;&#34;&#34;
@@ -210,7 +212,7 @@ def deprecated(message: str = &#34;{} is deprecated and will be removed in futur
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\utils.py#L59-L61" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/utils.py#L62-L64" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def is_game_uid(uid: int) -&gt; bool:
     &#34;&#34;&#34;Recognizes whether the uid is a game uid.&#34;&#34;&#34;
@@ -225,11 +227,11 @@ def deprecated(message: str = &#34;{} is deprecated and will be removed in futur
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\utils.py#L76-L99" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/utils.py#L79-L102" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def permanent_cache(*params: str) -&gt; Callable[[T], T]:
     &#34;&#34;&#34;Like lru_cache except permanent and only caches based on some parameters&#34;&#34;&#34;
-    cache = {}
+    cache: Dict[Any, Any] = {}
 
     def wrapper(func):
         sig = inspect.signature(func)
@@ -261,7 +263,7 @@ def deprecated(message: str = &#34;{} is deprecated and will be removed in futur
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\utils.py#L39-L57" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/utils.py#L40-L60" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def recognize_id(id: int) -&gt; Optional[str]:
     &#34;&#34;&#34;Attempts to recognize what item type an id is&#34;&#34;&#34;
@@ -278,10 +280,12 @@ def deprecated(message: str = &#34;{} is deprecated and will be removed in futur
     elif 100 &lt; id &lt; 1000:
         return &#34;contellation&#34;
     elif 10 ** 17 &lt; id &lt; 10 ** 19:
-        return &#34;gacha_pull&#34;
+        return &#34;transaction&#34;
     # not sure about these ones:
     elif 1 &lt;= id &lt;= 4:
-        return &#34;exploration&#34; </code></pre>
+        return &#34;exploration&#34; 
+    else:
+        return None</code></pre>
 </details>
 </dd>
 <dt id="genshinstats.utils.recognize_server"><code class="name flex">
@@ -292,7 +296,7 @@ def deprecated(message: str = &#34;{} is deprecated and will be removed in futur
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\utils.py#L24-L37" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/utils.py#L25-L38" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def recognize_server(uid: int) -&gt; str:
     &#34;&#34;&#34;Recognizes which server a UID is from.&#34;&#34;&#34;
@@ -386,7 +390,7 @@ setTimeout(() => input.focus(), 100);
 </nav>
 </main>
 <footer id="footer">
-<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.9.2</a>.</p>
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
 </footer>
 </body>
 </html>

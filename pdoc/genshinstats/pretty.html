@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
-<meta name="generator" content="pdoc 0.9.2" />
+<meta name="generator" content="pdoc 0.10.0" />
 <title>genshinstats.pretty API documentation</title>
 <meta name="description" content="Prettifiers for genshinstats api returns …" />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
@@ -28,7 +28,7 @@ that were leftover from during development</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\pretty.py#L0-L291" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/pretty.py#L1-L307" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">&#34;&#34;&#34;Prettifiers for genshinstats api returns.
 
@@ -38,30 +38,27 @@ that were leftover from during development
 import re
 from datetime import datetime
 
+character_icons = {
+    &#34;PlayerGirl&#34;: &#34;Traveler&#34;,
+    &#34;PlayerBoy&#34;: &#34;Traveler&#34;,
+    &#34;Ambor&#34;: &#34;Amber&#34;,
+    &#34;Qin&#34;: &#34;Jean&#34;,
+    &#34;Hutao&#34;: &#34;Hu Tao&#34;,
+    &#34;Feiyan&#34;: &#34;Yanfei&#34;,
+    &#34;Kazuha&#34;: &#34;Kadehara Kazuha&#34;
+}
+
 def _recognize_character_icon(url: str) -&gt; str: 
     &#34;&#34;&#34;Recognizes a character&#39;s icon url and returns its name.&#34;&#34;&#34;
     exp = r&#39;https://upload-os-bbs.mihoyo.com/game_record/genshin/character_.*_(\w+)(?:@\dx)?.png&#39;
     match = re.fullmatch(exp,url)
     if match is None: 
-        raise ValueError(f&#34;{url!r} is not a charcater icon or image url&#34;)
+        raise ValueError(f&#34;{url!r} is not a character icon or image url&#34;)
     character = match.group(1)
-    if character.startswith(&#34;Player&#34;):
-        return &#34;Traveler&#34;
-    elif character == &#34;Ambor&#34;: 
-        return &#34;Amber&#34;
-    elif character == &#34;Qin&#34;: 
-        return &#34;Jean&#34;
-    elif character == &#34;Hutao&#34;: 
-        return &#34;Hu Tao&#34;
-    elif character == &#34;Feiyan&#34;:
-        return &#34;Yanfei&#34;
-    elif character == &#34;Kazuha&#34;:
-        return &#34;Kadehara Kazuha&#34;
-    else: 
-        return character
+    return character_icons.get(character) or character
 
 
-def prettify_user_stats(data):
+def prettify_stats(data):
     s = data[&#34;stats&#34;]
     return {
         &#34;stats&#34;: {
@@ -115,13 +112,6 @@ def prettify_user_stats(data):
 def prettify_characters(data):
     return [{
         &#34;name&#34;: i[&#34;name&#34;],
-        &#34;alt_name&#34;: { # this exists just for traveler tbh
-            &#34;Traveler&#34;: &#34;Aether&#34; if &#34;Boy&#34; in i[&#34;icon&#34;] else &#34;Lumine&#34;,
-            &#34;Venti&#34;: &#34;Barbatos&#34;,
-            &#34;Zhongli&#34;: &#34;Morax&#34;,
-            &#34;Albedo&#34;: &#34;Kreideprinz&#34;,
-            &#34;Tartaglia&#34;: &#34;Childe&#34;,
-        }.get(i[&#34;name&#34;],None),
         &#34;rarity&#34;: i[&#34;rarity&#34;],
         &#34;element&#34;: i[&#34;element&#34;],
         &#34;level&#34;: i[&#34;level&#34;],
@@ -130,6 +120,7 @@ def prettify_characters(data):
         &#34;icon&#34;: i[&#34;icon&#34;],
         &#34;image&#34;: i[&#34;image&#34;],
         &#34;id&#34;: i[&#34;id&#34;],
+        **({&#34;traveler_name&#34;: &#34;Aether&#34; if &#34;Boy&#34; in i[&#34;icon&#34;] else &#34;Lumine&#34;} if &#34;Player&#34; in i[&#34;icon&#34;] else {}),
         &#34;weapon&#34;: {
             &#34;name&#34;: i[&#34;weapon&#34;][&#34;name&#34;],
             &#34;rarity&#34;: i[&#34;weapon&#34;][&#34;rarity&#34;],
@@ -161,7 +152,7 @@ def prettify_characters(data):
                     &#34;pieces&#34;: e[&#34;activation_number&#34;],
                     &#34;effect&#34;: e[&#34;effect&#34;],
                 } for e in a[&#34;set&#34;][&#34;affixes&#34;]],
-                &#34;set_id&#34;: int(re.search(r&#39;UI_RelicIcon_(\d+)_\d&#39;,a[&#34;icon&#34;]).group(1)), # type: ignore
+                &#34;set_id&#34;: int(re.search(r&#39;UI_RelicIcon_(\d+)_\d+&#39;,a[&#34;icon&#34;]).group(1)), # type: ignore
                 &#34;id&#34;: a[&#34;set&#34;][&#34;id&#34;]
             },
             &#34;icon&#34;: a[&#34;icon&#34;],
@@ -182,7 +173,7 @@ def prettify_characters(data):
         } for c in i[&#34;costumes&#34;]],
     } for i in data]
 
-def prettify_spiral_abyss(data):
+def prettify_abyss(data):
     fchars = lambda d: [{
         &#34;value&#34;: a[&#34;value&#34;],
         &#34;name&#34;: _recognize_character_icon(a[&#34;avatar_icon&#34;]),
@@ -321,7 +312,31 @@ def prettify_banner_details(data):
         &#34;items&#34;: fprobs(sorted(
             data[&#34;r5_prob_list&#34;]+data[&#34;r4_prob_list&#34;]+data[&#34;r3_prob_list&#34;],
             key=lambda x: x[&#34;order_value&#34;]))
-    }</code></pre>
+    }
+
+def prettify_trans(data, reasons={}):
+    if data and &#34;name&#34; in data[0]:
+        # transaction item
+        return [{
+            &#34;time&#34;: i[&#34;time&#34;],
+            &#34;name&#34;: i[&#34;name&#34;],
+            &#34;rarity&#34;: int(i[&#34;rank&#34;]),
+            &#34;amount&#34;: int(i[&#34;add_num&#34;]),
+            &#34;reason&#34;: reasons.get(int(i[&#34;reason&#34;]), &#34;&#34;),
+            &#34;reason_id&#34;: int(i[&#34;reason&#34;]),
+            &#34;uid&#34;: int(i[&#34;uid&#34;]),
+            &#34;id&#34;: int(i[&#34;id&#34;]),
+        } for i in data]
+    else:
+        # transaction
+        return [{
+            &#34;time&#34;: i[&#34;time&#34;],
+            &#34;amount&#34;: int(i[&#34;add_num&#34;]),
+            &#34;reason&#34;: reasons.get(int(i[&#34;reason&#34;]), &#34;&#34;),
+            &#34;reason_id&#34;: int(i[&#34;reason&#34;]),
+            &#34;uid&#34;: int(i[&#34;uid&#34;]),
+            &#34;id&#34;: int(i[&#34;id&#34;]),
+        } for i in data]</code></pre>
 </details>
 </section>
 <section>
@@ -331,6 +346,72 @@ def prettify_banner_details(data):
 <section>
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
+<dt id="genshinstats.pretty.prettify_abyss"><code class="name flex">
+<span>def <span class="ident">prettify_abyss</span></span>(<span>data)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/pretty.py#L144-L197" class="git-link">Browse git</a>
+</summary>
+<pre><code class="python">def prettify_abyss(data):
+    fchars = lambda d: [{
+        &#34;value&#34;: a[&#34;value&#34;],
+        &#34;name&#34;: _recognize_character_icon(a[&#34;avatar_icon&#34;]),
+        &#34;rarity&#34;: a[&#34;rarity&#34;],
+        &#34;icon&#34;: a[&#34;avatar_icon&#34;],
+        &#34;id&#34;: a[&#34;avatar_id&#34;],
+    } for a in d]
+    todate = lambda x: datetime.fromtimestamp(int(x)).strftime(&#34;%Y-%m-%d&#34;)
+    totime = lambda x: datetime.fromtimestamp(int(x)).isoformat(&#39; &#39;)
+    return {
+        &#34;season&#34;: data[&#34;schedule_id&#34;],
+        &#34;season_start_time&#34;: todate(data[&#34;start_time&#34;]),
+        &#34;season_end_time&#34;: todate(data[&#34;end_time&#34;]),
+        &#34;stats&#34;: {
+            &#34;total_battles&#34;: data[&#34;total_battle_times&#34;],
+            &#34;total_wins&#34;: data[&#34;total_win_times&#34;],
+            &#34;max_floor&#34;: data[&#34;max_floor&#34;],
+            &#34;total_stars&#34;: data[&#34;total_star&#34;],
+        },
+        &#34;character_ranks&#34;: {
+            &#34;most_played&#34;: fchars(data[&#34;reveal_rank&#34;]),
+            &#34;most_kills&#34;: fchars(data[&#34;defeat_rank&#34;]),
+            &#34;strongest_strike&#34;: fchars(data[&#34;damage_rank&#34;]),
+            &#34;most_damage_taken&#34;: fchars(data[&#34;take_damage_rank&#34;]),
+            &#34;most_bursts_used&#34;: fchars(data[&#34;normal_skill_rank&#34;]),
+            &#34;most_skills_used&#34;: fchars(data[&#34;energy_skill_rank&#34;]),
+        },
+        &#34;floors&#34;: [{
+            &#34;floor&#34;: f[&#34;index&#34;],
+            &#34;stars&#34;: f[&#34;star&#34;],
+            &#34;max_stars&#34;: f[&#34;max_star&#34;],
+            &#34;start&#34;: totime(f[&#34;levels&#34;][0][&#34;battles&#34;][0][&#34;timestamp&#34;]),
+            &#34;icon&#34;: f[&#34;icon&#34;],
+            &#34;chambers&#34;: [{
+                &#34;chamber&#34;: l[&#34;index&#34;],
+                &#34;stars&#34;: l[&#34;star&#34;],
+                &#34;max_stars&#34;: l[&#34;max_star&#34;],
+                &#34;has_halves&#34;: len(l[&#34;battles&#34;]) == 2,
+                &#34;battles&#34;: [{
+                    &#34;half&#34;: b[&#34;index&#34;],
+                    &#34;timestamp&#34;: totime(b[&#34;timestamp&#34;]),
+                    &#34;characters&#34;: [{
+                        &#34;name&#34;: _recognize_character_icon(c[&#34;icon&#34;]),
+                        &#34;rarity&#34;: c[&#34;rarity&#34;],
+                        &#34;level&#34;: c[&#34;level&#34;],
+                        &#34;icon&#34;: c[&#34;icon&#34;],
+                        &#34;id&#34;: c[&#34;id&#34;],
+
+                    } for c in b[&#34;avatars&#34;]]
+                } for b in l[&#34;battles&#34;]]
+            } for l in f[&#34;levels&#34;]]
+        } for f in data[&#34;floors&#34;]]
+    }</code></pre>
+</details>
+</dd>
 <dt id="genshinstats.pretty.prettify_banner_details"><code class="name flex">
 <span>def <span class="ident">prettify_banner_details</span></span>(<span>data)</span>
 </code></dt>
@@ -339,7 +420,7 @@ def prettify_banner_details(data):
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\pretty.py#L240-L292" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/pretty.py#L231-L283" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def prettify_banner_details(data):
     per = lambda p: None if p==&#39;0%&#39; else float(p[: -1].replace(&#39;,&#39;,&#39;.&#39;))
@@ -404,18 +485,11 @@ def prettify_banner_details(data):
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\pretty.py#L83-L151" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/pretty.py#L80-L142" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def prettify_characters(data):
     return [{
         &#34;name&#34;: i[&#34;name&#34;],
-        &#34;alt_name&#34;: { # this exists just for traveler tbh
-            &#34;Traveler&#34;: &#34;Aether&#34; if &#34;Boy&#34; in i[&#34;icon&#34;] else &#34;Lumine&#34;,
-            &#34;Venti&#34;: &#34;Barbatos&#34;,
-            &#34;Zhongli&#34;: &#34;Morax&#34;,
-            &#34;Albedo&#34;: &#34;Kreideprinz&#34;,
-            &#34;Tartaglia&#34;: &#34;Childe&#34;,
-        }.get(i[&#34;name&#34;],None),
         &#34;rarity&#34;: i[&#34;rarity&#34;],
         &#34;element&#34;: i[&#34;element&#34;],
         &#34;level&#34;: i[&#34;level&#34;],
@@ -424,6 +498,7 @@ def prettify_banner_details(data):
         &#34;icon&#34;: i[&#34;icon&#34;],
         &#34;image&#34;: i[&#34;image&#34;],
         &#34;id&#34;: i[&#34;id&#34;],
+        **({&#34;traveler_name&#34;: &#34;Aether&#34; if &#34;Boy&#34; in i[&#34;icon&#34;] else &#34;Lumine&#34;} if &#34;Player&#34; in i[&#34;icon&#34;] else {}),
         &#34;weapon&#34;: {
             &#34;name&#34;: i[&#34;weapon&#34;][&#34;name&#34;],
             &#34;rarity&#34;: i[&#34;weapon&#34;][&#34;rarity&#34;],
@@ -455,7 +530,7 @@ def prettify_banner_details(data):
                     &#34;pieces&#34;: e[&#34;activation_number&#34;],
                     &#34;effect&#34;: e[&#34;effect&#34;],
                 } for e in a[&#34;set&#34;][&#34;affixes&#34;]],
-                &#34;set_id&#34;: int(re.search(r&#39;UI_RelicIcon_(\d+)_\d&#39;,a[&#34;icon&#34;]).group(1)), # type: ignore
+                &#34;set_id&#34;: int(re.search(r&#39;UI_RelicIcon_(\d+)_\d+&#39;,a[&#34;icon&#34;]).group(1)), # type: ignore
                 &#34;id&#34;: a[&#34;set&#34;][&#34;id&#34;]
             },
             &#34;icon&#34;: a[&#34;icon&#34;],
@@ -485,7 +560,7 @@ def prettify_banner_details(data):
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\pretty.py#L232-L238" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/pretty.py#L223-L229" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def prettify_gacha_items(data):
     return [{
@@ -504,7 +579,7 @@ def prettify_banner_details(data):
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\pretty.py#L208-L218" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/pretty.py#L199-L209" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def prettify_game_accounts(data):
     return [{
@@ -519,83 +594,17 @@ def prettify_banner_details(data):
     } for a in data]</code></pre>
 </details>
 </dd>
-<dt id="genshinstats.pretty.prettify_spiral_abyss"><code class="name flex">
-<span>def <span class="ident">prettify_spiral_abyss</span></span>(<span>data)</span>
+<dt id="genshinstats.pretty.prettify_stats"><code class="name flex">
+<span>def <span class="ident">prettify_stats</span></span>(<span>data)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\pretty.py#L153-L206" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/pretty.py#L29-L78" class="git-link">Browse git</a>
 </summary>
-<pre><code class="python">def prettify_spiral_abyss(data):
-    fchars = lambda d: [{
-        &#34;value&#34;: a[&#34;value&#34;],
-        &#34;name&#34;: _recognize_character_icon(a[&#34;avatar_icon&#34;]),
-        &#34;rarity&#34;: a[&#34;rarity&#34;],
-        &#34;icon&#34;: a[&#34;avatar_icon&#34;],
-        &#34;id&#34;: a[&#34;avatar_id&#34;],
-    } for a in d]
-    todate = lambda x: datetime.fromtimestamp(int(x)).strftime(&#34;%Y-%m-%d&#34;)
-    totime = lambda x: datetime.fromtimestamp(int(x)).isoformat(&#39; &#39;)
-    return {
-        &#34;season&#34;: data[&#34;schedule_id&#34;],
-        &#34;season_start_time&#34;: todate(data[&#34;start_time&#34;]),
-        &#34;season_end_time&#34;: todate(data[&#34;end_time&#34;]),
-        &#34;stats&#34;: {
-            &#34;total_battles&#34;: data[&#34;total_battle_times&#34;],
-            &#34;total_wins&#34;: data[&#34;total_win_times&#34;],
-            &#34;max_floor&#34;: data[&#34;max_floor&#34;],
-            &#34;total_stars&#34;: data[&#34;total_star&#34;],
-        },
-        &#34;character_ranks&#34;: {
-            &#34;most_played&#34;: fchars(data[&#34;reveal_rank&#34;]),
-            &#34;most_kills&#34;: fchars(data[&#34;defeat_rank&#34;]),
-            &#34;strongest_strike&#34;: fchars(data[&#34;damage_rank&#34;]),
-            &#34;most_damage_taken&#34;: fchars(data[&#34;take_damage_rank&#34;]),
-            &#34;most_bursts_used&#34;: fchars(data[&#34;normal_skill_rank&#34;]),
-            &#34;most_skills_used&#34;: fchars(data[&#34;energy_skill_rank&#34;]),
-        },
-        &#34;floors&#34;: [{
-            &#34;floor&#34;: f[&#34;index&#34;],
-            &#34;stars&#34;: f[&#34;star&#34;],
-            &#34;max_stars&#34;: f[&#34;max_star&#34;],
-            &#34;start&#34;: totime(f[&#34;levels&#34;][0][&#34;battles&#34;][0][&#34;timestamp&#34;]),
-            &#34;icon&#34;: f[&#34;icon&#34;],
-            &#34;chambers&#34;: [{
-                &#34;chamber&#34;: l[&#34;index&#34;],
-                &#34;stars&#34;: l[&#34;star&#34;],
-                &#34;max_stars&#34;: l[&#34;max_star&#34;],
-                &#34;has_halves&#34;: len(l[&#34;battles&#34;]) == 2,
-                &#34;battles&#34;: [{
-                    &#34;half&#34;: b[&#34;index&#34;],
-                    &#34;timestamp&#34;: totime(b[&#34;timestamp&#34;]),
-                    &#34;characters&#34;: [{
-                        &#34;name&#34;: _recognize_character_icon(c[&#34;icon&#34;]),
-                        &#34;rarity&#34;: c[&#34;rarity&#34;],
-                        &#34;level&#34;: c[&#34;level&#34;],
-                        &#34;icon&#34;: c[&#34;icon&#34;],
-                        &#34;id&#34;: c[&#34;id&#34;],
-
-                    } for c in b[&#34;avatars&#34;]]
-                } for b in l[&#34;battles&#34;]]
-            } for l in f[&#34;levels&#34;]]
-        } for f in data[&#34;floors&#34;]]
-    }</code></pre>
-</details>
-</dd>
-<dt id="genshinstats.pretty.prettify_user_stats"><code class="name flex">
-<span>def <span class="ident">prettify_user_stats</span></span>(<span>data)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\pretty.py#L32-L81" class="git-link">Browse git</a>
-</summary>
-<pre><code class="python">def prettify_user_stats(data):
+<pre><code class="python">def prettify_stats(data):
     s = data[&#34;stats&#34;]
     return {
         &#34;stats&#34;: {
@@ -647,6 +656,41 @@ def prettify_banner_details(data):
     }</code></pre>
 </details>
 </dd>
+<dt id="genshinstats.pretty.prettify_trans"><code class="name flex">
+<span>def <span class="ident">prettify_trans</span></span>(<span>data, reasons={})</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/pretty.py#L285-L307" class="git-link">Browse git</a>
+</summary>
+<pre><code class="python">def prettify_trans(data, reasons={}):
+    if data and &#34;name&#34; in data[0]:
+        # transaction item
+        return [{
+            &#34;time&#34;: i[&#34;time&#34;],
+            &#34;name&#34;: i[&#34;name&#34;],
+            &#34;rarity&#34;: int(i[&#34;rank&#34;]),
+            &#34;amount&#34;: int(i[&#34;add_num&#34;]),
+            &#34;reason&#34;: reasons.get(int(i[&#34;reason&#34;]), &#34;&#34;),
+            &#34;reason_id&#34;: int(i[&#34;reason&#34;]),
+            &#34;uid&#34;: int(i[&#34;uid&#34;]),
+            &#34;id&#34;: int(i[&#34;id&#34;]),
+        } for i in data]
+    else:
+        # transaction
+        return [{
+            &#34;time&#34;: i[&#34;time&#34;],
+            &#34;amount&#34;: int(i[&#34;add_num&#34;]),
+            &#34;reason&#34;: reasons.get(int(i[&#34;reason&#34;]), &#34;&#34;),
+            &#34;reason_id&#34;: int(i[&#34;reason&#34;]),
+            &#34;uid&#34;: int(i[&#34;uid&#34;]),
+            &#34;id&#34;: int(i[&#34;id&#34;]),
+        } for i in data]</code></pre>
+</details>
+</dd>
 <dt id="genshinstats.pretty.prettify_wish_history"><code class="name flex">
 <span>def <span class="ident">prettify_wish_history</span></span>(<span>data, banner_name=None)</span>
 </code></dt>
@@ -655,7 +699,7 @@ def prettify_banner_details(data):
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\pretty.py#L220-L230" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/pretty.py#L211-L221" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def prettify_wish_history(data, banner_name = None):
     return [{
@@ -734,12 +778,13 @@ setTimeout(() => input.focus(), 100);
 </li>
 <li><h3><a href="#header-functions">Functions</a></h3>
 <ul class="">
+<li><code><a title="genshinstats.pretty.prettify_abyss" href="#genshinstats.pretty.prettify_abyss">prettify_abyss</a></code></li>
 <li><code><a title="genshinstats.pretty.prettify_banner_details" href="#genshinstats.pretty.prettify_banner_details">prettify_banner_details</a></code></li>
 <li><code><a title="genshinstats.pretty.prettify_characters" href="#genshinstats.pretty.prettify_characters">prettify_characters</a></code></li>
 <li><code><a title="genshinstats.pretty.prettify_gacha_items" href="#genshinstats.pretty.prettify_gacha_items">prettify_gacha_items</a></code></li>
 <li><code><a title="genshinstats.pretty.prettify_game_accounts" href="#genshinstats.pretty.prettify_game_accounts">prettify_game_accounts</a></code></li>
-<li><code><a title="genshinstats.pretty.prettify_spiral_abyss" href="#genshinstats.pretty.prettify_spiral_abyss">prettify_spiral_abyss</a></code></li>
-<li><code><a title="genshinstats.pretty.prettify_user_stats" href="#genshinstats.pretty.prettify_user_stats">prettify_user_stats</a></code></li>
+<li><code><a title="genshinstats.pretty.prettify_stats" href="#genshinstats.pretty.prettify_stats">prettify_stats</a></code></li>
+<li><code><a title="genshinstats.pretty.prettify_trans" href="#genshinstats.pretty.prettify_trans">prettify_trans</a></code></li>
 <li><code><a title="genshinstats.pretty.prettify_wish_history" href="#genshinstats.pretty.prettify_wish_history">prettify_wish_history</a></code></li>
 </ul>
 </li>
@@ -747,7 +792,7 @@ setTimeout(() => input.focus(), 100);
 </nav>
 </main>
 <footer id="footer">
-<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.9.2</a>.</p>
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
 </footer>
 </body>
 </html>

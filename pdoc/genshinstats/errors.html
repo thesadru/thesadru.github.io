@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
-<meta name="generator" content="pdoc 0.9.2" />
+<meta name="generator" content="pdoc 0.10.0" />
 <title>genshinstats.errors API documentation</title>
 <meta name="description" content="Genshinstats errors …" />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
@@ -28,7 +28,7 @@ It's possible to add retcodes and the original api response message with <code>.
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\errors.py#L0-L79" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/errors.py#L1-L80" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">&#34;&#34;&#34;Genshinstats errors.
 
@@ -127,7 +127,7 @@ def raise_for_error(response: dict):
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\errors.py#L49-L80" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/errors.py#L49-L80" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def raise_for_error(response: dict):
     &#34;&#34;&#34;Raises a custom genshinstats error from a response.&#34;&#34;&#34;
@@ -177,7 +177,7 @@ def raise_for_error(response: dict):
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\errors.py#L30-L31" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/errors.py#L30-L31" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">class AccountNotFound(GenshinStatsException):
     &#34;&#34;&#34;Tried to get data with an invalid uid.&#34;&#34;&#34;</code></pre>
@@ -217,7 +217,7 @@ def raise_for_error(response: dict):
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\errors.py#L40-L41" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/errors.py#L40-L41" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">class AuthkeyError(GenshinStatsException):
     &#34;&#34;&#34;Base GachaLog Exception.&#34;&#34;&#34;</code></pre>
@@ -263,7 +263,7 @@ def raise_for_error(response: dict):
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\errors.py#L44-L45" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/errors.py#L44-L45" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">class AuthkeyTimeout(AuthkeyError):
     &#34;&#34;&#34;An authkey has timed out.&#34;&#34;&#34;</code></pre>
@@ -304,7 +304,7 @@ def raise_for_error(response: dict):
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\errors.py#L35-L36" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/errors.py#L35-L36" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">class CodeRedeemException(GenshinStatsException):
     &#34;&#34;&#34;Code redemption failed.&#34;&#34;&#34;</code></pre>
@@ -344,7 +344,7 @@ def raise_for_error(response: dict):
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\errors.py#L32-L33" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/errors.py#L32-L33" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">class DataNotPublic(GenshinStatsException):
     &#34;&#34;&#34;User hasn&#39;t set their data to public.&#34;&#34;&#34;</code></pre>
@@ -384,7 +384,7 @@ def raise_for_error(response: dict):
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\errors.py#L6-L24" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/errors.py#L6-L24" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">class GenshinStatsException(Exception):
     &#34;&#34;&#34;Base Exception for all genshinstats errors.&#34;&#34;&#34;
@@ -440,7 +440,7 @@ def raise_for_error(response: dict):
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\errors.py#L19-L21" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/errors.py#L19-L21" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">@property
 def msg(self) -&gt; str:
@@ -451,14 +451,14 @@ def msg(self) -&gt; str:
 <h3>Methods</h3>
 <dl>
 <dt id="genshinstats.errors.GenshinStatsException.set_response"><code class="name flex">
-<span>def <span class="ident">set_response</span></span>(<span>self, response: dict) ‑> NoneType</span>
+<span>def <span class="ident">set_response</span></span>(<span>self, response: dict) ‑> None</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Adds an optional response object to the error.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\errors.py#L13-L17" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/errors.py#L13-L17" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def set_response(self, response: dict) -&gt; None:
     &#34;&#34;&#34;Adds an optional response object to the error.&#34;&#34;&#34;
@@ -478,7 +478,7 @@ def msg(self) -&gt; str:
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\errors.py#L42-L43" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/errors.py#L42-L43" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">class InvalidAuthkey(AuthkeyError):
     &#34;&#34;&#34;An authkey is invalid.&#34;&#34;&#34;</code></pre>
@@ -519,7 +519,7 @@ def msg(self) -&gt; str:
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\errors.py#L46-L47" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/errors.py#L46-L47" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">class MissingAuthKey(AuthkeyError):
     &#34;&#34;&#34;No gacha authkey was found.&#34;&#34;&#34;</code></pre>
@@ -560,7 +560,7 @@ def msg(self) -&gt; str:
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\errors.py#L28-L29" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/errors.py#L28-L29" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">class NotLoggedIn(GenshinStatsException):
     &#34;&#34;&#34;Cookies have not been provided.&#34;&#34;&#34;</code></pre>
@@ -600,7 +600,7 @@ def msg(self) -&gt; str:
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\errors.py#L37-L38" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/errors.py#L37-L38" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">class SignInException(GenshinStatsException):
     &#34;&#34;&#34;Sign-in failed&#34;&#34;&#34;</code></pre>
@@ -640,7 +640,7 @@ def msg(self) -&gt; str:
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats\errors.py#L26-L27" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/errors.py#L26-L27" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">class TooManyRequests(GenshinStatsException):
     &#34;&#34;&#34;Made too many requests and got ratelimited&#34;&#34;&#34;</code></pre>
@@ -823,7 +823,7 @@ setTimeout(() => input.focus(), 100);
 </nav>
 </main>
 <footer id="footer">
-<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.9.2</a>.</p>
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
 </footer>
 </body>
 </html>
