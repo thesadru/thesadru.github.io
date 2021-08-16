@@ -28,7 +28,7 @@ It's possible to add retcodes and the original api response message with <code>.
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/errors.py#L1-L80" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/errors.py#L1-L81" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">&#34;&#34;&#34;Genshinstats errors.
 
@@ -92,6 +92,7 @@ def raise_for_error(response: dict):
         -1:    AccountNotFound(&#39;Could not find user; uid may not be valid.&#39;),
         -10002:AccountNotFound(&#39;Cannot get rewards info. Account has no game account binded to it.&#39;),
         -108:  GenshinStatsException(&#39;Language is not valid.&#39;),
+        10103: NotLoggedIn(&#39;Cookies are correct but do not have a hoyolab account bound to them.&#39;),
         # code redemption
         -2003: CodeRedeemException(&#39;Invalid redemption code&#39;),
         -2017: CodeRedeemException(&#39;Redemption code has been claimed already.&#39;),
@@ -127,7 +128,7 @@ def raise_for_error(response: dict):
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/errors.py#L49-L80" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/errors.py#L49-L81" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def raise_for_error(response: dict):
     &#34;&#34;&#34;Raises a custom genshinstats error from a response.&#34;&#34;&#34;
@@ -143,6 +144,7 @@ def raise_for_error(response: dict):
         -1:    AccountNotFound(&#39;Could not find user; uid may not be valid.&#39;),
         -10002:AccountNotFound(&#39;Cannot get rewards info. Account has no game account binded to it.&#39;),
         -108:  GenshinStatsException(&#39;Language is not valid.&#39;),
+        10103: NotLoggedIn(&#39;Cookies are correct but do not have a hoyolab account bound to them.&#39;),
         # code redemption
         -2003: CodeRedeemException(&#39;Invalid redemption code&#39;),
         -2017: CodeRedeemException(&#39;Redemption code has been claimed already.&#39;),
