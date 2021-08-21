@@ -7,6 +7,7 @@ URLS=[
 "genshinstats/genshinstats.html",
 "genshinstats/utils.html",
 "genshinstats/daily.html",
+"genshinstats/caching.html",
 "genshinstats/errors.html"
 ];
 INDEX=[
@@ -18,7 +19,7 @@ INDEX=[
 {
 "ref":"genshinstats.transactions",
 "url":1,
-"doc":""
+"doc":"Logs for currency \"transactions\". Logs for artifact, weapon, resin, genesis crystol and primogem \"transactions\". You may view a history of everything you have gained in the last 3 months."
 },
 {
 "ref":"genshinstats.transactions.fetch_transaction_endpoint",
@@ -352,15 +353,9 @@ INDEX=[
 "func":1
 },
 {
-"ref":"genshinstats.utils.get_output_log",
+"ref":"genshinstats.utils.get_logfile",
 "url":6,
-"doc":"Find and return the Genshin Impact output log. None if not found.",
-"func":1
-},
-{
-"ref":"genshinstats.utils.permanent_cache",
-"url":6,
-"doc":"Like lru_cache except permanent and only caches based on some parameters",
+"doc":"Find and return the Genshin Impact logfile. None if not found.",
 "func":1
 },
 {
@@ -399,249 +394,272 @@ INDEX=[
 "func":1
 },
 {
-"ref":"genshinstats.errors",
+"ref":"genshinstats.caching",
 "url":8,
+"doc":"Install a cache into genshinstats"
+},
+{
+"ref":"genshinstats.caching.permanent_cache",
+"url":8,
+"doc":"Like lru_cache except permanent and only caches based on some parameters",
+"func":1
+},
+{
+"ref":"genshinstats.caching.install_cache",
+"url":8,
+"doc":"Installs a cache into every cacheable function in genshinstats If strict mode is on then the first item of the paginator will no longer be requested every time. That can however cause a variety of problems and it's therefore recommend to use it only with TTL caches.",
+"func":1
+},
+{
+"ref":"genshinstats.caching.uninstall_cache",
+"url":8,
+"doc":"Uninstalls the cache from all functions",
+"func":1
+},
+{
+"ref":"genshinstats.errors",
+"url":9,
 "doc":"Genshinstats errors. These take in only a single argument: msg. It's possible to add retcodes and the original api response message with  .set_reponse() ."
 },
 {
 "ref":"genshinstats.errors.GenshinStatsException",
-"url":8,
+"url":9,
 "doc":"Base Exception for all genshinstats errors."
 },
 {
 "ref":"genshinstats.errors.GenshinStatsException.retcode",
-"url":8,
+"url":9,
 "doc":""
 },
 {
 "ref":"genshinstats.errors.GenshinStatsException.orig_msg",
-"url":8,
+"url":9,
 "doc":""
 },
 {
 "ref":"genshinstats.errors.GenshinStatsException.set_response",
-"url":8,
+"url":9,
 "doc":"Adds an optional response object to the error.",
 "func":1
 },
 {
 "ref":"genshinstats.errors.GenshinStatsException.msg",
-"url":8,
+"url":9,
 "doc":""
 },
 {
 "ref":"genshinstats.errors.TooManyRequests",
-"url":8,
+"url":9,
 "doc":"Made too many requests and got ratelimited"
 },
 {
 "ref":"genshinstats.errors.TooManyRequests.retcode",
-"url":8,
+"url":9,
 "doc":""
 },
 {
 "ref":"genshinstats.errors.TooManyRequests.orig_msg",
-"url":8,
+"url":9,
 "doc":""
 },
 {
 "ref":"genshinstats.errors.TooManyRequests.set_response",
-"url":8,
+"url":9,
 "doc":"Adds an optional response object to the error.",
 "func":1
 },
 {
 "ref":"genshinstats.errors.NotLoggedIn",
-"url":8,
+"url":9,
 "doc":"Cookies have not been provided."
 },
 {
 "ref":"genshinstats.errors.NotLoggedIn.retcode",
-"url":8,
+"url":9,
 "doc":""
 },
 {
 "ref":"genshinstats.errors.NotLoggedIn.orig_msg",
-"url":8,
+"url":9,
 "doc":""
 },
 {
 "ref":"genshinstats.errors.NotLoggedIn.set_response",
-"url":8,
+"url":9,
 "doc":"Adds an optional response object to the error.",
 "func":1
 },
 {
 "ref":"genshinstats.errors.AccountNotFound",
-"url":8,
+"url":9,
 "doc":"Tried to get data with an invalid uid."
 },
 {
 "ref":"genshinstats.errors.AccountNotFound.retcode",
-"url":8,
+"url":9,
 "doc":""
 },
 {
 "ref":"genshinstats.errors.AccountNotFound.orig_msg",
-"url":8,
+"url":9,
 "doc":""
 },
 {
 "ref":"genshinstats.errors.AccountNotFound.set_response",
-"url":8,
+"url":9,
 "doc":"Adds an optional response object to the error.",
 "func":1
 },
 {
 "ref":"genshinstats.errors.DataNotPublic",
-"url":8,
+"url":9,
 "doc":"User hasn't set their data to public."
 },
 {
 "ref":"genshinstats.errors.DataNotPublic.retcode",
-"url":8,
+"url":9,
 "doc":""
 },
 {
 "ref":"genshinstats.errors.DataNotPublic.orig_msg",
-"url":8,
+"url":9,
 "doc":""
 },
 {
 "ref":"genshinstats.errors.DataNotPublic.set_response",
-"url":8,
+"url":9,
 "doc":"Adds an optional response object to the error.",
 "func":1
 },
 {
 "ref":"genshinstats.errors.CodeRedeemException",
-"url":8,
+"url":9,
 "doc":"Code redemption failed."
 },
 {
 "ref":"genshinstats.errors.CodeRedeemException.retcode",
-"url":8,
+"url":9,
 "doc":""
 },
 {
 "ref":"genshinstats.errors.CodeRedeemException.orig_msg",
-"url":8,
+"url":9,
 "doc":""
 },
 {
 "ref":"genshinstats.errors.CodeRedeemException.set_response",
-"url":8,
+"url":9,
 "doc":"Adds an optional response object to the error.",
 "func":1
 },
 {
 "ref":"genshinstats.errors.SignInException",
-"url":8,
+"url":9,
 "doc":"Sign-in failed"
 },
 {
 "ref":"genshinstats.errors.SignInException.retcode",
-"url":8,
+"url":9,
 "doc":""
 },
 {
 "ref":"genshinstats.errors.SignInException.orig_msg",
-"url":8,
+"url":9,
 "doc":""
 },
 {
 "ref":"genshinstats.errors.SignInException.set_response",
-"url":8,
+"url":9,
 "doc":"Adds an optional response object to the error.",
 "func":1
 },
 {
 "ref":"genshinstats.errors.AuthkeyError",
-"url":8,
+"url":9,
 "doc":"Base GachaLog Exception."
 },
 {
 "ref":"genshinstats.errors.AuthkeyError.retcode",
-"url":8,
+"url":9,
 "doc":""
 },
 {
 "ref":"genshinstats.errors.AuthkeyError.orig_msg",
-"url":8,
+"url":9,
 "doc":""
 },
 {
 "ref":"genshinstats.errors.AuthkeyError.set_response",
-"url":8,
+"url":9,
 "doc":"Adds an optional response object to the error.",
 "func":1
 },
 {
 "ref":"genshinstats.errors.InvalidAuthkey",
-"url":8,
+"url":9,
 "doc":"An authkey is invalid."
 },
 {
 "ref":"genshinstats.errors.InvalidAuthkey.retcode",
-"url":8,
+"url":9,
 "doc":""
 },
 {
 "ref":"genshinstats.errors.InvalidAuthkey.orig_msg",
-"url":8,
+"url":9,
 "doc":""
 },
 {
 "ref":"genshinstats.errors.InvalidAuthkey.set_response",
-"url":8,
+"url":9,
 "doc":"Adds an optional response object to the error.",
 "func":1
 },
 {
 "ref":"genshinstats.errors.AuthkeyTimeout",
-"url":8,
+"url":9,
 "doc":"An authkey has timed out."
 },
 {
 "ref":"genshinstats.errors.AuthkeyTimeout.retcode",
-"url":8,
+"url":9,
 "doc":""
 },
 {
 "ref":"genshinstats.errors.AuthkeyTimeout.orig_msg",
-"url":8,
+"url":9,
 "doc":""
 },
 {
 "ref":"genshinstats.errors.AuthkeyTimeout.set_response",
-"url":8,
+"url":9,
 "doc":"Adds an optional response object to the error.",
 "func":1
 },
 {
 "ref":"genshinstats.errors.MissingAuthKey",
-"url":8,
+"url":9,
 "doc":"No gacha authkey was found."
 },
 {
 "ref":"genshinstats.errors.MissingAuthKey.retcode",
-"url":8,
+"url":9,
 "doc":""
 },
 {
 "ref":"genshinstats.errors.MissingAuthKey.orig_msg",
-"url":8,
+"url":9,
 "doc":""
 },
 {
 "ref":"genshinstats.errors.MissingAuthKey.set_response",
-"url":8,
+"url":9,
 "doc":"Adds an optional response object to the error.",
 "func":1
 },
 {
 "ref":"genshinstats.errors.raise_for_error",
-"url":8,
+"url":9,
 "doc":"Raises a custom genshinstats error from a response.",
 "func":1
 }

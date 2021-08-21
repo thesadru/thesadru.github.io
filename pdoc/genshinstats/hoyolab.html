@@ -27,7 +27,7 @@
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/hoyolab.py#L1-L156" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/hoyolab.py#L1-L157" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">&#34;&#34;&#34;Wrapper for the hoyolab.com community api.
 
@@ -36,9 +36,10 @@ Can search users, get record cards, redeem codes...
 import time
 from typing import Any, Dict, List, Mapping, Optional
 
+from .caching import permanent_cache
 from .genshinstats import fetch_endpoint
 from .pretty import prettify_game_accounts
-from .utils import deprecated, permanent_cache, recognize_server
+from .utils import deprecated, recognize_server
 
 __all__ = [
     &#34;get_langs&#34;,
@@ -203,7 +204,7 @@ def get_hot_posts(forum_id: int = 1, size: int = 100, lang: str = &#39;en-us&#39
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/hoyolab.py#L70-L77" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/hoyolab.py#L71-L78" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def get_game_accounts(chinese: bool = False, cookie: Mapping[str, Any] = None) -&gt; List[Dict[str, Any]]:
     &#34;&#34;&#34;Gets all game accounts of the currently signed in player.
@@ -225,7 +226,7 @@ There may be less posts returned than size.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/hoyolab.py#L143-L156" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/hoyolab.py#L144-L157" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def get_hot_posts(forum_id: int = 1, size: int = 100, lang: str = &#39;en-us&#39;) -&gt; List[Dict[str, Any]]:
     &#34;&#34;&#34;Fetches hot posts from the front page of hoyolabs
@@ -251,7 +252,7 @@ There may be less posts returned than size.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/hoyolab.py#L26-L34" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/hoyolab.py#L27-L35" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">@permanent_cache()
 def get_langs() -&gt; Dict[str, str]:
@@ -272,7 +273,7 @@ def get_langs() -&gt; Dict[str, str]:
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/hoyolab.py#L135-L141" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/hoyolab.py#L136-L142" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def get_recommended_users(page_size: int = None) -&gt; List[Dict[str, Any]]:
     &#34;&#34;&#34;Gets a list of recommended active users&#34;&#34;&#34;
@@ -295,7 +296,7 @@ In case the user hasn't set their data to public or you are ratelimited the func
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/hoyolab.py#L79-L93" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/hoyolab.py#L80-L94" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def get_record_card(hoyolab_uid: int, cookie: Mapping[str, Any] = None) -&gt; Optional[Dict[str, Any]]:
     &#34;&#34;&#34;Gets a game record card of a user based on their hoyolab uid.
@@ -324,7 +325,7 @@ In case the uid is private, returns None.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/hoyolab.py#L95-L102" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/hoyolab.py#L96-L103" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def get_uid_from_hoyolab_uid(hoyolab_uid: int, cookie: Mapping[str, Any] = None) -&gt; Optional[int]:
     &#34;&#34;&#34;Gets a uid with a community uid.
@@ -345,7 +346,7 @@ In case the uid is private, returns None.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/hoyolab.py#L57-L68" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/hoyolab.py#L58-L69" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">@deprecated()
 def hoyolab_check_in(cookie: Mapping[str, Any] = None) -&gt; None:
@@ -378,7 +379,7 @@ but you must sleep yourself when passing in a uid or when an error is encountere
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/hoyolab.py#L104-L133" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/hoyolab.py#L105-L134" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def redeem_code(code: str, uid: int = None, cookie: Mapping[str, Any] = None) -&gt; None:
     &#34;&#34;&#34;Redeems a gift code for the currently signed in user.
@@ -421,7 +422,7 @@ but you must sleep yourself when passing in a uid or when an error is encountere
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/hoyolab.py#L36-L45" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/hoyolab.py#L37-L46" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def search(keyword: str, size: int = 20) -&gt; List[Dict[str, Any]]:
     &#34;&#34;&#34;Searches all users.
@@ -443,7 +444,7 @@ but you must sleep yourself when passing in a uid or when an error is encountere
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/hoyolab.py#L47-L55" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/hoyolab.py#L48-L56" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def set_visibility(public: bool, cookie: Mapping[str, Any] = None) -&gt; None:
     &#34;&#34;&#34;Sets your data to public or private.&#34;&#34;&#34;

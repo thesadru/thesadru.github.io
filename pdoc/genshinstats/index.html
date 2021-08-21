@@ -30,7 +30,7 @@ Majority of the endpoints are implemented, documented and typehinted.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/__init__.py#L1-L16" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/__init__.py#L1-L17" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">&#34;&#34;&#34;Wrapper for the Genshin Impact&#39;s api.
 
@@ -41,6 +41,7 @@ All endpoints require to be logged in with either a cookie or an authkey, read t
 
 https://github.com/thesadru/genshinstats
 &#34;&#34;&#34;
+from .caching import *
 from .daily import *
 from .errors import *
 from .genshinstats import *
@@ -53,6 +54,10 @@ from .wishes import *</code></pre>
 <section>
 <h2 class="section-title" id="header-submodules">Sub-modules</h2>
 <dl>
+<dt><code class="name"><a title="genshinstats.caching" href="caching.html">genshinstats.caching</a></code></dt>
+<dd>
+<div class="desc"><p>Install a cache into genshinstats</p></div>
+</dd>
 <dt><code class="name"><a title="genshinstats.daily" href="daily.html">genshinstats.daily</a></code></dt>
 <dd>
 <div class="desc"><p>Automatic sign-in for hoyolab's daily rewards …</p></div>
@@ -75,7 +80,7 @@ from .wishes import *</code></pre>
 </dd>
 <dt><code class="name"><a title="genshinstats.transactions" href="transactions.html">genshinstats.transactions</a></code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Logs for currency "transactions" …</p></div>
 </dd>
 <dt><code class="name"><a title="genshinstats.utils" href="utils.html">genshinstats.utils</a></code></dt>
 <dd>
@@ -148,6 +153,7 @@ setTimeout(() => input.focus(), 100);
 <ul id="index">
 <li><h3><a href="#header-submodules">Sub-modules</a></h3>
 <ul>
+<li><code><a title="genshinstats.caching" href="caching.html">genshinstats.caching</a></code></li>
 <li><code><a title="genshinstats.daily" href="daily.html">genshinstats.daily</a></code></li>
 <li><code><a title="genshinstats.errors" href="errors.html">genshinstats.errors</a></code></li>
 <li><code><a title="genshinstats.genshinstats" href="genshinstats.html">genshinstats.genshinstats</a></code></li>

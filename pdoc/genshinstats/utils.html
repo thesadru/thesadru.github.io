@@ -26,7 +26,7 @@
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/utils.py#L1-L132" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/utils.py#L1-L106" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">&#34;&#34;&#34;Various utility functions for genshinstats.&#34;&#34;&#34;
 import inspect
@@ -44,8 +44,7 @@ __all__ = [
     &#34;recognize_id&#34;,
     &#34;is_game_uid&#34;,
     &#34;is_chinese&#34;,
-    &#34;get_output_log&#34;,
-    &#34;permanent_cache&#34;,
+    &#34;get_logfile&#34;,
 ]
 
 T = TypeVar(&#34;T&#34;)
@@ -97,39 +96,14 @@ def is_chinese(x: Union[int, str]) -&gt; bool:
     &#34;&#34;&#34;Recognizes whether the server/uid is chinese.&#34;&#34;&#34;
     return str(x).startswith((&#34;cn&#34;, &#34;1&#34;, &#34;5&#34;))
 
-def get_output_log() -&gt; Optional[str]:
-    &#34;&#34;&#34;Find and return the Genshin Impact output log. None if not found.&#34;&#34;&#34;
+def get_logfile() -&gt; Optional[str]:
+    &#34;&#34;&#34;Find and return the Genshin Impact logfile. None if not found.&#34;&#34;&#34;
     mihoyo_dir = os.path.expanduser(&#34;~/AppData/LocalLow/miHoYo/&#34;)
     for name in [&#34;Genshin Impact&#34;, &#34;原神&#34;, &#34;YuanShen&#34;]:
         output_log = os.path.join(mihoyo_dir, name, &#34;output_log.txt&#34;)
         if os.path.isfile(output_log):
             return output_log
     return None # no genshin installation
-
-def permanent_cache(*params: str) -&gt; Callable[[T], T]:
-    &#34;&#34;&#34;Like lru_cache except permanent and only caches based on some parameters&#34;&#34;&#34;
-    cache: Dict[Any, Any] = {}
-
-    def wrapper(func):
-        sig = inspect.signature(func)
-        
-        @wraps(func)
-        def inner(*args, **kwargs):
-            bound = sig.bind(*args, **kwargs)
-            bound.apply_defaults()
-            # since the amount of arguments is constant we can just save the values
-            key = tuple(v for k, v in bound.arguments.items() if k in params)
-
-            if key in cache:
-                return cache[key]
-            r = func(*args, **kwargs)
-            cache[key] = r
-            return r
-
-        inner.cache = cache
-        return inner
-
-    return wrapper # type: ignore
 
 def retry(tries: int = 3, exceptions: Union[Type[BaseException], Iterable[Type[BaseException]]] = Exception) -&gt; Callable[[T], T]:
     &#34;&#34;&#34;A classic retry() decorator&#34;&#34;&#34;
@@ -169,18 +143,18 @@ def deprecated(message: str = &#34;{} is deprecated and will be removed in futur
 <section>
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
-<dt id="genshinstats.utils.get_output_log"><code class="name flex">
-<span>def <span class="ident">get_output_log</span></span>(<span>) ‑> Optional[str]</span>
+<dt id="genshinstats.utils.get_logfile"><code class="name flex">
+<span>def <span class="ident">get_logfile</span></span>(<span>) ‑> Optional[str]</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Find and return the Genshin Impact output log. None if not found.</p></div>
+<div class="desc"><p>Find and return the Genshin Impact logfile. None if not found.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/utils.py#L70-L77" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/utils.py#L69-L76" class="git-link">Browse git</a>
 </summary>
-<pre><code class="python">def get_output_log() -&gt; Optional[str]:
-    &#34;&#34;&#34;Find and return the Genshin Impact output log. None if not found.&#34;&#34;&#34;
+<pre><code class="python">def get_logfile() -&gt; Optional[str]:
+    &#34;&#34;&#34;Find and return the Genshin Impact logfile. None if not found.&#34;&#34;&#34;
     mihoyo_dir = os.path.expanduser(&#34;~/AppData/LocalLow/miHoYo/&#34;)
     for name in [&#34;Genshin Impact&#34;, &#34;原神&#34;, &#34;YuanShen&#34;]:
         output_log = os.path.join(mihoyo_dir, name, &#34;output_log.txt&#34;)
@@ -197,7 +171,7 @@ def deprecated(message: str = &#34;{} is deprecated and will be removed in futur
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/utils.py#L66-L68" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/utils.py#L65-L67" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def is_chinese(x: Union[int, str]) -&gt; bool:
     &#34;&#34;&#34;Recognizes whether the server/uid is chinese.&#34;&#34;&#34;
@@ -212,47 +186,11 @@ def deprecated(message: str = &#34;{} is deprecated and will be removed in futur
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/utils.py#L62-L64" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/utils.py#L61-L63" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def is_game_uid(uid: int) -&gt; bool:
     &#34;&#34;&#34;Recognizes whether the uid is a game uid.&#34;&#34;&#34;
     return bool(re.fullmatch(r&#34;[6789]\d{8}&#34;, str(uid)))</code></pre>
-</details>
-</dd>
-<dt id="genshinstats.utils.permanent_cache"><code class="name flex">
-<span>def <span class="ident">permanent_cache</span></span>(<span>*params: str) ‑> Callable[[~T], ~T]</span>
-</code></dt>
-<dd>
-<div class="desc"><p>Like lru_cache except permanent and only caches based on some parameters</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/utils.py#L79-L102" class="git-link">Browse git</a>
-</summary>
-<pre><code class="python">def permanent_cache(*params: str) -&gt; Callable[[T], T]:
-    &#34;&#34;&#34;Like lru_cache except permanent and only caches based on some parameters&#34;&#34;&#34;
-    cache: Dict[Any, Any] = {}
-
-    def wrapper(func):
-        sig = inspect.signature(func)
-        
-        @wraps(func)
-        def inner(*args, **kwargs):
-            bound = sig.bind(*args, **kwargs)
-            bound.apply_defaults()
-            # since the amount of arguments is constant we can just save the values
-            key = tuple(v for k, v in bound.arguments.items() if k in params)
-
-            if key in cache:
-                return cache[key]
-            r = func(*args, **kwargs)
-            cache[key] = r
-            return r
-
-        inner.cache = cache
-        return inner
-
-    return wrapper # type: ignore</code></pre>
 </details>
 </dd>
 <dt id="genshinstats.utils.recognize_id"><code class="name flex">
@@ -263,7 +201,7 @@ def deprecated(message: str = &#34;{} is deprecated and will be removed in futur
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/utils.py#L40-L60" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/utils.py#L39-L59" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def recognize_id(id: int) -&gt; Optional[str]:
     &#34;&#34;&#34;Attempts to recognize what item type an id is&#34;&#34;&#34;
@@ -296,7 +234,7 @@ def deprecated(message: str = &#34;{} is deprecated and will be removed in futur
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/utils.py#L25-L38" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/utils.py#L24-L37" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def recognize_server(uid: int) -&gt; str:
     &#34;&#34;&#34;Recognizes which server a UID is from.&#34;&#34;&#34;
@@ -377,11 +315,10 @@ setTimeout(() => input.focus(), 100);
 </ul>
 </li>
 <li><h3><a href="#header-functions">Functions</a></h3>
-<ul class="two-column">
-<li><code><a title="genshinstats.utils.get_output_log" href="#genshinstats.utils.get_output_log">get_output_log</a></code></li>
+<ul class="">
+<li><code><a title="genshinstats.utils.get_logfile" href="#genshinstats.utils.get_logfile">get_logfile</a></code></li>
 <li><code><a title="genshinstats.utils.is_chinese" href="#genshinstats.utils.is_chinese">is_chinese</a></code></li>
 <li><code><a title="genshinstats.utils.is_game_uid" href="#genshinstats.utils.is_game_uid">is_game_uid</a></code></li>
-<li><code><a title="genshinstats.utils.permanent_cache" href="#genshinstats.utils.permanent_cache">permanent_cache</a></code></li>
 <li><code><a title="genshinstats.utils.recognize_id" href="#genshinstats.utils.recognize_id">recognize_id</a></code></li>
 <li><code><a title="genshinstats.utils.recognize_server" href="#genshinstats.utils.recognize_server">recognize_server</a></code></li>
 </ul>
