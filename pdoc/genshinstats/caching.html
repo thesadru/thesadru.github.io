@@ -26,7 +26,7 @@
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/caching.py#L1-L204" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/caching.py#L1-L199" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">&#34;&#34;&#34;Install a cache into genshinstats&#34;&#34;&#34;
 import inspect
@@ -107,9 +107,7 @@ def cache_paginator(func: C, cache: MutableMapping[Tuple[Any, ...], Any], strict
     sig = inspect.signature(func)
 
     def wrapper(*args, **kwargs):
-        # create key (transaction id, *arguments)
-        # transaction ids are always unique no matter the function so this is safe
-        # for heads (end_id=0) we either don&#39;t store them or store them as the function name
+        # create key (func name, end id, *arguments)
         bound = sig.bind(*args, **kwargs)
         bound.apply_defaults()
         arguments = bound.arguments
@@ -123,38 +121,32 @@ def cache_paginator(func: C, cache: MutableMapping[Tuple[Any, ...], Any], strict
         if &#34;banner_type&#34; in arguments and arguments[&#34;banner_type&#34;] is None:
             return func(*args, **kwargs)
 
+        def make_key(end_id: int) -&gt; Tuple[Any, ...]:
+            return (func.__name__,end_id,) + partial_key
+
         def helper(end_id: int):
-            # in case we&#39;re using strict mode its fastest to just get the items at the start
-            if end_id == 0 and strict:
-                key = (func.__name__,) + partial_key
+            while True:
+                # yield new items from the cache
+                key = make_key(end_id)
                 while key in cache:
                     yield cache[key]
-                    key = (cache[key][&#39;id&#39;],) + partial_key
-            
-            while True:
+                    end_id = cache[key][&#34;id&#34;]
+                    key = make_key(end_id)
+
                 # look ahead and add new items to the cache
                 # since the size limit is always 20 we use that to make only a single request
                 new = list(func(size=20, authkey=authkey, end_id=end_id, **arguments))
                 if len(new) == 0:
                     break
-                
-                # we have to special-case end_id=0 since it&#39;s a bad idea to store the head by default
-                if end_id != 0:
-                    cache[(end_id,) + partial_key] = new[0]
-                else:
+                # the head may not want to be cached so it must be handled separately
+                if end_id != 0 or strict:
+                    cache[make_key(end_id)] = new[0]
+                if end_id == 0:
                     yield new[0]
                     end_id = new[0][&#34;id&#34;]
-                    if strict:
-                        cache[(func.__name__,) + partial_key] = new[0]
 
                 for p, n in zip(new, new[1:]):
-                    cache[(p[&#34;id&#34;],) + partial_key] = n
-
-                # yield new items
-                key = (end_id,) + partial_key
-                while key in cache:
-                    yield cache[key]
-                    key = (cache[key][&#39;id&#39;],) + partial_key
+                    cache[make_key(p[&#34;id&#34;])] = n
 
         return islice(helper(end_id), size)
 
@@ -168,6 +160,8 @@ def install_cache(cache: MutableMapping[Tuple[Any, ...], Any], strict: bool = Fa
 
     If strict mode is on then the first item of the paginator will no longer be requested every time.
     That can however cause a variety of problems and it&#39;s therefore recommend to use it only with TTL caches.
+
+    Please do note that hundreds of accesses may be made per call so your cache shouldn&#39;t be doing heavy computations during accesses.
     &#34;&#34;&#34;
     functions: List[Callable] = [
         # genshinstats
@@ -214,11 +208,12 @@ def install_cache(cache: MutableMapping[Tuple[Any, ...], Any], strict: bool = Fa
             orig_func = getattr(module, func.__name__)
             if (
                 os.path.split(orig_func.__globals__[&#34;__file__&#34;])[0]
-                != os.path.split(func.__globals__[&#34;__file__&#34;])[0] # type: ignore
+                != os.path.split(func.__globals__[&#34;__file__&#34;])[0]  # type: ignore
             ):
                 continue
 
             setattr(module, func.__name__, func)
+
 
 def uninstall_cache() -&gt; None:
     &#34;&#34;&#34;Uninstalls the cache from all functions&#34;&#34;&#34;
@@ -228,7 +223,7 @@ def uninstall_cache() -&gt; None:
             members = inspect.getmembers(module)
         except ModuleNotFoundError:
             continue
-    
+
         for name, func in members:
             if hasattr(func, &#34;__cache__&#34;):
                 setattr(module, name, getattr(func, &#34;__original__&#34;, func))</code></pre>
@@ -247,17 +242,20 @@ def uninstall_cache() -&gt; None:
 <dd>
 <div class="desc"><p>Installs a cache into every cacheable function in genshinstats</p>
 <p>If strict mode is on then the first item of the paginator will no longer be requested every time.
-That can however cause a variety of problems and it's therefore recommend to use it only with TTL caches.</p></div>
+That can however cause a variety of problems and it's therefore recommend to use it only with TTL caches.</p>
+<p>Please do note that hundreds of accesses may be made per call so your cache shouldn't be doing heavy computations during accesses.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/caching.py#L136-L191" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/caching.py#L128-L185" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def install_cache(cache: MutableMapping[Tuple[Any, ...], Any], strict: bool = False) -&gt; None:
     &#34;&#34;&#34;Installs a cache into every cacheable function in genshinstats
 
     If strict mode is on then the first item of the paginator will no longer be requested every time.
     That can however cause a variety of problems and it&#39;s therefore recommend to use it only with TTL caches.
+
+    Please do note that hundreds of accesses may be made per call so your cache shouldn&#39;t be doing heavy computations during accesses.
     &#34;&#34;&#34;
     functions: List[Callable] = [
         # genshinstats
@@ -304,7 +302,7 @@ That can however cause a variety of problems and it's therefore recommend to use
             orig_func = getattr(module, func.__name__)
             if (
                 os.path.split(orig_func.__globals__[&#34;__file__&#34;])[0]
-                != os.path.split(func.__globals__[&#34;__file__&#34;])[0] # type: ignore
+                != os.path.split(func.__globals__[&#34;__file__&#34;])[0]  # type: ignore
             ):
                 continue
 
@@ -354,7 +352,7 @@ That can however cause a variety of problems and it's therefore recommend to use
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/caching.py#L193-L204" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/caching.py#L188-L199" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def uninstall_cache() -&gt; None:
     &#34;&#34;&#34;Uninstalls the cache from all functions&#34;&#34;&#34;
@@ -364,7 +362,7 @@ That can however cause a variety of problems and it's therefore recommend to use
             members = inspect.getmembers(module)
         except ModuleNotFoundError:
             continue
-    
+
         for name, func in members:
             if hasattr(func, &#34;__cache__&#34;):
                 setattr(module, name, getattr(func, &#34;__original__&#34;, func))</code></pre>

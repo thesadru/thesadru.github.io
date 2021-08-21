@@ -407,7 +407,7 @@ INDEX=[
 {
 "ref":"genshinstats.caching.install_cache",
 "url":8,
-"doc":"Installs a cache into every cacheable function in genshinstats If strict mode is on then the first item of the paginator will no longer be requested every time. That can however cause a variety of problems and it's therefore recommend to use it only with TTL caches.",
+"doc":"Installs a cache into every cacheable function in genshinstats If strict mode is on then the first item of the paginator will no longer be requested every time. That can however cause a variety of problems and it's therefore recommend to use it only with TTL caches. Please do note that hundreds of accesses may be made per call so your cache shouldn't be doing heavy computations during accesses.",
 "func":1
 },
 {
