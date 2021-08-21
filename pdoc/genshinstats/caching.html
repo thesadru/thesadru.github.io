@@ -26,7 +26,7 @@
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/caching.py#L1-L203" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/caching.py#L1-L204" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">&#34;&#34;&#34;Install a cache into genshinstats&#34;&#34;&#34;
 import inspect
@@ -108,13 +108,14 @@ def cache_paginator(func: C, cache: MutableMapping[Tuple[Any, ...], Any], strict
 
     def wrapper(*args, **kwargs):
         # create key (transaction id, *arguments)
-        # transaction ids are always unique no matter the function
+        # transaction ids are always unique no matter the function so this is safe
+        # for heads (end_id=0) we either don&#39;t store them or store them as the function name
         bound = sig.bind(*args, **kwargs)
         bound.apply_defaults()
         arguments = bound.arguments
 
         # remove arguments that might cause problems
-        size, authkey, end_id = [arguments.pop(k, None) for k in (&#34;size&#34;, &#34;authkey&#34;, &#34;end_id&#34;)]
+        size, authkey, end_id = [arguments.pop(k) for k in (&#34;size&#34;, &#34;authkey&#34;, &#34;end_id&#34;)]
         partial_key = tuple(arguments.values())
 
         # special recursive case must be ignored
@@ -123,39 +124,39 @@ def cache_paginator(func: C, cache: MutableMapping[Tuple[Any, ...], Any], strict
             return func(*args, **kwargs)
 
         def helper(end_id: int):
-            &#34;&#34;&#34;Helper iterator&#34;&#34;&#34;
+            # in case we&#39;re using strict mode its fastest to just get the items at the start
+            if end_id == 0 and strict:
+                key = (func.__name__,) + partial_key
+                while key in cache:
+                    yield cache[key]
+                    key = (cache[key][&#39;id&#39;],) + partial_key
+            
             while True:
                 # look ahead and add new items to the cache
                 # since the size limit is always 20 we use that to make only a single request
                 new = list(func(size=20, authkey=authkey, end_id=end_id, **arguments))
                 if len(new) == 0:
-                    break  # default case for size=None
-
+                    break
+                
+                # we have to special-case end_id=0 since it&#39;s a bad idea to store the head by default
                 if end_id != 0:
                     cache[(end_id,) + partial_key] = new[0]
-                elif strict:
-                    cache[(func.__name__,) + partial_key] = new[0]
+                else:
+                    yield new[0]
+                    end_id = new[0][&#34;id&#34;]
+                    if strict:
+                        cache[(func.__name__,) + partial_key] = new[0]
 
                 for p, n in zip(new, new[1:]):
                     cache[(p[&#34;id&#34;],) + partial_key] = n
 
                 # yield new items
-                while True:
-                    if end_id == 0:
-                        yield new[0]
-                        end_id = new[0][&#34;id&#34;]
-                        if strict:
-                            cache[(func.__name__,) + partial_key] = new[0]
-
-                    key = (end_id,) + partial_key
-                    if key not in cache:
-                        break
-
+                key = (end_id,) + partial_key
+                while key in cache:
                     yield cache[key]
+                    key = (cache[key][&#39;id&#39;],) + partial_key
 
-                    end_id = cache[key][&#34;id&#34;]
-
-        return islice(helper(end_id or 0), size)
+        return islice(helper(end_id), size)
 
     setattr(wrapper, &#34;__cache__&#34;, cache)
     setattr(wrapper, &#34;__original__&#34;, func)
@@ -250,7 +251,7 @@ That can however cause a variety of problems and it's therefore recommend to use
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/caching.py#L135-L190" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/caching.py#L136-L191" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def install_cache(cache: MutableMapping[Tuple[Any, ...], Any], strict: bool = False) -&gt; None:
     &#34;&#34;&#34;Installs a cache into every cacheable function in genshinstats
@@ -353,7 +354,7 @@ That can however cause a variety of problems and it's therefore recommend to use
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/caching.py#L192-L203" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/caching.py#L193-L204" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def uninstall_cache() -&gt; None:
     &#34;&#34;&#34;Uninstalls the cache from all functions&#34;&#34;&#34;
