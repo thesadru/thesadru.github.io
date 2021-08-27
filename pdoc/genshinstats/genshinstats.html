@@ -27,7 +27,7 @@
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/genshinstats.py#L1-L235" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/genshinstats.py#L1-L244" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">&#34;&#34;&#34;Wrapper for the hoyolab.com gameRecord api.
 
@@ -76,12 +76,13 @@ session.headers.update({
 cookies: List[RequestsCookieJar] = [] # a list of all avalible cookies
 
 DS_SALT = &#34;6cqshh5dhw73bzxn20oexa9k516chk7s&#34;
+CN_DS_SALT = &#34;14bmu1mz0yuljprsfgpvjh3ju2ni468r&#34;
 OS_BBS_URL = &#34;https://bbs-api-os.hoyolab.com/&#34;  # overseas
 CN_TAKUMI_URL = &#34;https://api-takumi.mihoyo.com/&#34;  # chinese
 
 def set_cookie(cookie: Union[Mapping[str, Any], str] = None, **kwargs: Any) -&gt; None:
     &#34;&#34;&#34;Logs-in using a cookie.
-    
+
     Usage:
     &gt;&gt;&gt; set_cookie(ltuid=..., ltoken=...)
     &gt;&gt;&gt; set_cookie(account_id=..., cookie_token=...)
@@ -90,32 +91,32 @@ def set_cookie(cookie: Union[Mapping[str, Any], str] = None, **kwargs: Any) -&gt
     &#34;&#34;&#34;
     if bool(cookie) == bool(kwargs):
         raise ValueError(&#34;Cannot use both positional and keyword arguments at once&#34;)
-    
+
     set_cookies(cookie or kwargs)
 
 def set_cookies(*args: Union[Mapping[str, Any], str], clear: bool = True) -&gt; None:
     &#34;&#34;&#34;Sets multiple cookies at once to cycle between. Takes same arguments as set_cookie.
-    
+
     Unlike set_cookie, this function allows for multiple cookies to be used at once.
     This is so far the only way to circumvent the rate limit.
-    
+
     If clear is set to False the previously set cookies won&#39;t be cleared.
     &#34;&#34;&#34;
     if clear:
         cookies.clear()
-    
+
     for cookie in args:
         if isinstance(cookie, Mapping):
             cookie = {k: str(v) for k, v in cookie.items()} # SimpleCookie needs a string
         cookie = SimpleCookie(cookie)
-        
+
         jar = RequestsCookieJar()
         jar.update(cookie)
         cookies.append(jar)
 
 def get_browser_cookies(browser: str = None) -&gt; Dict[str, str]:
     &#34;&#34;&#34;Gets cookies from your browser for later storing.
-    
+
     If a specific browser is set, gets data from that browser only.
     Avalible browsers: chrome, chromium, opera, edge, firefox
     &#34;&#34;&#34;
@@ -129,19 +130,19 @@ def get_browser_cookies(browser: str = None) -&gt; Dict[str, str]:
     # however we can&#39;t just get every cookie because there&#39;s sensitive information
     allowed_cookies = {&#39;ltuid&#39;, &#39;ltoken&#39;, &#39;account_id&#39;, &#39;cookie_token&#39;}
     return {
-        c.name: c.value 
-        for domain in (&#39;mihoyo&#39;, &#39;hoyolab&#39;) 
-        for c in load(domain_name=domain) 
+        c.name: c.value
+        for domain in (&#39;mihoyo&#39;, &#39;hoyolab&#39;)
+        for c in load(domain_name=domain)
         if c.name in allowed_cookies and c.value is not None
     }
 
 def set_cookie_auto(browser: str = None) -&gt; None:
     &#34;&#34;&#34;Like set_cookie, but gets the cookies by itself from your browser.
-    
+
     Requires the module browser-cookie3
     Be aware that this process can take up to 10 seconds.
     To speed it up you may select a browser.
-    
+
     If a specific browser is set, gets data from that browser only.
     Avalible browsers: chrome, chromium, opera, edge, firefox
     &#34;&#34;&#34;
@@ -161,7 +162,7 @@ def generate_ds_token(salt: str = DS_SALT) -&gt; str:
 def _request(*args: Any, **kwargs: Any) -&gt; Any:
     &#34;&#34;&#34;Fancy requests.request&#34;&#34;&#34;
     r = session.request(*args, **kwargs)
-    
+
     r.raise_for_status()
     kwargs[&#39;cookies&#39;].update(session.cookies)
     session.cookies.clear()
@@ -176,30 +177,38 @@ def fetch_endpoint(endpoint: str, chinese: bool = False, cookie: Mapping[str, An
     Takes in an endpoint url which is joined with the base url.
     A request is then sent and returns a parsed response.
     Includes error handling and ds token renewal.
-    
-    Can specifically use the chinese base url and request data for chinese users, 
+
+    Can specifically use the chinese base url and request data for chinese users,
     but that requires being logged in as that user.
-    
+
     Supports handling ratelimits if multiple cookies are set with `set_cookies`
     &#34;&#34;&#34;
     # parse the arguments for requests.request
-    session.headers[&#39;ds&#39;] = generate_ds_token()
     method = kwargs.pop(&#39;method&#39;, &#39;get&#39;)
-    url = urljoin(CN_TAKUMI_URL if chinese else OS_BBS_URL, endpoint)
-    
+    if chinese:
+        kwargs.setdefault(&#39;headers&#39;, {}).update({
+            &#34;ds&#34;: generate_ds_token(CN_DS_SALT),
+            &#34;x-rpc-app_version&#34;: &#34;2.7.0&#34;,
+            &#34;x-rpc-client_type&#34;: &#34;5&#34;,
+        })
+        url = urljoin(CN_TAKUMI_URL, endpoint)
+    else:
+        session.headers[&#39;ds&#39;] = generate_ds_token()
+        url = urljoin(OS_BBS_URL, endpoint)
+
     if cookie is not None:
         cookie = {k: str(v) for k, v in cookie.items()}
         return _request(method, url, cookies=cookie, **kwargs)
     elif len(cookies) == 0:
         raise NotLoggedIn(&#39;Login cookies have not been provided&#39;)
-    
+
     for cookie in cookies.copy():
         try:
             return _request(method, url, cookies=cookie, **kwargs)
         except TooManyRequests:
             # move the ratelimited cookie to the end to let the ratelimit wear off
             cookies.append(cookies.pop(0))
-    
+
     # if we&#39;re here it means we used up all our cookies so we must handle that
     if len(cookies) == 1:
         raise TooManyRequests(&#34;Cannnot get data for more than 30 accounts per day.&#34;)
@@ -219,15 +228,15 @@ def get_user_stats(uid: int, cookie: Mapping[str, Any] = None) -&gt; Dict[str, A
 
 def get_characters(uid: int, character_ids: List[int] = None, lang: str = &#39;en-us&#39;, cookie: Mapping[str, Any] = None) -&gt; List[Dict[str, Any]]:
     &#34;&#34;&#34;Gets characters of a user.
-    
+
     Characters contain info about their level, constellation, weapon, and artifacts.
     Talents are not included.
-    
+
     If character_ids are provided then only characters with those ids are returned.
     &#34;&#34;&#34;
     if character_ids is None:
         character_ids = [i[&#39;id&#39;] for i in get_user_stats(uid)[&#39;characters&#39;]]
-    
+
     server = recognize_server(uid)
     data = fetch_endpoint(
         &#34;game_record/genshin/api/character&#34;,
@@ -241,7 +250,7 @@ def get_characters(uid: int, character_ids: List[int] = None, lang: str = &#39;e
 
 def get_spiral_abyss(uid: int, previous: bool = False, cookie: Mapping[str, Any] = None) -&gt; Dict[str, Any]:
     &#34;&#34;&#34;Gets spiral abyss runs of a user and details about them.
-    
+
     Every season these stats refresh and you can get the previous stats with `previous`.
     &#34;&#34;&#34;
     server = recognize_server(uid)
@@ -256,7 +265,7 @@ def get_spiral_abyss(uid: int, previous: bool = False, cookie: Mapping[str, Any]
 
 def get_all_user_data(uid: int, lang: str = &#39;en-us&#39;, cookie: Mapping[str, Any] = None) -&gt; Dict[str, Any]:
     &#34;&#34;&#34;Fetches all data a user can has. Very slow.
-    
+
     A helper function that gets all avalible data for a user and returns it as one dict.
     However that makes it fairly slow so it&#39;s not recommended to use it outside caching.
     &#34;&#34;&#34;
@@ -287,7 +296,7 @@ but that requires being logged in as that user.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/genshinstats.py#L142-L176" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/genshinstats.py#L143-L185" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def fetch_endpoint(endpoint: str, chinese: bool = False, cookie: Mapping[str, Any] = None, **kwargs) -&gt; Dict[str, Any]:
     &#34;&#34;&#34;Fetch an enpoint from the API.
@@ -295,30 +304,38 @@ but that requires being logged in as that user.</p>
     Takes in an endpoint url which is joined with the base url.
     A request is then sent and returns a parsed response.
     Includes error handling and ds token renewal.
-    
-    Can specifically use the chinese base url and request data for chinese users, 
+
+    Can specifically use the chinese base url and request data for chinese users,
     but that requires being logged in as that user.
-    
+
     Supports handling ratelimits if multiple cookies are set with `set_cookies`
     &#34;&#34;&#34;
     # parse the arguments for requests.request
-    session.headers[&#39;ds&#39;] = generate_ds_token()
     method = kwargs.pop(&#39;method&#39;, &#39;get&#39;)
-    url = urljoin(CN_TAKUMI_URL if chinese else OS_BBS_URL, endpoint)
-    
+    if chinese:
+        kwargs.setdefault(&#39;headers&#39;, {}).update({
+            &#34;ds&#34;: generate_ds_token(CN_DS_SALT),
+            &#34;x-rpc-app_version&#34;: &#34;2.7.0&#34;,
+            &#34;x-rpc-client_type&#34;: &#34;5&#34;,
+        })
+        url = urljoin(CN_TAKUMI_URL, endpoint)
+    else:
+        session.headers[&#39;ds&#39;] = generate_ds_token()
+        url = urljoin(OS_BBS_URL, endpoint)
+
     if cookie is not None:
         cookie = {k: str(v) for k, v in cookie.items()}
         return _request(method, url, cookies=cookie, **kwargs)
     elif len(cookies) == 0:
         raise NotLoggedIn(&#39;Login cookies have not been provided&#39;)
-    
+
     for cookie in cookies.copy():
         try:
             return _request(method, url, cookies=cookie, **kwargs)
         except TooManyRequests:
             # move the ratelimited cookie to the end to let the ratelimit wear off
             cookies.append(cookies.pop(0))
-    
+
     # if we&#39;re here it means we used up all our cookies so we must handle that
     if len(cookies) == 1:
         raise TooManyRequests(&#34;Cannnot get data for more than 30 accounts per day.&#34;)
@@ -336,11 +353,11 @@ However that makes it fairly slow so it's not recommended to use it outside cach
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/genshinstats.py#L226-L235" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/genshinstats.py#L235-L244" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def get_all_user_data(uid: int, lang: str = &#39;en-us&#39;, cookie: Mapping[str, Any] = None) -&gt; Dict[str, Any]:
     &#34;&#34;&#34;Fetches all data a user can has. Very slow.
-    
+
     A helper function that gets all avalible data for a user and returns it as one dict.
     However that makes it fairly slow so it&#39;s not recommended to use it outside caching.
     &#34;&#34;&#34;
@@ -360,11 +377,11 @@ Avalible browsers: chrome, chromium, opera, edge, firefox</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/genshinstats.py#L85-L105" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/genshinstats.py#L86-L106" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def get_browser_cookies(browser: str = None) -&gt; Dict[str, str]:
     &#34;&#34;&#34;Gets cookies from your browser for later storing.
-    
+
     If a specific browser is set, gets data from that browser only.
     Avalible browsers: chrome, chromium, opera, edge, firefox
     &#34;&#34;&#34;
@@ -378,9 +395,9 @@ Avalible browsers: chrome, chromium, opera, edge, firefox</p></div>
     # however we can&#39;t just get every cookie because there&#39;s sensitive information
     allowed_cookies = {&#39;ltuid&#39;, &#39;ltoken&#39;, &#39;account_id&#39;, &#39;cookie_token&#39;}
     return {
-        c.name: c.value 
-        for domain in (&#39;mihoyo&#39;, &#39;hoyolab&#39;) 
-        for c in load(domain_name=domain) 
+        c.name: c.value
+        for domain in (&#39;mihoyo&#39;, &#39;hoyolab&#39;)
+        for c in load(domain_name=domain)
         if c.name in allowed_cookies and c.value is not None
     }</code></pre>
 </details>
@@ -396,19 +413,19 @@ Talents are not included.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/genshinstats.py#L189-L209" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/genshinstats.py#L198-L218" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def get_characters(uid: int, character_ids: List[int] = None, lang: str = &#39;en-us&#39;, cookie: Mapping[str, Any] = None) -&gt; List[Dict[str, Any]]:
     &#34;&#34;&#34;Gets characters of a user.
-    
+
     Characters contain info about their level, constellation, weapon, and artifacts.
     Talents are not included.
-    
+
     If character_ids are provided then only characters with those ids are returned.
     &#34;&#34;&#34;
     if character_ids is None:
         character_ids = [i[&#39;id&#39;] for i in get_user_stats(uid)[&#39;characters&#39;]]
-    
+
     server = recognize_server(uid)
     data = fetch_endpoint(
         &#34;game_record/genshin/api/character&#34;,
@@ -430,11 +447,11 @@ Talents are not included.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/genshinstats.py#L211-L224" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/genshinstats.py#L220-L233" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def get_spiral_abyss(uid: int, previous: bool = False, cookie: Mapping[str, Any] = None) -&gt; Dict[str, Any]:
     &#34;&#34;&#34;Gets spiral abyss runs of a user and details about them.
-    
+
     Every season these stats refresh and you can get the previous stats with `previous`.
     &#34;&#34;&#34;
     server = recognize_server(uid)
@@ -456,7 +473,7 @@ Talents are not included.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/genshinstats.py#L178-L187" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/genshinstats.py#L187-L196" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def get_user_stats(uid: int, cookie: Mapping[str, Any] = None) -&gt; Dict[str, Any]:
     &#34;&#34;&#34;Gets basic user information and stats.&#34;&#34;&#34;
@@ -484,11 +501,11 @@ Talents are not included.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/genshinstats.py#L51-L63" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/genshinstats.py#L52-L64" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def set_cookie(cookie: Union[Mapping[str, Any], str] = None, **kwargs: Any) -&gt; None:
     &#34;&#34;&#34;Logs-in using a cookie.
-    
+
     Usage:
     &gt;&gt;&gt; set_cookie(ltuid=..., ltoken=...)
     &gt;&gt;&gt; set_cookie(account_id=..., cookie_token=...)
@@ -497,7 +514,7 @@ Talents are not included.</p>
     &#34;&#34;&#34;
     if bool(cookie) == bool(kwargs):
         raise ValueError(&#34;Cannot use both positional and keyword arguments at once&#34;)
-    
+
     set_cookies(cookie or kwargs)</code></pre>
 </details>
 </dd>
@@ -514,15 +531,15 @@ Avalible browsers: chrome, chromium, opera, edge, firefox</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/genshinstats.py#L107-L117" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/genshinstats.py#L108-L118" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def set_cookie_auto(browser: str = None) -&gt; None:
     &#34;&#34;&#34;Like set_cookie, but gets the cookies by itself from your browser.
-    
+
     Requires the module browser-cookie3
     Be aware that this process can take up to 10 seconds.
     To speed it up you may select a browser.
-    
+
     If a specific browser is set, gets data from that browser only.
     Avalible browsers: chrome, chromium, opera, edge, firefox
     &#34;&#34;&#34;
@@ -540,24 +557,24 @@ This is so far the only way to circumvent the rate limit.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/genshinstats.py#L65-L83" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/genshinstats.py#L66-L84" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def set_cookies(*args: Union[Mapping[str, Any], str], clear: bool = True) -&gt; None:
     &#34;&#34;&#34;Sets multiple cookies at once to cycle between. Takes same arguments as set_cookie.
-    
+
     Unlike set_cookie, this function allows for multiple cookies to be used at once.
     This is so far the only way to circumvent the rate limit.
-    
+
     If clear is set to False the previously set cookies won&#39;t be cleared.
     &#34;&#34;&#34;
     if clear:
         cookies.clear()
-    
+
     for cookie in args:
         if isinstance(cookie, Mapping):
             cookie = {k: str(v) for k, v in cookie.items()} # SimpleCookie needs a string
         cookie = SimpleCookie(cookie)
-        
+
         jar = RequestsCookieJar()
         jar.update(cookie)
         cookies.append(jar)</code></pre>
@@ -576,15 +593,15 @@ Avalible browsers: chrome, chromium, opera, edge, firefox</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/genshinstats.py#L107-L117" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/genshinstats.py#L108-L118" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def set_cookie_auto(browser: str = None) -&gt; None:
     &#34;&#34;&#34;Like set_cookie, but gets the cookies by itself from your browser.
-    
+
     Requires the module browser-cookie3
     Be aware that this process can take up to 10 seconds.
     To speed it up you may select a browser.
-    
+
     If a specific browser is set, gets data from that browser only.
     Avalible browsers: chrome, chromium, opera, edge, firefox
     &#34;&#34;&#34;

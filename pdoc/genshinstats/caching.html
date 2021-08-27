@@ -26,7 +26,7 @@
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/caching.py#L1-L199" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/caching.py#L1-L200" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">&#34;&#34;&#34;Install a cache into genshinstats&#34;&#34;&#34;
 import inspect
@@ -59,7 +59,8 @@ def permanent_cache(*params: str) -&gt; Callable[[C], C]:
             if key in cache:
                 return cache[key]
             r = func(*args, **kwargs)
-            cache[key] = r
+            if r is not None:
+                cache[key] = r
             return r
 
         inner.cache = cache
@@ -247,7 +248,7 @@ That can however cause a variety of problems and it's therefore recommend to use
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/caching.py#L128-L185" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/caching.py#L129-L186" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def install_cache(cache: MutableMapping[Tuple[Any, ...], Any], strict: bool = False) -&gt; None:
     &#34;&#34;&#34;Installs a cache into every cacheable function in genshinstats
@@ -317,7 +318,7 @@ That can however cause a variety of problems and it's therefore recommend to use
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/caching.py#L16-L38" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/caching.py#L16-L39" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def permanent_cache(*params: str) -&gt; Callable[[C], C]:
     &#34;&#34;&#34;Like lru_cache except permanent and only caches based on some parameters&#34;&#34;&#34;
@@ -335,7 +336,8 @@ That can however cause a variety of problems and it's therefore recommend to use
             if key in cache:
                 return cache[key]
             r = func(*args, **kwargs)
-            cache[key] = r
+            if r is not None:
+                cache[key] = r
             return r
 
         inner.cache = cache
@@ -352,7 +354,7 @@ That can however cause a variety of problems and it's therefore recommend to use
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/caching.py#L188-L199" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/caching.py#L189-L200" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def uninstall_cache() -&gt; None:
     &#34;&#34;&#34;Uninstalls the cache from all functions&#34;&#34;&#34;
