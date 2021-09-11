@@ -27,7 +27,7 @@
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/genshinstats.py#L1-L244" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/genshinstats.py#L1-L250" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">&#34;&#34;&#34;Wrapper for the hoyolab.com gameRecord api.
 
@@ -38,7 +38,7 @@ import random
 import string
 import time
 from http.cookies import SimpleCookie
-from typing import Any, Dict, List, Mapping, Union
+from typing import Any, Dict, List, Mapping, MutableMapping, Union
 from urllib.parse import urljoin
 
 import requests
@@ -64,8 +64,8 @@ __all__ = [
 session = Session()
 session.headers.update({
     # required headers
-    &#34;x-rpc-app_version&#34;: &#34;1.5.0&#34;,  # overseas api uses 1.x.x, chinese api uses 2.x.x
-    &#34;x-rpc-client_type&#34;: &#34;4&#34;,
+    &#34;x-rpc-app_version&#34;: &#34;&#34;, 
+    &#34;x-rpc-client_type&#34;: &#34;&#34;,
     &#34;x-rpc-language&#34;: &#34;en-us&#34;,
     # authentications headers
     &#34;ds&#34;: &#34;&#34;,
@@ -75,7 +75,7 @@ session.headers.update({
 
 cookies: List[RequestsCookieJar] = [] # a list of all avalible cookies
 
-DS_SALT = &#34;6cqshh5dhw73bzxn20oexa9k516chk7s&#34;
+OS_DS_SALT = &#34;6cqshh5dhw73bzxn20oexa9k516chk7s&#34;
 CN_DS_SALT = &#34;14bmu1mz0yuljprsfgpvjh3ju2ni468r&#34;
 OS_BBS_URL = &#34;https://bbs-api-os.hoyolab.com/&#34;  # overseas
 CN_TAKUMI_URL = &#34;https://api-takumi.mihoyo.com/&#34;  # chinese
@@ -150,7 +150,7 @@ def set_cookie_auto(browser: str = None) -&gt; None:
 set_cookies_auto = set_cookie_auto # alias
 
 
-def generate_ds_token(salt: str = DS_SALT) -&gt; str:
+def generate_ds_token(salt: str) -&gt; str:
     &#34;&#34;&#34;Creates a new ds token for authentication.&#34;&#34;&#34;
     t = int(time.time())  # current seconds
     r = &#39;&#39;.join(random.choices(string.ascii_letters, k=6))  # 6 random chars
@@ -162,7 +162,7 @@ def generate_ds_token(salt: str = DS_SALT) -&gt; str:
 def _request(*args: Any, **kwargs: Any) -&gt; Any:
     &#34;&#34;&#34;Fancy requests.request&#34;&#34;&#34;
     r = session.request(*args, **kwargs)
-
+    
     r.raise_for_status()
     kwargs[&#39;cookies&#39;].update(session.cookies)
     session.cookies.clear()
@@ -184,20 +184,26 @@ def fetch_endpoint(endpoint: str, chinese: bool = False, cookie: Mapping[str, An
     Supports handling ratelimits if multiple cookies are set with `set_cookies`
     &#34;&#34;&#34;
     # parse the arguments for requests.request
+    kwargs.setdefault(&#39;headers&#39;, {})
     method = kwargs.pop(&#39;method&#39;, &#39;get&#39;)
     if chinese:
-        kwargs.setdefault(&#39;headers&#39;, {}).update({
+        kwargs[&#39;headers&#39;].update({
             &#34;ds&#34;: generate_ds_token(CN_DS_SALT),
             &#34;x-rpc-app_version&#34;: &#34;2.7.0&#34;,
             &#34;x-rpc-client_type&#34;: &#34;5&#34;,
         })
         url = urljoin(CN_TAKUMI_URL, endpoint)
     else:
-        session.headers[&#39;ds&#39;] = generate_ds_token()
+        kwargs[&#39;headers&#39;].update({
+            &#34;ds&#34;: generate_ds_token(OS_DS_SALT),
+            &#34;x-rpc-app_version&#34;: &#34;1.5.0&#34;, 
+            &#34;x-rpc-client_type&#34;: &#34;4&#34;,
+        })
         url = urljoin(OS_BBS_URL, endpoint)
 
     if cookie is not None:
-        cookie = {k: str(v) for k, v in cookie.items()}
+        if not isinstance(cookie, MutableMapping) or not all(isinstance(v, str) for v in cookie.values()):
+            cookie = {k: str(v) for k, v in cookie.items()}
         return _request(method, url, cookies=cookie, **kwargs)
     elif len(cookies) == 0:
         raise NotLoggedIn(&#39;Login cookies have not been provided&#39;)
@@ -296,7 +302,7 @@ but that requires being logged in as that user.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/genshinstats.py#L143-L185" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/genshinstats.py#L143-L191" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def fetch_endpoint(endpoint: str, chinese: bool = False, cookie: Mapping[str, Any] = None, **kwargs) -&gt; Dict[str, Any]:
     &#34;&#34;&#34;Fetch an enpoint from the API.
@@ -311,20 +317,26 @@ but that requires being logged in as that user.</p>
     Supports handling ratelimits if multiple cookies are set with `set_cookies`
     &#34;&#34;&#34;
     # parse the arguments for requests.request
+    kwargs.setdefault(&#39;headers&#39;, {})
     method = kwargs.pop(&#39;method&#39;, &#39;get&#39;)
     if chinese:
-        kwargs.setdefault(&#39;headers&#39;, {}).update({
+        kwargs[&#39;headers&#39;].update({
             &#34;ds&#34;: generate_ds_token(CN_DS_SALT),
             &#34;x-rpc-app_version&#34;: &#34;2.7.0&#34;,
             &#34;x-rpc-client_type&#34;: &#34;5&#34;,
         })
         url = urljoin(CN_TAKUMI_URL, endpoint)
     else:
-        session.headers[&#39;ds&#39;] = generate_ds_token()
+        kwargs[&#39;headers&#39;].update({
+            &#34;ds&#34;: generate_ds_token(OS_DS_SALT),
+            &#34;x-rpc-app_version&#34;: &#34;1.5.0&#34;, 
+            &#34;x-rpc-client_type&#34;: &#34;4&#34;,
+        })
         url = urljoin(OS_BBS_URL, endpoint)
 
     if cookie is not None:
-        cookie = {k: str(v) for k, v in cookie.items()}
+        if not isinstance(cookie, MutableMapping) or not all(isinstance(v, str) for v in cookie.values()):
+            cookie = {k: str(v) for k, v in cookie.items()}
         return _request(method, url, cookies=cookie, **kwargs)
     elif len(cookies) == 0:
         raise NotLoggedIn(&#39;Login cookies have not been provided&#39;)
@@ -353,7 +365,7 @@ However that makes it fairly slow so it's not recommended to use it outside cach
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/genshinstats.py#L235-L244" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/genshinstats.py#L241-L250" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def get_all_user_data(uid: int, lang: str = &#39;en-us&#39;, cookie: Mapping[str, Any] = None) -&gt; Dict[str, Any]:
     &#34;&#34;&#34;Fetches all data a user can has. Very slow.
@@ -413,7 +425,7 @@ Talents are not included.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/genshinstats.py#L198-L218" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/genshinstats.py#L204-L224" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def get_characters(uid: int, character_ids: List[int] = None, lang: str = &#39;en-us&#39;, cookie: Mapping[str, Any] = None) -&gt; List[Dict[str, Any]]:
     &#34;&#34;&#34;Gets characters of a user.
@@ -447,7 +459,7 @@ Talents are not included.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/genshinstats.py#L220-L233" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/genshinstats.py#L226-L239" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def get_spiral_abyss(uid: int, previous: bool = False, cookie: Mapping[str, Any] = None) -&gt; Dict[str, Any]:
     &#34;&#34;&#34;Gets spiral abyss runs of a user and details about them.
@@ -473,7 +485,7 @@ Talents are not included.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/genshinstats.py#L187-L196" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/genshinstats.py#L193-L202" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def get_user_stats(uid: int, cookie: Mapping[str, Any] = None) -&gt; Dict[str, Any]:
     &#34;&#34;&#34;Gets basic user information and stats.&#34;&#34;&#34;

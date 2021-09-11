@@ -34,7 +34,7 @@ import os.path
 import re
 import warnings
 from functools import wraps
-from typing import Any, Callable, Dict, Iterable, Optional, Type, TypeVar, Union
+from typing import Callable, Iterable, Optional, Type, TypeVar, Union
 
 from .errors import AccountNotFound
 
@@ -54,13 +54,13 @@ USER_AGENT = &#34;Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (
 def recognize_server(uid: int) -&gt; str:
     &#34;&#34;&#34;Recognizes which server a UID is from.&#34;&#34;&#34;
     server = {
-        1:&#39;cn_gf01&#39;,
-        5:&#39;cn_qd01&#39;,
-        6:&#39;os_usa&#39;,
-        7:&#39;os_euro&#39;,
-        8:&#39;os_asia&#39;,
-        9:&#39;os_cht&#39;,
-    }.get(int(str(uid)[0])) # first digit
+        &#39;1&#39;:&#39;cn_gf01&#39;,
+        &#39;5&#39;:&#39;cn_qd01&#39;,
+        &#39;6&#39;:&#39;os_usa&#39;,
+        &#39;7&#39;:&#39;os_euro&#39;,
+        &#39;8&#39;:&#39;os_asia&#39;,
+        &#39;9&#39;:&#39;os_cht&#39;,
+    }.get(str(uid)[0])
     if server:
         return server
     else:
@@ -79,7 +79,7 @@ def recognize_id(id: int) -&gt; Optional[str]:
     elif 10000 &lt; id &lt; 50000:
         return &#34;weapon&#34;
     elif 100 &lt; id &lt; 1000:
-        return &#34;contellation&#34;
+        return &#34;constellation&#34;
     elif 10 ** 17 &lt; id &lt; 10 ** 19:
         return &#34;transaction&#34;
     # not sure about these ones:
@@ -216,7 +216,7 @@ def deprecated(message: str = &#34;{} is deprecated and will be removed in futur
     elif 10000 &lt; id &lt; 50000:
         return &#34;weapon&#34;
     elif 100 &lt; id &lt; 1000:
-        return &#34;contellation&#34;
+        return &#34;constellation&#34;
     elif 10 ** 17 &lt; id &lt; 10 ** 19:
         return &#34;transaction&#34;
     # not sure about these ones:
@@ -239,13 +239,13 @@ def deprecated(message: str = &#34;{} is deprecated and will be removed in futur
 <pre><code class="python">def recognize_server(uid: int) -&gt; str:
     &#34;&#34;&#34;Recognizes which server a UID is from.&#34;&#34;&#34;
     server = {
-        1:&#39;cn_gf01&#39;,
-        5:&#39;cn_qd01&#39;,
-        6:&#39;os_usa&#39;,
-        7:&#39;os_euro&#39;,
-        8:&#39;os_asia&#39;,
-        9:&#39;os_cht&#39;,
-    }.get(int(str(uid)[0])) # first digit
+        &#39;1&#39;:&#39;cn_gf01&#39;,
+        &#39;5&#39;:&#39;cn_qd01&#39;,
+        &#39;6&#39;:&#39;os_usa&#39;,
+        &#39;7&#39;:&#39;os_euro&#39;,
+        &#39;8&#39;:&#39;os_asia&#39;,
+        &#39;9&#39;:&#39;os_cht&#39;,
+    }.get(str(uid)[0])
     if server:
         return server
     else:
