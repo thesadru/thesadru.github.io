@@ -26,7 +26,7 @@
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/caching.py#L1-L200" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/caching.py#L1-L201" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">&#34;&#34;&#34;Install a cache into genshinstats&#34;&#34;&#34;
 import inspect
@@ -88,7 +88,8 @@ def cache_func(func: C, cache: MutableMapping[Tuple[Any, ...], Any]) -&gt; C:
             return cache[key]
 
         r = func(*args, **kwargs)
-        cache[key] = r
+        if r is not None:
+            cache[key] = r
         return r
 
     setattr(wrapper, &#34;__cache__&#34;, cache)
@@ -248,7 +249,7 @@ That can however cause a variety of problems and it's therefore recommend to use
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/caching.py#L129-L186" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/caching.py#L130-L187" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def install_cache(cache: MutableMapping[Tuple[Any, ...], Any], strict: bool = False) -&gt; None:
     &#34;&#34;&#34;Installs a cache into every cacheable function in genshinstats
@@ -354,7 +355,7 @@ That can however cause a variety of problems and it's therefore recommend to use
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/caching.py#L189-L200" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/caching.py#L190-L201" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def uninstall_cache() -&gt; None:
     &#34;&#34;&#34;Uninstalls the cache from all functions&#34;&#34;&#34;
