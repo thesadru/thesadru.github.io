@@ -28,7 +28,7 @@ that were leftover from during development</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/pretty.py#L1-L307" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/pretty.py#L1-L308" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">&#34;&#34;&#34;Prettifiers for genshinstats api returns.
 
@@ -60,6 +60,7 @@ def _recognize_character_icon(url: str) -&gt; str:
 
 def prettify_stats(data):
     s = data[&#34;stats&#34;]
+    h = data[&#34;homes&#34;][0] if data[&#34;homes&#34;] else None
     return {
         &#34;stats&#34;: {
             &#34;achievements&#34;: s[&#34;achievement_number&#34;],
@@ -78,27 +79,26 @@ def prettify_stats(data):
         },
         &#34;characters&#34;: [{
             &#34;name&#34;: i[&#34;name&#34;],
-            &#34;rarity&#34;: i[&#34;rarity&#34;],
+            &#34;rarity&#34;: i[&#34;rarity&#34;] if i[&#34;rarity&#34;] &lt; 100 else i[&#34;rarity&#34;] - 100, # aloy has 105 stars
             &#34;element&#34;: i[&#34;element&#34;],
             &#34;level&#34;: i[&#34;level&#34;],
             &#34;friendship&#34;: i[&#34;fetter&#34;],
             &#34;icon&#34;: i[&#34;image&#34;],
             &#34;id&#34;: i[&#34;id&#34;],
         } for i in data[&#34;avatars&#34;]],
-        &#34;teapots&#34;: [{
-            &#34;name&#34;: { # in chinese and idk what the names are
-                &#34;翠黛峰&#34;: &#34;Emerald Peak&#34;,
-                &#34;清琼岛&#34;: &#34;Cool Isle&#34;,
-            }.get(t[&#34;name&#34;], &#34;Floating Abode&#34;),
-            &#34;icon&#34;: t[&#34;icon&#34;],
-            # these are currently shared accross all realm styles
-            &#34;level&#34;: t[&#34;level&#34;],
-            &#34;comfort&#34;: t[&#34;comfort_num&#34;], # yes I know this is called adeptal energy
-            &#34;comfort_name&#34;: t[&#34;comfort_level_name&#34;],
-            &#34;comfort_icon&#34;: t[&#34;comfort_level_icon&#34;],
-            &#34;placed_items&#34;: t[&#34;item_num&#34;],
-            &#34;visitors&#34;: t[&#34;visit_num&#34;] # currently not in use
-        } for t in data[&#34;homes&#34;]],
+        &#34;teapot&#34;: {
+            # only unique data between realms are names and icons
+            &#34;realms&#34;: [{
+                &#34;name&#34;: s[&#34;name&#34;],
+                &#34;icon&#34;: s[&#34;icon&#34;]
+            } for s in data[&#34;homes&#34;]],
+            &#34;level&#34;: h[&#34;level&#34;],
+            &#34;comfort&#34;: h[&#34;comfort_num&#34;],
+            &#34;comfort_name&#34;: h[&#34;comfort_level_name&#34;],
+            &#34;comfort_icon&#34;: h[&#34;comfort_level_icon&#34;],
+            &#34;items&#34;: h[&#34;item_num&#34;],
+            &#34;visitors&#34;: h[&#34;visit_num&#34;] # currently not in use
+        } if h else None,
         &#34;explorations&#34;: [{
             &#34;name&#34;: i[&#34;name&#34;],
             &#34;explored&#34;: round(i[&#34;exploration_percentage&#34;]/10, 1),
@@ -112,7 +112,7 @@ def prettify_stats(data):
 def prettify_characters(data):
     return [{
         &#34;name&#34;: i[&#34;name&#34;],
-        &#34;rarity&#34;: i[&#34;rarity&#34;],
+        &#34;rarity&#34;: i[&#34;rarity&#34;] if i[&#34;rarity&#34;] &lt; 100 else i[&#34;rarity&#34;] - 100, # aloy has 105 stars
         &#34;element&#34;: i[&#34;element&#34;],
         &#34;level&#34;: i[&#34;level&#34;],
         &#34;friendship&#34;: i[&#34;fetter&#34;],
@@ -120,6 +120,7 @@ def prettify_characters(data):
         &#34;icon&#34;: i[&#34;icon&#34;],
         &#34;image&#34;: i[&#34;image&#34;],
         &#34;id&#34;: i[&#34;id&#34;],
+        &#34;collab&#34;: i[&#34;rarity&#34;] &gt;= 100,
         **({&#34;traveler_name&#34;: &#34;Aether&#34; if &#34;Boy&#34; in i[&#34;icon&#34;] else &#34;Lumine&#34;} if &#34;Player&#34; in i[&#34;icon&#34;] else {}),
         &#34;weapon&#34;: {
             &#34;name&#34;: i[&#34;weapon&#34;][&#34;name&#34;],
@@ -177,7 +178,7 @@ def prettify_abyss(data):
     fchars = lambda d: [{
         &#34;value&#34;: a[&#34;value&#34;],
         &#34;name&#34;: _recognize_character_icon(a[&#34;avatar_icon&#34;]),
-        &#34;rarity&#34;: a[&#34;rarity&#34;],
+        &#34;rarity&#34;: a[&#34;rarity&#34;] if a[&#34;rarity&#34;] &lt; 100 else a[&#34;rarity&#34;] - 100, # aloy has 105 stars
         &#34;icon&#34;: a[&#34;avatar_icon&#34;],
         &#34;id&#34;: a[&#34;avatar_id&#34;],
     } for a in d]
@@ -217,7 +218,7 @@ def prettify_abyss(data):
                     &#34;timestamp&#34;: totime(b[&#34;timestamp&#34;]),
                     &#34;characters&#34;: [{
                         &#34;name&#34;: _recognize_character_icon(c[&#34;icon&#34;]),
-                        &#34;rarity&#34;: c[&#34;rarity&#34;],
+                        &#34;rarity&#34;: c[&#34;rarity&#34;] if c[&#34;rarity&#34;] &lt; 100 else c[&#34;rarity&#34;] - 100, # aloy has 105 stars
                         &#34;level&#34;: c[&#34;level&#34;],
                         &#34;icon&#34;: c[&#34;icon&#34;],
                         &#34;id&#34;: c[&#34;id&#34;],
@@ -354,13 +355,13 @@ def prettify_trans(data, reasons={}):
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/pretty.py#L144-L197" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/pretty.py#L145-L198" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def prettify_abyss(data):
     fchars = lambda d: [{
         &#34;value&#34;: a[&#34;value&#34;],
         &#34;name&#34;: _recognize_character_icon(a[&#34;avatar_icon&#34;]),
-        &#34;rarity&#34;: a[&#34;rarity&#34;],
+        &#34;rarity&#34;: a[&#34;rarity&#34;] if a[&#34;rarity&#34;] &lt; 100 else a[&#34;rarity&#34;] - 100, # aloy has 105 stars
         &#34;icon&#34;: a[&#34;avatar_icon&#34;],
         &#34;id&#34;: a[&#34;avatar_id&#34;],
     } for a in d]
@@ -400,7 +401,7 @@ def prettify_trans(data, reasons={}):
                     &#34;timestamp&#34;: totime(b[&#34;timestamp&#34;]),
                     &#34;characters&#34;: [{
                         &#34;name&#34;: _recognize_character_icon(c[&#34;icon&#34;]),
-                        &#34;rarity&#34;: c[&#34;rarity&#34;],
+                        &#34;rarity&#34;: c[&#34;rarity&#34;] if c[&#34;rarity&#34;] &lt; 100 else c[&#34;rarity&#34;] - 100, # aloy has 105 stars
                         &#34;level&#34;: c[&#34;level&#34;],
                         &#34;icon&#34;: c[&#34;icon&#34;],
                         &#34;id&#34;: c[&#34;id&#34;],
@@ -420,7 +421,7 @@ def prettify_trans(data, reasons={}):
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/pretty.py#L231-L283" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/pretty.py#L232-L284" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def prettify_banner_details(data):
     per = lambda p: None if p==&#39;0%&#39; else float(p[: -1].replace(&#39;,&#39;,&#39;.&#39;))
@@ -485,12 +486,12 @@ def prettify_trans(data, reasons={}):
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/pretty.py#L80-L142" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/pretty.py#L80-L143" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def prettify_characters(data):
     return [{
         &#34;name&#34;: i[&#34;name&#34;],
-        &#34;rarity&#34;: i[&#34;rarity&#34;],
+        &#34;rarity&#34;: i[&#34;rarity&#34;] if i[&#34;rarity&#34;] &lt; 100 else i[&#34;rarity&#34;] - 100, # aloy has 105 stars
         &#34;element&#34;: i[&#34;element&#34;],
         &#34;level&#34;: i[&#34;level&#34;],
         &#34;friendship&#34;: i[&#34;fetter&#34;],
@@ -498,6 +499,7 @@ def prettify_trans(data, reasons={}):
         &#34;icon&#34;: i[&#34;icon&#34;],
         &#34;image&#34;: i[&#34;image&#34;],
         &#34;id&#34;: i[&#34;id&#34;],
+        &#34;collab&#34;: i[&#34;rarity&#34;] &gt;= 100,
         **({&#34;traveler_name&#34;: &#34;Aether&#34; if &#34;Boy&#34; in i[&#34;icon&#34;] else &#34;Lumine&#34;} if &#34;Player&#34; in i[&#34;icon&#34;] else {}),
         &#34;weapon&#34;: {
             &#34;name&#34;: i[&#34;weapon&#34;][&#34;name&#34;],
@@ -560,7 +562,7 @@ def prettify_trans(data, reasons={}):
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/pretty.py#L223-L229" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/pretty.py#L224-L230" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def prettify_gacha_items(data):
     return [{
@@ -579,7 +581,7 @@ def prettify_trans(data, reasons={}):
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/pretty.py#L199-L209" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/pretty.py#L200-L210" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def prettify_game_accounts(data):
     return [{
@@ -606,6 +608,7 @@ def prettify_trans(data, reasons={}):
 </summary>
 <pre><code class="python">def prettify_stats(data):
     s = data[&#34;stats&#34;]
+    h = data[&#34;homes&#34;][0] if data[&#34;homes&#34;] else None
     return {
         &#34;stats&#34;: {
             &#34;achievements&#34;: s[&#34;achievement_number&#34;],
@@ -624,27 +627,26 @@ def prettify_trans(data, reasons={}):
         },
         &#34;characters&#34;: [{
             &#34;name&#34;: i[&#34;name&#34;],
-            &#34;rarity&#34;: i[&#34;rarity&#34;],
+            &#34;rarity&#34;: i[&#34;rarity&#34;] if i[&#34;rarity&#34;] &lt; 100 else i[&#34;rarity&#34;] - 100, # aloy has 105 stars
             &#34;element&#34;: i[&#34;element&#34;],
             &#34;level&#34;: i[&#34;level&#34;],
             &#34;friendship&#34;: i[&#34;fetter&#34;],
             &#34;icon&#34;: i[&#34;image&#34;],
             &#34;id&#34;: i[&#34;id&#34;],
         } for i in data[&#34;avatars&#34;]],
-        &#34;teapots&#34;: [{
-            &#34;name&#34;: { # in chinese and idk what the names are
-                &#34;翠黛峰&#34;: &#34;Emerald Peak&#34;,
-                &#34;清琼岛&#34;: &#34;Cool Isle&#34;,
-            }.get(t[&#34;name&#34;], &#34;Floating Abode&#34;),
-            &#34;icon&#34;: t[&#34;icon&#34;],
-            # these are currently shared accross all realm styles
-            &#34;level&#34;: t[&#34;level&#34;],
-            &#34;comfort&#34;: t[&#34;comfort_num&#34;], # yes I know this is called adeptal energy
-            &#34;comfort_name&#34;: t[&#34;comfort_level_name&#34;],
-            &#34;comfort_icon&#34;: t[&#34;comfort_level_icon&#34;],
-            &#34;placed_items&#34;: t[&#34;item_num&#34;],
-            &#34;visitors&#34;: t[&#34;visit_num&#34;] # currently not in use
-        } for t in data[&#34;homes&#34;]],
+        &#34;teapot&#34;: {
+            # only unique data between realms are names and icons
+            &#34;realms&#34;: [{
+                &#34;name&#34;: s[&#34;name&#34;],
+                &#34;icon&#34;: s[&#34;icon&#34;]
+            } for s in data[&#34;homes&#34;]],
+            &#34;level&#34;: h[&#34;level&#34;],
+            &#34;comfort&#34;: h[&#34;comfort_num&#34;],
+            &#34;comfort_name&#34;: h[&#34;comfort_level_name&#34;],
+            &#34;comfort_icon&#34;: h[&#34;comfort_level_icon&#34;],
+            &#34;items&#34;: h[&#34;item_num&#34;],
+            &#34;visitors&#34;: h[&#34;visit_num&#34;] # currently not in use
+        } if h else None,
         &#34;explorations&#34;: [{
             &#34;name&#34;: i[&#34;name&#34;],
             &#34;explored&#34;: round(i[&#34;exploration_percentage&#34;]/10, 1),
@@ -664,7 +666,7 @@ def prettify_trans(data, reasons={}):
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/pretty.py#L285-L307" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/pretty.py#L286-L308" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def prettify_trans(data, reasons={}):
     if data and &#34;name&#34; in data[0]:
@@ -699,7 +701,7 @@ def prettify_trans(data, reasons={}):
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/pretty.py#L211-L221" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/pretty.py#L212-L222" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def prettify_wish_history(data, banner_name = None):
     return [{

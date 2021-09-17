@@ -1,15 +1,15 @@
 URLS=[
 "genshinstats/index.html",
-"genshinstats/genshinstats.html",
-"genshinstats/wishes.html",
-"genshinstats/hoyolab.html",
 "genshinstats/utils.html",
+"genshinstats/wishes.html",
+"genshinstats/pretty.html",
 "genshinstats/daily.html",
+"genshinstats/map.html",
 "genshinstats/errors.html",
 "genshinstats/transactions.html",
-"genshinstats/pretty.html",
+"genshinstats/hoyolab.html",
 "genshinstats/caching.html",
-"genshinstats/map.html"
+"genshinstats/genshinstats.html"
 ];
 INDEX=[
 {
@@ -18,68 +18,38 @@ INDEX=[
 "doc":"Wrapper for the Genshin Impact's api. This is an unofficial wrapper for the Genshin Impact gameRecord and wish history api. Majority of the endpoints are implemented, documented and typehinted. All endpoints require to be logged in with either a cookie or an authkey, read the README.md for more info. https: github.com/thesadru/genshinstats"
 },
 {
-"ref":"genshinstats.genshinstats",
+"ref":"genshinstats.utils",
 "url":1,
-"doc":"Wrapper for the hoyolab.com gameRecord api. Can fetch data for a user's stats like stats, characters, spiral abyss runs ."
+"doc":"Various utility functions for genshinstats."
 },
 {
-"ref":"genshinstats.genshinstats.set_cookie",
+"ref":"genshinstats.utils.recognize_server",
 "url":1,
-"doc":"Logs-in using a cookie. Usage: >>> set_cookie(ltuid= ., ltoken= .) >>> set_cookie(account_id= ., cookie_token= .) >>> set_cookie({'ltuid':  ., 'ltoken':  .}) >>> set_cookie(\"ltuid= .; ltoken= .\")",
+"doc":"Recognizes which server a UID is from.",
 "func":1
 },
 {
-"ref":"genshinstats.genshinstats.set_cookies",
+"ref":"genshinstats.utils.recognize_id",
 "url":1,
-"doc":"Sets multiple cookies at once to cycle between. Takes same arguments as set_cookie. Unlike set_cookie, this function allows for multiple cookies to be used at once. This is so far the only way to circumvent the rate limit. If clear is set to False the previously set cookies won't be cleared.",
+"doc":"Attempts to recognize what item type an id is",
 "func":1
 },
 {
-"ref":"genshinstats.genshinstats.get_browser_cookies",
+"ref":"genshinstats.utils.is_game_uid",
 "url":1,
-"doc":"Gets cookies from your browser for later storing. If a specific browser is set, gets data from that browser only. Avalible browsers: chrome, chromium, opera, edge, firefox",
+"doc":"Recognizes whether the uid is a game uid.",
 "func":1
 },
 {
-"ref":"genshinstats.genshinstats.set_cookies_auto",
+"ref":"genshinstats.utils.is_chinese",
 "url":1,
-"doc":"Like set_cookie, but gets the cookies by itself from your browser. Requires the module browser-cookie3 Be aware that this process can take up to 10 seconds. To speed it up you may select a browser. If a specific browser is set, gets data from that browser only. Avalible browsers: chrome, chromium, opera, edge, firefox",
+"doc":"Recognizes whether the server/uid is chinese.",
 "func":1
 },
 {
-"ref":"genshinstats.genshinstats.set_cookie_auto",
+"ref":"genshinstats.utils.get_logfile",
 "url":1,
-"doc":"Like set_cookie, but gets the cookies by itself from your browser. Requires the module browser-cookie3 Be aware that this process can take up to 10 seconds. To speed it up you may select a browser. If a specific browser is set, gets data from that browser only. Avalible browsers: chrome, chromium, opera, edge, firefox",
-"func":1
-},
-{
-"ref":"genshinstats.genshinstats.fetch_endpoint",
-"url":1,
-"doc":"Fetch an enpoint from the API. Takes in an endpoint url which is joined with the base url. A request is then sent and returns a parsed response. Includes error handling and ds token renewal. Can specifically use the chinese base url and request data for chinese users, but that requires being logged in as that user. Supports handling ratelimits if multiple cookies are set with  set_cookies ",
-"func":1
-},
-{
-"ref":"genshinstats.genshinstats.get_user_stats",
-"url":1,
-"doc":"Gets basic user information and stats.",
-"func":1
-},
-{
-"ref":"genshinstats.genshinstats.get_characters",
-"url":1,
-"doc":"Gets characters of a user. Characters contain info about their level, constellation, weapon, and artifacts. Talents are not included. If character_ids are provided then only characters with those ids are returned.",
-"func":1
-},
-{
-"ref":"genshinstats.genshinstats.get_spiral_abyss",
-"url":1,
-"doc":"Gets spiral abyss runs of a user and details about them. Every season these stats refresh and you can get the previous stats with  previous .",
-"func":1
-},
-{
-"ref":"genshinstats.genshinstats.get_all_user_data",
-"url":1,
-"doc":"Fetches all data a user can has. Very slow. A helper function that gets all avalible data for a user and returns it as one dict. However that makes it fairly slow so it's not recommended to use it outside caching.",
+"doc":"Find and return the Genshin Impact logfile. None if not found.",
 "func":1
 },
 {
@@ -154,138 +124,138 @@ INDEX=[
 "func":1
 },
 {
-"ref":"genshinstats.hoyolab",
+"ref":"genshinstats.pretty",
 "url":3,
-"doc":"Wrapper for the hoyolab.com community api. Can search users, get record cards, redeem codes ."
+"doc":"Prettifiers for genshinstats api returns. Fixes the huge problem of outdated field names in the api, that were leftover from during development"
 },
 {
-"ref":"genshinstats.hoyolab.get_langs",
+"ref":"genshinstats.pretty.prettify_stats",
 "url":3,
-"doc":"Gets codes of all languages and their names",
+"doc":"",
 "func":1
 },
 {
-"ref":"genshinstats.hoyolab.search",
+"ref":"genshinstats.pretty.prettify_characters",
 "url":3,
-"doc":"Searches all users. Can return up to 20 results, based on size.",
+"doc":"",
 "func":1
 },
 {
-"ref":"genshinstats.hoyolab.set_visibility",
+"ref":"genshinstats.pretty.prettify_abyss",
 "url":3,
-"doc":"Sets your data to public or private.",
+"doc":"",
 "func":1
 },
 {
-"ref":"genshinstats.hoyolab.hoyolab_check_in",
+"ref":"genshinstats.pretty.prettify_game_accounts",
 "url":3,
-"doc":"Checks in the currently logged-in user to hoyolab. This function will not claim daily rewards !",
+"doc":"",
 "func":1
 },
 {
-"ref":"genshinstats.hoyolab.get_game_accounts",
+"ref":"genshinstats.pretty.prettify_wish_history",
 "url":3,
-"doc":"Gets all game accounts of the currently signed in player. Can get accounts both for overseas and china.",
+"doc":"",
 "func":1
 },
 {
-"ref":"genshinstats.hoyolab.get_record_card",
+"ref":"genshinstats.pretty.prettify_gacha_items",
 "url":3,
-"doc":"Gets a game record card of a user based on their hoyolab uid. A record card contains data regarding the stats of a user for their displayed server. Their uid for a given server is also included. In case the user hasn't set their data to public or you are ratelimited the function returns None. You can get a hoyolab id with  search .",
+"doc":"",
 "func":1
 },
 {
-"ref":"genshinstats.hoyolab.get_uid_from_hoyolab_uid",
+"ref":"genshinstats.pretty.prettify_banner_details",
 "url":3,
-"doc":"Gets a uid with a community uid. This is so it's possible to search a user and then directly get the uid. In case the uid is private, returns None.",
+"doc":"",
 "func":1
 },
 {
-"ref":"genshinstats.hoyolab.redeem_code",
+"ref":"genshinstats.pretty.prettify_trans",
 "url":3,
-"doc":"Redeems a gift code for the currently signed in user. Api endpoint for https: genshin.mihoyo.com/en/gift.  ! This function requires account_id and cookie_token cookies  ! The code will be redeemed for every avalible account, specifying the uid will claim it only for that account. Returns the amount of users it managed to claim codes for. You can claim codes only every 5s so you must sleep between claims. The function sleeps for you when claiming for every account but you must sleep yourself when passing in a uid or when an error is encountered. Currently codes can only be claimed for overseas accounts, not chinese.",
-"func":1
-},
-{
-"ref":"genshinstats.hoyolab.get_recommended_users",
-"url":3,
-"doc":"Gets a list of recommended active users",
-"func":1
-},
-{
-"ref":"genshinstats.hoyolab.get_hot_posts",
-"url":3,
-"doc":"Fetches hot posts from the front page of hoyolabs Posts are split into different forums set by ids 1-5. There may be less posts returned than size.",
-"func":1
-},
-{
-"ref":"genshinstats.utils",
-"url":4,
-"doc":"Various utility functions for genshinstats."
-},
-{
-"ref":"genshinstats.utils.recognize_server",
-"url":4,
-"doc":"Recognizes which server a UID is from.",
-"func":1
-},
-{
-"ref":"genshinstats.utils.recognize_id",
-"url":4,
-"doc":"Attempts to recognize what item type an id is",
-"func":1
-},
-{
-"ref":"genshinstats.utils.is_game_uid",
-"url":4,
-"doc":"Recognizes whether the uid is a game uid.",
-"func":1
-},
-{
-"ref":"genshinstats.utils.is_chinese",
-"url":4,
-"doc":"Recognizes whether the server/uid is chinese.",
-"func":1
-},
-{
-"ref":"genshinstats.utils.get_logfile",
-"url":4,
-"doc":"Find and return the Genshin Impact logfile. None if not found.",
+"doc":"",
 "func":1
 },
 {
 "ref":"genshinstats.daily",
-"url":5,
+"url":4,
 "doc":"Automatic sign-in for hoyolab's daily rewards. Automatically claims the next daily reward in the daily check-in rewards."
 },
 {
 "ref":"genshinstats.daily.fetch_daily_endpoint",
-"url":5,
+"url":4,
 "doc":"Fetch an enpoint for daily rewards",
 "func":1
 },
 {
 "ref":"genshinstats.daily.get_daily_reward_info",
-"url":5,
+"url":4,
 "doc":"Fetches daily award info for the currently logged-in user. Returns a tuple - whether the user is logged in, how many total rewards the user has claimed so far",
 "func":1
 },
 {
 "ref":"genshinstats.daily.get_claimed_rewards",
-"url":5,
+"url":4,
 "doc":"Gets all claimed awards for the currently logged-in user",
 "func":1
 },
 {
 "ref":"genshinstats.daily.get_monthly_rewards",
-"url":5,
+"url":4,
 "doc":"Gets a list of avalible rewards for the current month",
 "func":1
 },
 {
 "ref":"genshinstats.daily.claim_daily_reward",
-"url":5,
+"url":4,
 "doc":"Signs into hoyolab and claims the daily rewards. Chinese and overseas servers work a bit differently, so you must specify whether you want to claim rewards for chinese accounts. When claiming rewards for other users you may add a cookie argument. Returns the claimed reward or None if the reward cannot be claimed yet.",
+"func":1
+},
+{
+"ref":"genshinstats.map",
+"url":5,
+"doc":"The official genshin map Gets data from the official genshin map such as categories, points and similar."
+},
+{
+"ref":"genshinstats.map.fetch_map_endpoint",
+"url":5,
+"doc":"Fetch an enpoint from mihoyo's webstatic map api. Only currently liyue is supported. Takes in an endpoint url which is joined with the base url. A request is then sent and returns a parsed response.",
+"func":1
+},
+{
+"ref":"genshinstats.map.get_map_image",
+"url":5,
+"doc":"Get the url to the entire map image",
+"func":1
+},
+{
+"ref":"genshinstats.map.get_map_icons",
+"url":5,
+"doc":"Get all icons for the map",
+"func":1
+},
+{
+"ref":"genshinstats.map.get_map_labels",
+"url":5,
+"doc":"Get labels and label categories",
+"func":1
+},
+{
+"ref":"genshinstats.map.get_map_locations",
+"url":5,
+"doc":"Get all locations on the map",
+"func":1
+},
+{
+"ref":"genshinstats.map.get_map_points",
+"url":5,
+"doc":"Get points on the map",
+"func":1
+},
+{
+"ref":"genshinstats.map.get_map_tile",
+"url":5,
+"doc":"Gets a map tile at a position You may set an x, y, width and height of the resulting image however you shoudl prefer to use multiples of 256 because they are cached on the mihoyo servers. Resolution dictates the resolution of the image as a percentage. 100 is highest and 0 is lowest. You should pick values from 100, 50, 25 and 12.5",
 "func":1
 },
 {
@@ -589,56 +559,68 @@ INDEX=[
 "func":1
 },
 {
-"ref":"genshinstats.pretty",
+"ref":"genshinstats.hoyolab",
 "url":8,
-"doc":"Prettifiers for genshinstats api returns. Fixes the huge problem of outdated field names in the api, that were leftover from during development"
+"doc":"Wrapper for the hoyolab.com community api. Can search users, get record cards, redeem codes ."
 },
 {
-"ref":"genshinstats.pretty.prettify_stats",
+"ref":"genshinstats.hoyolab.get_langs",
 "url":8,
-"doc":"",
+"doc":"Gets codes of all languages and their names",
 "func":1
 },
 {
-"ref":"genshinstats.pretty.prettify_characters",
+"ref":"genshinstats.hoyolab.search",
 "url":8,
-"doc":"",
+"doc":"Searches all users. Can return up to 20 results, based on size.",
 "func":1
 },
 {
-"ref":"genshinstats.pretty.prettify_abyss",
+"ref":"genshinstats.hoyolab.set_visibility",
 "url":8,
-"doc":"",
+"doc":"Sets your data to public or private.",
 "func":1
 },
 {
-"ref":"genshinstats.pretty.prettify_game_accounts",
+"ref":"genshinstats.hoyolab.hoyolab_check_in",
 "url":8,
-"doc":"",
+"doc":"Checks in the currently logged-in user to hoyolab. This function will not claim daily rewards !",
 "func":1
 },
 {
-"ref":"genshinstats.pretty.prettify_wish_history",
+"ref":"genshinstats.hoyolab.get_game_accounts",
 "url":8,
-"doc":"",
+"doc":"Gets all game accounts of the currently signed in player. Can get accounts both for overseas and china.",
 "func":1
 },
 {
-"ref":"genshinstats.pretty.prettify_gacha_items",
+"ref":"genshinstats.hoyolab.get_record_card",
 "url":8,
-"doc":"",
+"doc":"Gets a game record card of a user based on their hoyolab uid. A record card contains data regarding the stats of a user for their displayed server. Their uid for a given server is also included. In case the user hasn't set their data to public or you are ratelimited the function returns None. You can get a hoyolab id with  search .",
 "func":1
 },
 {
-"ref":"genshinstats.pretty.prettify_banner_details",
+"ref":"genshinstats.hoyolab.get_uid_from_hoyolab_uid",
 "url":8,
-"doc":"",
+"doc":"Gets a uid with a community uid. This is so it's possible to search a user and then directly get the uid. In case the uid is private, returns None.",
 "func":1
 },
 {
-"ref":"genshinstats.pretty.prettify_trans",
+"ref":"genshinstats.hoyolab.redeem_code",
 "url":8,
-"doc":"",
+"doc":"Redeems a gift code for the currently signed in user. Api endpoint for https: genshin.mihoyo.com/en/gift.  ! This function requires account_id and cookie_token cookies  ! The code will be redeemed for every avalible account, specifying the uid will claim it only for that account. Returns the amount of users it managed to claim codes for. You can claim codes only every 5s so you must sleep between claims. The function sleeps for you when claiming for every account but you must sleep yourself when passing in a uid or when an error is encountered. Currently codes can only be claimed for overseas accounts, not chinese.",
+"func":1
+},
+{
+"ref":"genshinstats.hoyolab.get_recommended_users",
+"url":8,
+"doc":"Gets a list of recommended active users",
+"func":1
+},
+{
+"ref":"genshinstats.hoyolab.get_hot_posts",
+"url":8,
+"doc":"Fetches hot posts from the front page of hoyolabs Posts are split into different forums set by ids 1-5. There may be less posts returned than size.",
 "func":1
 },
 {
@@ -665,50 +647,68 @@ INDEX=[
 "func":1
 },
 {
-"ref":"genshinstats.map",
+"ref":"genshinstats.genshinstats",
 "url":10,
-"doc":"The official genshin map Gets data from the official genshin map such as categories, points and similar."
+"doc":"Wrapper for the hoyolab.com gameRecord api. Can fetch data for a user's stats like stats, characters, spiral abyss runs ."
 },
 {
-"ref":"genshinstats.map.fetch_map_endpoint",
+"ref":"genshinstats.genshinstats.set_cookie",
 "url":10,
-"doc":"Fetch an enpoint from mihoyo's webstatic map api. Only currently liyue is supported. Takes in an endpoint url which is joined with the base url. A request is then sent and returns a parsed response.",
+"doc":"Logs-in using a cookie. Usage: >>> set_cookie(ltuid= ., ltoken= .) >>> set_cookie(account_id= ., cookie_token= .) >>> set_cookie({'ltuid':  ., 'ltoken':  .}) >>> set_cookie(\"ltuid= .; ltoken= .\")",
 "func":1
 },
 {
-"ref":"genshinstats.map.get_map_image",
+"ref":"genshinstats.genshinstats.set_cookies",
 "url":10,
-"doc":"Get the url to the entire map image",
+"doc":"Sets multiple cookies at once to cycle between. Takes same arguments as set_cookie. Unlike set_cookie, this function allows for multiple cookies to be used at once. This is so far the only way to circumvent the rate limit. If clear is set to False the previously set cookies won't be cleared.",
 "func":1
 },
 {
-"ref":"genshinstats.map.get_map_icons",
+"ref":"genshinstats.genshinstats.get_browser_cookies",
 "url":10,
-"doc":"Get all icons for the map",
+"doc":"Gets cookies from your browser for later storing. If a specific browser is set, gets data from that browser only. Avalible browsers: chrome, chromium, opera, edge, firefox",
 "func":1
 },
 {
-"ref":"genshinstats.map.get_map_labels",
+"ref":"genshinstats.genshinstats.set_cookies_auto",
 "url":10,
-"doc":"Get labels and label categories",
+"doc":"Like set_cookie, but gets the cookies by itself from your browser. Requires the module browser-cookie3 Be aware that this process can take up to 10 seconds. To speed it up you may select a browser. If a specific browser is set, gets data from that browser only. Avalible browsers: chrome, chromium, opera, edge, firefox",
 "func":1
 },
 {
-"ref":"genshinstats.map.get_map_locations",
+"ref":"genshinstats.genshinstats.set_cookie_auto",
 "url":10,
-"doc":"Get all locations on the map",
+"doc":"Like set_cookie, but gets the cookies by itself from your browser. Requires the module browser-cookie3 Be aware that this process can take up to 10 seconds. To speed it up you may select a browser. If a specific browser is set, gets data from that browser only. Avalible browsers: chrome, chromium, opera, edge, firefox",
 "func":1
 },
 {
-"ref":"genshinstats.map.get_map_points",
+"ref":"genshinstats.genshinstats.fetch_endpoint",
 "url":10,
-"doc":"Get points on the map",
+"doc":"Fetch an enpoint from the API. Takes in an endpoint url which is joined with the base url. A request is then sent and returns a parsed response. Includes error handling and ds token renewal. Can specifically use the chinese base url and request data for chinese users, but that requires being logged in as that user. Supports handling ratelimits if multiple cookies are set with  set_cookies ",
 "func":1
 },
 {
-"ref":"genshinstats.map.get_map_tile",
+"ref":"genshinstats.genshinstats.get_user_stats",
 "url":10,
-"doc":"Gets a map tile at a position You may set an x, y, width and height of the resulting image however you shoudl prefer to use multiples of 256 because they are cached on the mihoyo servers. Resolution dictates the resolution of the image as a percentage. 100 is highest and 0 is lowest. You should pick values from 100, 50, 25 and 12.5",
+"doc":"Gets basic user information and stats.",
+"func":1
+},
+{
+"ref":"genshinstats.genshinstats.get_characters",
+"url":10,
+"doc":"Gets characters of a user. Characters contain info about their level, constellation, weapon, and artifacts. Talents are not included. If character_ids are provided then only characters with those ids are returned.",
+"func":1
+},
+{
+"ref":"genshinstats.genshinstats.get_spiral_abyss",
+"url":10,
+"doc":"Gets spiral abyss runs of a user and details about them. Every season these stats refresh and you can get the previous stats with  previous .",
+"func":1
+},
+{
+"ref":"genshinstats.genshinstats.get_all_user_data",
+"url":10,
+"doc":"Fetches all data a user can has. Very slow. A helper function that gets all avalible data for a user and returns it as one dict. However that makes it fairly slow so it's not recommended to use it outside caching.",
 "func":1
 }
 ]
