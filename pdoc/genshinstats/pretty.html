@@ -28,7 +28,7 @@ that were leftover from during development</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/pretty.py#L1-L310" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/pretty.py#L1-L339" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">&#34;&#34;&#34;Prettifiers for genshinstats api returns.
 
@@ -231,6 +231,35 @@ def prettify_abyss(data):
         } for f in data[&#34;floors&#34;]]
     }
 
+def prettify_activities(data):
+    activities = data[&#39;activities&#39;][0]
+    return {
+        &#39;hyakunin&#39;: [{
+            &#34;id&#34;: r[&#39;challenge_id&#39;],
+            &#34;name&#34;: r[&#39;challenge_name&#39;],
+            &#34;difficulty&#34;: r[&#34;difficulty&#34;],
+            &#34;medal_icon&#34;: r[&#34;heraldry_icon&#34;],
+            &#34;score&#34;: r[&#34;max_score&#34;],
+            &#34;multiplier&#34;: r[&#34;score_multiple&#34;],
+            &#34;lineups&#34;: [{
+                &#34;characters&#34;: [{
+                    &#34;name&#34;: _recognize_character_icon(c[&#34;icon&#34;]),
+                    &#34;rarity&#34;: c[&#34;rarity&#34;] if c[&#34;rarity&#34;] &lt; 100 else c[&#34;rarity&#34;] - 100, # aloy has 105 stars
+                    &#34;level&#34;: c[&#34;level&#34;],
+                    &#34;icon&#34;: c[&#34;icon&#34;],
+                    &#34;id&#34;: c[&#34;id&#34;],
+                    &#34;trial&#34;: c[&#34;is_trail_avatar&#34;],
+                } for c in l[&#34;avatars&#34;]],
+                &#34;skills&#34;: [{
+                    &#34;name&#34;: s[&#34;name&#34;],
+                    &#34;desc&#34;: s[&#34;desc&#34;],
+                    &#34;icon&#34;: s[&#34;icon&#34;],
+                    &#34;id&#34;: s[&#34;id&#34;]
+                } for s in l[&#34;skills&#34;]]
+            } for l in r[&#34;lineups&#34;]]
+        } for r in activities[&#39;sumo&#39;][&#39;records&#39;]]
+    }
+
 def prettify_game_accounts(data):
     return [{
         &#34;uid&#34;: int(a[&#34;game_uid&#34;]),
@@ -415,6 +444,46 @@ def prettify_trans(data, reasons={}):
     }</code></pre>
 </details>
 </dd>
+<dt id="genshinstats.pretty.prettify_activities"><code class="name flex">
+<span>def <span class="ident">prettify_activities</span></span>(<span>data)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/pretty.py#L202-L229" class="git-link">Browse git</a>
+</summary>
+<pre><code class="python">def prettify_activities(data):
+    activities = data[&#39;activities&#39;][0]
+    return {
+        &#39;hyakunin&#39;: [{
+            &#34;id&#34;: r[&#39;challenge_id&#39;],
+            &#34;name&#34;: r[&#39;challenge_name&#39;],
+            &#34;difficulty&#34;: r[&#34;difficulty&#34;],
+            &#34;medal_icon&#34;: r[&#34;heraldry_icon&#34;],
+            &#34;score&#34;: r[&#34;max_score&#34;],
+            &#34;multiplier&#34;: r[&#34;score_multiple&#34;],
+            &#34;lineups&#34;: [{
+                &#34;characters&#34;: [{
+                    &#34;name&#34;: _recognize_character_icon(c[&#34;icon&#34;]),
+                    &#34;rarity&#34;: c[&#34;rarity&#34;] if c[&#34;rarity&#34;] &lt; 100 else c[&#34;rarity&#34;] - 100, # aloy has 105 stars
+                    &#34;level&#34;: c[&#34;level&#34;],
+                    &#34;icon&#34;: c[&#34;icon&#34;],
+                    &#34;id&#34;: c[&#34;id&#34;],
+                    &#34;trial&#34;: c[&#34;is_trail_avatar&#34;],
+                } for c in l[&#34;avatars&#34;]],
+                &#34;skills&#34;: [{
+                    &#34;name&#34;: s[&#34;name&#34;],
+                    &#34;desc&#34;: s[&#34;desc&#34;],
+                    &#34;icon&#34;: s[&#34;icon&#34;],
+                    &#34;id&#34;: s[&#34;id&#34;]
+                } for s in l[&#34;skills&#34;]]
+            } for l in r[&#34;lineups&#34;]]
+        } for r in activities[&#39;sumo&#39;][&#39;records&#39;]]
+    }</code></pre>
+</details>
+</dd>
 <dt id="genshinstats.pretty.prettify_banner_details"><code class="name flex">
 <span>def <span class="ident">prettify_banner_details</span></span>(<span>data)</span>
 </code></dt>
@@ -423,7 +492,7 @@ def prettify_trans(data, reasons={}):
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/pretty.py#L234-L286" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/pretty.py#L263-L315" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def prettify_banner_details(data):
     per = lambda p: None if p==&#39;0%&#39; else float(p[: -1].replace(&#39;,&#39;,&#39;.&#39;))
@@ -564,7 +633,7 @@ def prettify_trans(data, reasons={}):
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/pretty.py#L226-L232" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/pretty.py#L255-L261" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def prettify_gacha_items(data):
     return [{
@@ -583,7 +652,7 @@ def prettify_trans(data, reasons={}):
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/pretty.py#L202-L212" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/pretty.py#L231-L241" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def prettify_game_accounts(data):
     return [{
@@ -668,7 +737,7 @@ def prettify_trans(data, reasons={}):
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/pretty.py#L288-L310" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/pretty.py#L317-L339" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def prettify_trans(data, reasons={}):
     if data and &#34;name&#34; in data[0]:
@@ -703,7 +772,7 @@ def prettify_trans(data, reasons={}):
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/pretty.py#L214-L224" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/pretty.py#L243-L253" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def prettify_wish_history(data, banner_name = None):
     return [{
@@ -783,6 +852,7 @@ setTimeout(() => input.focus(), 100);
 <li><h3><a href="#header-functions">Functions</a></h3>
 <ul class="">
 <li><code><a title="genshinstats.pretty.prettify_abyss" href="#genshinstats.pretty.prettify_abyss">prettify_abyss</a></code></li>
+<li><code><a title="genshinstats.pretty.prettify_activities" href="#genshinstats.pretty.prettify_activities">prettify_activities</a></code></li>
 <li><code><a title="genshinstats.pretty.prettify_banner_details" href="#genshinstats.pretty.prettify_banner_details">prettify_banner_details</a></code></li>
 <li><code><a title="genshinstats.pretty.prettify_characters" href="#genshinstats.pretty.prettify_characters">prettify_characters</a></code></li>
 <li><code><a title="genshinstats.pretty.prettify_gacha_items" href="#genshinstats.pretty.prettify_gacha_items">prettify_gacha_items</a></code></li>

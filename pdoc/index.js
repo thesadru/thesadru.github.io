@@ -147,6 +147,12 @@ INDEX=[
 "func":1
 },
 {
+"ref":"genshinstats.pretty.prettify_activities",
+"url":3,
+"doc":"",
+"func":1
+},
+{
 "ref":"genshinstats.pretty.prettify_game_accounts",
 "url":3,
 "doc":"",
@@ -690,7 +696,7 @@ INDEX=[
 {
 "ref":"genshinstats.genshinstats.get_user_stats",
 "url":10,
-"doc":"Gets basic user information and stats.",
+"doc":"Gets basic user information and stats. If equipment is True an additional request will be made to get the character equipment",
 "func":1
 },
 {
@@ -703,6 +709,12 @@ INDEX=[
 "ref":"genshinstats.genshinstats.get_spiral_abyss",
 "url":10,
 "doc":"Gets spiral abyss runs of a user and details about them. Every season these stats refresh and you can get the previous stats with  previous .",
+"func":1
+},
+{
+"ref":"genshinstats.genshinstats.get_activities",
+"url":10,
+"doc":"Gets the activities of the user As of this time only Hyakunin Ikki is availible.",
 "func":1
 },
 {
