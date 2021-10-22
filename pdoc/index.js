@@ -77,6 +77,12 @@ INDEX=[
 "func":1
 },
 {
+"ref":"genshinstats.genshinstats.get_notes",
+"url":1,
+"doc":"Gets the real-time notes of the user Contains current resin, expeditions, daily commissions and similar.",
+"func":1
+},
+{
 "ref":"genshinstats.genshinstats.get_activities",
 "url":1,
 "doc":"Gets the activities of the user As of this time only Hyakunin Ikki is availible.",
@@ -531,6 +537,12 @@ INDEX=[
 },
 {
 "ref":"genshinstats.pretty.prettify_activities",
+"url":6,
+"doc":"",
+"func":1
+},
+{
+"ref":"genshinstats.pretty.prettify_notes",
 "url":6,
 "doc":"",
 "func":1
