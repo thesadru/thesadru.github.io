@@ -27,7 +27,7 @@
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/genshinstats.py#L1-L346" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/genshinstats.py#L1-L357" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">&#34;&#34;&#34;Wrapper for the hoyolab.com gameRecord api.
 
@@ -88,8 +88,10 @@ cookies: List[RequestsCookieJar] = []  # a list of all avalible cookies
 
 OS_DS_SALT = &#34;6cqshh5dhw73bzxn20oexa9k516chk7s&#34;
 CN_DS_SALT = &#34;xV8v4Qu54lUKrEYFZkJhB8cuOh9Asafs&#34;
-OS_BBS_URL = &#34;https://api-os-takumi.mihoyo.com/&#34;  # overseas
+OS_TAKUMI_URL = &#34;https://api-os-takumi.mihoyo.com/&#34;  # overseas
 CN_TAKUMI_URL = &#34;https://api-takumi.mihoyo.com/&#34;  # chinese
+OS_GAME_RECORD_URL = &#34;https://api-os-takumi.mihoyo.com/game_record/&#34;
+CN_GAME_RECORD_URL = &#34;https://api-takumi.mihoyo.com/game_record/app/&#34;
 
 
 def set_cookie(cookie: Union[Mapping[str, Any], str] = None, **kwargs: Any) -&gt; None:
@@ -237,7 +239,7 @@ def fetch_endpoint(
                 &#34;x-rpc-client_type&#34;: &#34;4&#34;,
             }
         )
-        url = urljoin(OS_BBS_URL, endpoint)
+        url = urljoin(OS_TAKUMI_URL, endpoint)
 
     if cookie is not None:
         if not isinstance(cookie, MutableMapping) or not all(
@@ -262,6 +264,15 @@ def fetch_endpoint(
         raise TooManyRequests(&#34;All cookies have hit their request limit of 30 accounts per day.&#34;)
 
 
+def fetch_game_record_endpoint(
+    endpoint: str, chinese: bool = False, cookie: Mapping[str, Any] = None, **kwargs
+):
+    &#34;&#34;&#34;A short-hand for fetching data for the game record&#34;&#34;&#34;
+    base_url = CN_GAME_RECORD_URL if chinese else OS_GAME_RECORD_URL
+    url = urljoin(base_url, endpoint)
+    return fetch_endpoint(url, chinese, cookie, **kwargs)
+
+
 def get_user_stats(
     uid: int, equipment: bool = False, lang: str = &#34;en-us&#34;, cookie: Mapping[str, Any] = None
 ) -&gt; Dict[str, Any]:
@@ -270,8 +281,8 @@ def get_user_stats(
     If equipment is True an additional request will be made to get the character equipment
     &#34;&#34;&#34;
     server = recognize_server(uid)
-    data = fetch_endpoint(
-        &#34;game_record/genshin/api/index&#34;,
+    data = fetch_game_record_endpoint(
+        &#34;genshin/api/index&#34;,
         chinese=is_chinese(uid),
         cookie=cookie,
         params=dict(server=server, role_id=uid),
@@ -299,8 +310,8 @@ def get_characters(
         character_ids = [i[&#34;id&#34;] for i in get_user_stats(uid)[&#34;characters&#34;]]
 
     server = recognize_server(uid)
-    data = fetch_endpoint(
-        &#34;game_record/genshin/api/character&#34;,
+    data = fetch_game_record_endpoint(
+        &#34;genshin/api/character&#34;,
         chinese=is_chinese(uid),
         cookie=cookie,
         method=&#34;POST&#34;,
@@ -321,8 +332,8 @@ def get_spiral_abyss(
     &#34;&#34;&#34;
     server = recognize_server(uid)
     schedule_type = 2 if previous else 1
-    data = fetch_endpoint(
-        &#34;game_record/genshin/api/spiralAbyss&#34;,
+    data = fetch_game_record_endpoint(
+        &#34;genshin/api/spiralAbyss&#34;,
         chinese=is_chinese(uid),
         cookie=cookie,
         params=dict(server=server, role_id=uid, schedule_type=schedule_type),
@@ -338,8 +349,8 @@ def get_activities(
     As of this time only Hyakunin Ikki is availible.
     &#34;&#34;&#34;
     server = recognize_server(uid)
-    data = fetch_endpoint(
-        &#34;game_record/genshin/api/activities&#34;,
+    data = fetch_game_record_endpoint(
+        &#34;genshin/api/activities&#34;,
         chinese=is_chinese(uid),
         cookie=cookie,
         params=dict(server=server, role_id=uid),
@@ -354,8 +365,8 @@ def get_notes(uid: int, lang: str = &#34;en-us&#34;, cookie: Mapping[str, Any] =
     Contains current resin, expeditions, daily commissions and similar.
     &#34;&#34;&#34;
     server = recognize_server(uid)
-    data = fetch_endpoint(
-        &#34;game_record/genshin/api/dailyNote&#34;,
+    data = fetch_game_record_endpoint(
+        &#34;genshin/api/dailyNote&#34;,
         chinese=is_chinese(uid),
         cookie=cookie,
         params=dict(server=server, role_id=uid),
@@ -398,7 +409,7 @@ but that requires being logged in as that user.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/genshinstats.py#L175-L231" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/genshinstats.py#L177-L233" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def fetch_endpoint(
     endpoint: str, chinese: bool = False, cookie: Mapping[str, Any] = None, **kwargs
@@ -434,7 +445,7 @@ but that requires being logged in as that user.</p>
                 &#34;x-rpc-client_type&#34;: &#34;4&#34;,
             }
         )
-        url = urljoin(OS_BBS_URL, endpoint)
+        url = urljoin(OS_TAKUMI_URL, endpoint)
 
     if cookie is not None:
         if not isinstance(cookie, MutableMapping) or not all(
@@ -468,7 +479,7 @@ but that requires being logged in as that user.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/genshinstats.py#L302-L317" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/genshinstats.py#L313-L328" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def get_activities(
     uid: int, lang: str = &#34;en-us&#34;, cookie: Mapping[str, Any] = None
@@ -478,8 +489,8 @@ but that requires being logged in as that user.</p>
     As of this time only Hyakunin Ikki is availible.
     &#34;&#34;&#34;
     server = recognize_server(uid)
-    data = fetch_endpoint(
-        &#34;game_record/genshin/api/activities&#34;,
+    data = fetch_game_record_endpoint(
+        &#34;genshin/api/activities&#34;,
         chinese=is_chinese(uid),
         cookie=cookie,
         params=dict(server=server, role_id=uid),
@@ -498,7 +509,7 @@ However that makes it fairly slow so it's not recommended to use it outside cach
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/genshinstats.py#L336-L346" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/genshinstats.py#L347-L357" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def get_all_user_data(
     uid: int, lang: str = &#34;en-us&#34;, cookie: Mapping[str, Any] = None
@@ -523,7 +534,7 @@ Avalible browsers: chrome, chromium, opera, edge, firefox</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/genshinstats.py#L100-L122" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/genshinstats.py#L102-L124" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def get_browser_cookies(browser: str = None) -&gt; Dict[str, str]:
     &#34;&#34;&#34;Gets cookies from your browser for later storing.
@@ -561,7 +572,7 @@ Talents are not included.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/genshinstats.py#L257-L281" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/genshinstats.py#L268-L292" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def get_characters(
     uid: int, character_ids: List[int] = None, lang: str = &#34;en-us&#34;, cookie: Mapping[str, Any] = None
@@ -577,8 +588,8 @@ Talents are not included.</p>
         character_ids = [i[&#34;id&#34;] for i in get_user_stats(uid)[&#34;characters&#34;]]
 
     server = recognize_server(uid)
-    data = fetch_endpoint(
-        &#34;game_record/genshin/api/character&#34;,
+    data = fetch_game_record_endpoint(
+        &#34;genshin/api/character&#34;,
         chinese=is_chinese(uid),
         cookie=cookie,
         method=&#34;POST&#34;,
@@ -599,7 +610,7 @@ Talents are not included.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/genshinstats.py#L320-L333" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/genshinstats.py#L331-L344" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def get_notes(uid: int, lang: str = &#34;en-us&#34;, cookie: Mapping[str, Any] = None) -&gt; Dict[str, Any]:
     &#34;&#34;&#34;Gets the real-time notes of the user
@@ -607,8 +618,8 @@ Talents are not included.</p>
     Contains current resin, expeditions, daily commissions and similar.
     &#34;&#34;&#34;
     server = recognize_server(uid)
-    data = fetch_endpoint(
-        &#34;game_record/genshin/api/dailyNote&#34;,
+    data = fetch_game_record_endpoint(
+        &#34;genshin/api/dailyNote&#34;,
         chinese=is_chinese(uid),
         cookie=cookie,
         params=dict(server=server, role_id=uid),
@@ -626,7 +637,7 @@ Talents are not included.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/genshinstats.py#L284-L299" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/genshinstats.py#L295-L310" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def get_spiral_abyss(
     uid: int, previous: bool = False, cookie: Mapping[str, Any] = None
@@ -637,8 +648,8 @@ Talents are not included.</p>
     &#34;&#34;&#34;
     server = recognize_server(uid)
     schedule_type = 2 if previous else 1
-    data = fetch_endpoint(
-        &#34;game_record/genshin/api/spiralAbyss&#34;,
+    data = fetch_game_record_endpoint(
+        &#34;genshin/api/spiralAbyss&#34;,
         chinese=is_chinese(uid),
         cookie=cookie,
         params=dict(server=server, role_id=uid, schedule_type=schedule_type),
@@ -655,7 +666,7 @@ Talents are not included.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/genshinstats.py#L234-L254" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/genshinstats.py#L245-L265" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def get_user_stats(
     uid: int, equipment: bool = False, lang: str = &#34;en-us&#34;, cookie: Mapping[str, Any] = None
@@ -665,8 +676,8 @@ Talents are not included.</p>
     If equipment is True an additional request will be made to get the character equipment
     &#34;&#34;&#34;
     server = recognize_server(uid)
-    data = fetch_endpoint(
-        &#34;game_record/genshin/api/index&#34;,
+    data = fetch_game_record_endpoint(
+        &#34;genshin/api/index&#34;,
         chinese=is_chinese(uid),
         cookie=cookie,
         params=dict(server=server, role_id=uid),
@@ -694,7 +705,7 @@ Talents are not included.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/genshinstats.py#L64-L76" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/genshinstats.py#L66-L78" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def set_cookie(cookie: Union[Mapping[str, Any], str] = None, **kwargs: Any) -&gt; None:
     &#34;&#34;&#34;Logs-in using a cookie.
@@ -724,7 +735,7 @@ Avalible browsers: chrome, chromium, opera, edge, firefox</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/genshinstats.py#L125-L135" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/genshinstats.py#L127-L137" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def set_cookie_auto(browser: str = None) -&gt; None:
     &#34;&#34;&#34;Like set_cookie, but gets the cookies by itself from your browser.
@@ -750,7 +761,7 @@ This is so far the only way to circumvent the rate limit.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/genshinstats.py#L79-L97" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/genshinstats.py#L81-L99" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def set_cookies(*args: Union[Mapping[str, Any], str], clear: bool = True) -&gt; None:
     &#34;&#34;&#34;Sets multiple cookies at once to cycle between. Takes same arguments as set_cookie.
@@ -786,7 +797,7 @@ Avalible browsers: chrome, chromium, opera, edge, firefox</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/genshinstats.py#L125-L135" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/genshinstats.py#L127-L137" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def set_cookie_auto(browser: str = None) -&gt; None:
     &#34;&#34;&#34;Like set_cookie, but gets the cookies by itself from your browser.
