@@ -27,13 +27,14 @@
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/genshinstats.py#L1-L288" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/genshinstats.py#L1-L346" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">&#34;&#34;&#34;Wrapper for the hoyolab.com gameRecord api.
 
 Can fetch data for a user&#39;s stats like stats, characters, spiral abyss runs...
 &#34;&#34;&#34;
 import hashlib
+import json
 import random
 import string
 import time
@@ -45,7 +46,13 @@ import requests
 from requests.sessions import RequestsCookieJar, Session
 
 from .errors import NotLoggedIn, TooManyRequests, raise_for_error
-from .pretty import prettify_abyss, prettify_characters, prettify_stats, prettify_activities, prettify_notes
+from .pretty import (
+    prettify_abyss,
+    prettify_activities,
+    prettify_characters,
+    prettify_notes,
+    prettify_stats,
+)
 from .utils import USER_AGENT, is_chinese, recognize_server, retry
 
 __all__ = [
@@ -64,23 +71,26 @@ __all__ = [
 ]
 
 session = Session()
-session.headers.update({
-    # required headers
-    &#34;x-rpc-app_version&#34;: &#34;&#34;,
-    &#34;x-rpc-client_type&#34;: &#34;&#34;,
-    &#34;x-rpc-language&#34;: &#34;en-us&#34;,
-    # authentications headers
-    &#34;ds&#34;: &#34;&#34;,
-    # recommended headers
-    &#34;user-agent&#34;: USER_AGENT
-})
+session.headers.update(
+    {
+        # required headers
+        &#34;x-rpc-app_version&#34;: &#34;&#34;,
+        &#34;x-rpc-client_type&#34;: &#34;&#34;,
+        &#34;x-rpc-language&#34;: &#34;en-us&#34;,
+        # authentications headers
+        &#34;ds&#34;: &#34;&#34;,
+        # recommended headers
+        &#34;user-agent&#34;: USER_AGENT,
+    }
+)
 
-cookies: List[RequestsCookieJar] = [] # a list of all avalible cookies
+cookies: List[RequestsCookieJar] = []  # a list of all avalible cookies
 
 OS_DS_SALT = &#34;6cqshh5dhw73bzxn20oexa9k516chk7s&#34;
 CN_DS_SALT = &#34;14bmu1mz0yuljprsfgpvjh3ju2ni468r&#34;
 OS_BBS_URL = &#34;https://api-os-takumi.mihoyo.com/&#34;  # overseas
 CN_TAKUMI_URL = &#34;https://api-takumi.mihoyo.com/&#34;  # chinese
+
 
 def set_cookie(cookie: Union[Mapping[str, Any], str] = None, **kwargs: Any) -&gt; None:
     &#34;&#34;&#34;Logs-in using a cookie.
@@ -96,6 +106,7 @@ def set_cookie(cookie: Union[Mapping[str, Any], str] = None, **kwargs: Any) -&gt
 
     set_cookies(cookie or kwargs)
 
+
 def set_cookies(*args: Union[Mapping[str, Any], str], clear: bool = True) -&gt; None:
     &#34;&#34;&#34;Sets multiple cookies at once to cycle between. Takes same arguments as set_cookie.
 
@@ -109,12 +120,13 @@ def set_cookies(*args: Union[Mapping[str, Any], str], clear: bool = True) -&gt; 
 
     for cookie in args:
         if isinstance(cookie, Mapping):
-            cookie = {k: str(v) for k, v in cookie.items()} # SimpleCookie needs a string
+            cookie = {k: str(v) for k, v in cookie.items()}  # SimpleCookie needs a string
         cookie = SimpleCookie(cookie)
 
         jar = RequestsCookieJar()
         jar.update(cookie)
         cookies.append(jar)
+
 
 def get_browser_cookies(browser: str = None) -&gt; Dict[str, str]:
     &#34;&#34;&#34;Gets cookies from your browser for later storing.
@@ -125,18 +137,21 @@ def get_browser_cookies(browser: str = None) -&gt; Dict[str, str]:
     try:
         import browser_cookie3  # optional library
     except ImportError:
-        raise ImportError(&#34;functions &#39;set_cookie_auto&#39; and &#39;get_browser_cookie` require \&#34;browser-cookie3\&#34;. &#34;
-                          &#34;To use these function please install the dependency with \&#34;pip install browser-cookie3\&#34;.&#34;)
+        raise ImportError(
+            &#34;functions &#39;set_cookie_auto&#39; and &#39;get_browser_cookie` require \&#34;browser-cookie3\&#34;. &#34;
+            &#39;To use these function please install the dependency with &#34;pip install browser-cookie3&#34;.&#39;
+        )
     load = getattr(browser_cookie3, browser.lower()) if browser else browser_cookie3.load
     # For backwards compatibility we also get account_id and cookie_token
     # however we can&#39;t just get every cookie because there&#39;s sensitive information
-    allowed_cookies = {&#39;ltuid&#39;, &#39;ltoken&#39;, &#39;account_id&#39;, &#39;cookie_token&#39;}
+    allowed_cookies = {&#34;ltuid&#34;, &#34;ltoken&#34;, &#34;account_id&#34;, &#34;cookie_token&#34;}
     return {
         c.name: c.value
-        for domain in (&#39;mihoyo&#39;, &#39;hoyolab&#39;)
+        for domain in (&#34;mihoyo&#34;, &#34;hoyolab&#34;)
         for c in load(domain_name=domain)
         if c.name in allowed_cookies and c.value is not None
     }
+
 
 def set_cookie_auto(browser: str = None) -&gt; None:
     &#34;&#34;&#34;Like set_cookie, but gets the cookies by itself from your browser.
@@ -149,15 +164,29 @@ def set_cookie_auto(browser: str = None) -&gt; None:
     Avalible browsers: chrome, chromium, opera, edge, firefox
     &#34;&#34;&#34;
     set_cookies(get_browser_cookies(browser), clear=True)
-set_cookies_auto = set_cookie_auto # alias
 
 
-def generate_ds_token(salt: str) -&gt; str:
-    &#34;&#34;&#34;Creates a new ds token for authentication.&#34;&#34;&#34;
+set_cookies_auto = set_cookie_auto  # alias
+
+
+def generate_ds(salt: str) -&gt; str:
+    &#34;&#34;&#34;Creates a new ds for authentication.&#34;&#34;&#34;
     t = int(time.time())  # current seconds
-    r = &#39;&#39;.join(random.choices(string.ascii_letters, k=6))  # 6 random chars
+    r = &#34;&#34;.join(random.choices(string.ascii_letters, k=6))  # 6 random chars
     h = hashlib.md5(f&#34;salt={salt}&amp;t={t}&amp;r={r}&#34;.encode()).hexdigest()  # hash and get hex
-    return f&#39;{t},{r},{h}&#39;
+    return f&#34;{t},{r},{h}&#34;
+
+
+def generate_cn_ds(salt: str, body: Any = None, query: Mapping[str, Any] = None) -&gt; str:
+    &#34;&#34;&#34;Creates a new chinese ds for authentication.&#34;&#34;&#34;
+    t = int(time.time())
+    r = random.randint(100001, 200000)
+    b = json.dumps(body) if body else &#34;&#34;
+    q = &#34;&amp;&#34;.join(f&#34;{k}={v}&#34; for k, v in sorted(query.items())) if query else &#34;&#34;
+
+    h = hashlib.md5(f&#34;salt={salt}&amp;t={t}&amp;r={r}&amp;b={b}&amp;q={q}&#34;.encode()).hexdigest()
+    return f&#34;{t},{r},{h}&#34;
+
 
 # sometimes a random connection error can just occur, mihoyo being mihoyo
 @retry(3, requests.ConnectionError)
@@ -166,14 +195,17 @@ def _request(*args: Any, **kwargs: Any) -&gt; Any:
     r = session.request(*args, **kwargs)
 
     r.raise_for_status()
-    kwargs[&#39;cookies&#39;].update(session.cookies)
+    kwargs[&#34;cookies&#34;].update(session.cookies)
     session.cookies.clear()
     data = r.json()
-    if data[&#39;retcode&#39;] == 0:
-        return data[&#39;data&#39;]
+    if data[&#34;retcode&#34;] == 0:
+        return data[&#34;data&#34;]
     raise_for_error(data)
 
-def fetch_endpoint(endpoint: str, chinese: bool = False, cookie: Mapping[str, Any] = None, **kwargs) -&gt; Dict[str, Any]:
+
+def fetch_endpoint(
+    endpoint: str, chinese: bool = False, cookie: Mapping[str, Any] = None, **kwargs
+) -&gt; Dict[str, Any]:
     &#34;&#34;&#34;Fetch an enpoint from the API.
 
     Takes in an endpoint url which is joined with the base url.
@@ -186,29 +218,35 @@ def fetch_endpoint(endpoint: str, chinese: bool = False, cookie: Mapping[str, An
     Supports handling ratelimits if multiple cookies are set with `set_cookies`
     &#34;&#34;&#34;
     # parse the arguments for requests.request
-    kwargs.setdefault(&#39;headers&#39;, {})
-    method = kwargs.pop(&#39;method&#39;, &#39;get&#39;)
+    kwargs.setdefault(&#34;headers&#34;, {})
+    method = kwargs.pop(&#34;method&#34;, &#34;get&#34;)
     if chinese:
-        kwargs[&#39;headers&#39;].update({
-            &#34;ds&#34;: generate_ds_token(CN_DS_SALT),
-            &#34;x-rpc-app_version&#34;: &#34;2.7.0&#34;,
-            &#34;x-rpc-client_type&#34;: &#34;5&#34;,
-        })
+        kwargs[&#34;headers&#34;].update(
+            {
+                &#34;ds&#34;: generate_cn_ds(CN_DS_SALT, kwargs.get(&#34;json&#34;), kwargs.get(&#34;params&#34;)),
+                &#34;x-rpc-app_version&#34;: &#34;2.11.1&#34;,
+                &#34;x-rpc-client_type&#34;: &#34;5&#34;,
+            }
+        )
         url = urljoin(CN_TAKUMI_URL, endpoint)
     else:
-        kwargs[&#39;headers&#39;].update({
-            &#34;ds&#34;: generate_ds_token(OS_DS_SALT),
-            &#34;x-rpc-app_version&#34;: &#34;1.5.0&#34;,
-            &#34;x-rpc-client_type&#34;: &#34;4&#34;,
-        })
+        kwargs[&#34;headers&#34;].update(
+            {
+                &#34;ds&#34;: generate_ds(OS_DS_SALT),
+                &#34;x-rpc-app_version&#34;: &#34;1.5.0&#34;,
+                &#34;x-rpc-client_type&#34;: &#34;4&#34;,
+            }
+        )
         url = urljoin(OS_BBS_URL, endpoint)
 
     if cookie is not None:
-        if not isinstance(cookie, MutableMapping) or not all(isinstance(v, str) for v in cookie.values()):
+        if not isinstance(cookie, MutableMapping) or not all(
+            isinstance(v, str) for v in cookie.values()
+        ):
             cookie = {k: str(v) for k, v in cookie.items()}
         return _request(method, url, cookies=cookie, **kwargs)
     elif len(cookies) == 0:
-        raise NotLoggedIn(&#39;Login cookies have not been provided&#39;)
+        raise NotLoggedIn(&#34;Login cookies have not been provided&#34;)
 
     for cookie in cookies.copy():
         try:
@@ -223,7 +261,10 @@ def fetch_endpoint(endpoint: str, chinese: bool = False, cookie: Mapping[str, An
     else:
         raise TooManyRequests(&#34;All cookies have hit their request limit of 30 accounts per day.&#34;)
 
-def get_user_stats(uid: int, equipment: bool = False, lang: str = &#39;en-us&#39;, cookie: Mapping[str, Any] = None) -&gt; Dict[str, Any]:
+
+def get_user_stats(
+    uid: int, equipment: bool = False, lang: str = &#34;en-us&#34;, cookie: Mapping[str, Any] = None
+) -&gt; Dict[str, Any]:
     &#34;&#34;&#34;Gets basic user information and stats.
 
     If equipment is True an additional request will be made to get the character equipment
@@ -234,14 +275,19 @@ def get_user_stats(uid: int, equipment: bool = False, lang: str = &#39;en-us&#39
         chinese=is_chinese(uid),
         cookie=cookie,
         params=dict(server=server, role_id=uid),
-        headers={&#39;x-rpc-language&#39;: lang},
+        headers={&#34;x-rpc-language&#34;: lang},
     )
     data = prettify_stats(data)
     if equipment:
-        data[&#39;characters&#39;] = get_characters(uid, [i[&#39;id&#39;] for i in data[&#39;characters&#39;]], lang, cookie)
+        data[&#34;characters&#34;] = get_characters(
+            uid, [i[&#34;id&#34;] for i in data[&#34;characters&#34;]], lang, cookie
+        )
     return data
 
-def get_characters(uid: int, character_ids: List[int] = None, lang: str = &#39;en-us&#39;, cookie: Mapping[str, Any] = None) -&gt; List[Dict[str, Any]]:
+
+def get_characters(
+    uid: int, character_ids: List[int] = None, lang: str = &#34;en-us&#34;, cookie: Mapping[str, Any] = None
+) -&gt; List[Dict[str, Any]]:
     &#34;&#34;&#34;Gets characters of a user.
 
     Characters contain info about their level, constellation, weapon, and artifacts.
@@ -250,20 +296,25 @@ def get_characters(uid: int, character_ids: List[int] = None, lang: str = &#39;e
     If character_ids are provided then only characters with those ids are returned.
     &#34;&#34;&#34;
     if character_ids is None:
-        character_ids = [i[&#39;id&#39;] for i in get_user_stats(uid)[&#39;characters&#39;]]
+        character_ids = [i[&#34;id&#34;] for i in get_user_stats(uid)[&#34;characters&#34;]]
 
     server = recognize_server(uid)
     data = fetch_endpoint(
         &#34;game_record/genshin/api/character&#34;,
         chinese=is_chinese(uid),
         cookie=cookie,
-        method=&#39;POST&#39;,
-        json=dict(character_ids=character_ids, role_id=uid, server=server),  # POST uses the body instead
-        headers={&#39;x-rpc-language&#39;: lang},
+        method=&#34;POST&#34;,
+        json=dict(
+            character_ids=character_ids, role_id=uid, server=server
+        ),  # POST uses the body instead
+        headers={&#34;x-rpc-language&#34;: lang},
     )[&#34;avatars&#34;]
     return prettify_characters(data)
 
-def get_spiral_abyss(uid: int, previous: bool = False, cookie: Mapping[str, Any] = None) -&gt; Dict[str, Any]:
+
+def get_spiral_abyss(
+    uid: int, previous: bool = False, cookie: Mapping[str, Any] = None
+) -&gt; Dict[str, Any]:
     &#34;&#34;&#34;Gets spiral abyss runs of a user and details about them.
 
     Every season these stats refresh and you can get the previous stats with `previous`.
@@ -274,11 +325,14 @@ def get_spiral_abyss(uid: int, previous: bool = False, cookie: Mapping[str, Any]
         &#34;game_record/genshin/api/spiralAbyss&#34;,
         chinese=is_chinese(uid),
         cookie=cookie,
-        params=dict(server=server, role_id=uid, schedule_type=schedule_type)
+        params=dict(server=server, role_id=uid, schedule_type=schedule_type),
     )
     return prettify_abyss(data)
 
-def get_activities(uid: int, lang: str = &#39;en-us&#39;, cookie: Mapping[str, Any] = None) -&gt; Dict[str, Any]:
+
+def get_activities(
+    uid: int, lang: str = &#34;en-us&#34;, cookie: Mapping[str, Any] = None
+) -&gt; Dict[str, Any]:
     &#34;&#34;&#34;Gets the activities of the user
 
     As of this time only Hyakunin Ikki is availible.
@@ -289,13 +343,14 @@ def get_activities(uid: int, lang: str = &#39;en-us&#39;, cookie: Mapping[str, A
         chinese=is_chinese(uid),
         cookie=cookie,
         params=dict(server=server, role_id=uid),
-        headers={&#39;x-rpc-language&#39;: lang},
+        headers={&#34;x-rpc-language&#34;: lang},
     )
     return prettify_activities(data)
 
-def get_notes(uid: int, lang: str = &#39;en-us&#39;, cookie: Mapping[str, Any] = None) -&gt; Dict[str, Any]:
+
+def get_notes(uid: int, lang: str = &#34;en-us&#34;, cookie: Mapping[str, Any] = None) -&gt; Dict[str, Any]:
     &#34;&#34;&#34;Gets the real-time notes of the user
-    
+
     Contains current resin, expeditions, daily commissions and similar.
     &#34;&#34;&#34;
     server = recognize_server(uid)
@@ -304,18 +359,21 @@ def get_notes(uid: int, lang: str = &#39;en-us&#39;, cookie: Mapping[str, Any] =
         chinese=is_chinese(uid),
         cookie=cookie,
         params=dict(server=server, role_id=uid),
-        headers={&#39;x-rpc-language&#39;: lang},
+        headers={&#34;x-rpc-language&#34;: lang},
     )
     return prettify_notes(data)
 
-def get_all_user_data(uid: int, lang: str = &#39;en-us&#39;, cookie: Mapping[str, Any] = None) -&gt; Dict[str, Any]:
+
+def get_all_user_data(
+    uid: int, lang: str = &#34;en-us&#34;, cookie: Mapping[str, Any] = None
+) -&gt; Dict[str, Any]:
     &#34;&#34;&#34;Fetches all data a user can has. Very slow.
 
     A helper function that gets all avalible data for a user and returns it as one dict.
     However that makes it fairly slow so it&#39;s not recommended to use it outside caching.
     &#34;&#34;&#34;
     data = get_user_stats(uid, equipment=True, lang=lang, cookie=cookie)
-    data[&#39;spiral_abyss&#39;] = [get_spiral_abyss(uid, previous, cookie) for previous in [False, True]]
+    data[&#34;spiral_abyss&#34;] = [get_spiral_abyss(uid, previous, cookie) for previous in [False, True]]
     return data</code></pre>
 </details>
 </section>
@@ -340,9 +398,11 @@ but that requires being logged in as that user.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/genshinstats.py#L145-L193" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/genshinstats.py#L175-L231" class="git-link">Browse git</a>
 </summary>
-<pre><code class="python">def fetch_endpoint(endpoint: str, chinese: bool = False, cookie: Mapping[str, Any] = None, **kwargs) -&gt; Dict[str, Any]:
+<pre><code class="python">def fetch_endpoint(
+    endpoint: str, chinese: bool = False, cookie: Mapping[str, Any] = None, **kwargs
+) -&gt; Dict[str, Any]:
     &#34;&#34;&#34;Fetch an enpoint from the API.
 
     Takes in an endpoint url which is joined with the base url.
@@ -355,29 +415,35 @@ but that requires being logged in as that user.</p>
     Supports handling ratelimits if multiple cookies are set with `set_cookies`
     &#34;&#34;&#34;
     # parse the arguments for requests.request
-    kwargs.setdefault(&#39;headers&#39;, {})
-    method = kwargs.pop(&#39;method&#39;, &#39;get&#39;)
+    kwargs.setdefault(&#34;headers&#34;, {})
+    method = kwargs.pop(&#34;method&#34;, &#34;get&#34;)
     if chinese:
-        kwargs[&#39;headers&#39;].update({
-            &#34;ds&#34;: generate_ds_token(CN_DS_SALT),
-            &#34;x-rpc-app_version&#34;: &#34;2.7.0&#34;,
-            &#34;x-rpc-client_type&#34;: &#34;5&#34;,
-        })
+        kwargs[&#34;headers&#34;].update(
+            {
+                &#34;ds&#34;: generate_cn_ds(CN_DS_SALT, kwargs.get(&#34;json&#34;), kwargs.get(&#34;params&#34;)),
+                &#34;x-rpc-app_version&#34;: &#34;2.11.1&#34;,
+                &#34;x-rpc-client_type&#34;: &#34;5&#34;,
+            }
+        )
         url = urljoin(CN_TAKUMI_URL, endpoint)
     else:
-        kwargs[&#39;headers&#39;].update({
-            &#34;ds&#34;: generate_ds_token(OS_DS_SALT),
-            &#34;x-rpc-app_version&#34;: &#34;1.5.0&#34;,
-            &#34;x-rpc-client_type&#34;: &#34;4&#34;,
-        })
+        kwargs[&#34;headers&#34;].update(
+            {
+                &#34;ds&#34;: generate_ds(OS_DS_SALT),
+                &#34;x-rpc-app_version&#34;: &#34;1.5.0&#34;,
+                &#34;x-rpc-client_type&#34;: &#34;4&#34;,
+            }
+        )
         url = urljoin(OS_BBS_URL, endpoint)
 
     if cookie is not None:
-        if not isinstance(cookie, MutableMapping) or not all(isinstance(v, str) for v in cookie.values()):
+        if not isinstance(cookie, MutableMapping) or not all(
+            isinstance(v, str) for v in cookie.values()
+        ):
             cookie = {k: str(v) for k, v in cookie.items()}
         return _request(method, url, cookies=cookie, **kwargs)
     elif len(cookies) == 0:
-        raise NotLoggedIn(&#39;Login cookies have not been provided&#39;)
+        raise NotLoggedIn(&#34;Login cookies have not been provided&#34;)
 
     for cookie in cookies.copy():
         try:
@@ -402,9 +468,11 @@ but that requires being logged in as that user.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/genshinstats.py#L250-L263" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/genshinstats.py#L302-L317" class="git-link">Browse git</a>
 </summary>
-<pre><code class="python">def get_activities(uid: int, lang: str = &#39;en-us&#39;, cookie: Mapping[str, Any] = None) -&gt; Dict[str, Any]:
+<pre><code class="python">def get_activities(
+    uid: int, lang: str = &#34;en-us&#34;, cookie: Mapping[str, Any] = None
+) -&gt; Dict[str, Any]:
     &#34;&#34;&#34;Gets the activities of the user
 
     As of this time only Hyakunin Ikki is availible.
@@ -415,7 +483,7 @@ but that requires being logged in as that user.</p>
         chinese=is_chinese(uid),
         cookie=cookie,
         params=dict(server=server, role_id=uid),
-        headers={&#39;x-rpc-language&#39;: lang},
+        headers={&#34;x-rpc-language&#34;: lang},
     )
     return prettify_activities(data)</code></pre>
 </details>
@@ -430,16 +498,18 @@ However that makes it fairly slow so it's not recommended to use it outside cach
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/genshinstats.py#L280-L288" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/genshinstats.py#L336-L346" class="git-link">Browse git</a>
 </summary>
-<pre><code class="python">def get_all_user_data(uid: int, lang: str = &#39;en-us&#39;, cookie: Mapping[str, Any] = None) -&gt; Dict[str, Any]:
+<pre><code class="python">def get_all_user_data(
+    uid: int, lang: str = &#34;en-us&#34;, cookie: Mapping[str, Any] = None
+) -&gt; Dict[str, Any]:
     &#34;&#34;&#34;Fetches all data a user can has. Very slow.
 
     A helper function that gets all avalible data for a user and returns it as one dict.
     However that makes it fairly slow so it&#39;s not recommended to use it outside caching.
     &#34;&#34;&#34;
     data = get_user_stats(uid, equipment=True, lang=lang, cookie=cookie)
-    data[&#39;spiral_abyss&#39;] = [get_spiral_abyss(uid, previous, cookie) for previous in [False, True]]
+    data[&#34;spiral_abyss&#34;] = [get_spiral_abyss(uid, previous, cookie) for previous in [False, True]]
     return data</code></pre>
 </details>
 </dd>
@@ -453,7 +523,7 @@ Avalible browsers: chrome, chromium, opera, edge, firefox</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/genshinstats.py#L88-L108" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/genshinstats.py#L100-L122" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def get_browser_cookies(browser: str = None) -&gt; Dict[str, str]:
     &#34;&#34;&#34;Gets cookies from your browser for later storing.
@@ -464,15 +534,17 @@ Avalible browsers: chrome, chromium, opera, edge, firefox</p></div>
     try:
         import browser_cookie3  # optional library
     except ImportError:
-        raise ImportError(&#34;functions &#39;set_cookie_auto&#39; and &#39;get_browser_cookie` require \&#34;browser-cookie3\&#34;. &#34;
-                          &#34;To use these function please install the dependency with \&#34;pip install browser-cookie3\&#34;.&#34;)
+        raise ImportError(
+            &#34;functions &#39;set_cookie_auto&#39; and &#39;get_browser_cookie` require \&#34;browser-cookie3\&#34;. &#34;
+            &#39;To use these function please install the dependency with &#34;pip install browser-cookie3&#34;.&#39;
+        )
     load = getattr(browser_cookie3, browser.lower()) if browser else browser_cookie3.load
     # For backwards compatibility we also get account_id and cookie_token
     # however we can&#39;t just get every cookie because there&#39;s sensitive information
-    allowed_cookies = {&#39;ltuid&#39;, &#39;ltoken&#39;, &#39;account_id&#39;, &#39;cookie_token&#39;}
+    allowed_cookies = {&#34;ltuid&#34;, &#34;ltoken&#34;, &#34;account_id&#34;, &#34;cookie_token&#34;}
     return {
         c.name: c.value
-        for domain in (&#39;mihoyo&#39;, &#39;hoyolab&#39;)
+        for domain in (&#34;mihoyo&#34;, &#34;hoyolab&#34;)
         for c in load(domain_name=domain)
         if c.name in allowed_cookies and c.value is not None
     }</code></pre>
@@ -489,9 +561,11 @@ Talents are not included.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/genshinstats.py#L213-L233" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/genshinstats.py#L257-L281" class="git-link">Browse git</a>
 </summary>
-<pre><code class="python">def get_characters(uid: int, character_ids: List[int] = None, lang: str = &#39;en-us&#39;, cookie: Mapping[str, Any] = None) -&gt; List[Dict[str, Any]]:
+<pre><code class="python">def get_characters(
+    uid: int, character_ids: List[int] = None, lang: str = &#34;en-us&#34;, cookie: Mapping[str, Any] = None
+) -&gt; List[Dict[str, Any]]:
     &#34;&#34;&#34;Gets characters of a user.
 
     Characters contain info about their level, constellation, weapon, and artifacts.
@@ -500,16 +574,18 @@ Talents are not included.</p>
     If character_ids are provided then only characters with those ids are returned.
     &#34;&#34;&#34;
     if character_ids is None:
-        character_ids = [i[&#39;id&#39;] for i in get_user_stats(uid)[&#39;characters&#39;]]
+        character_ids = [i[&#34;id&#34;] for i in get_user_stats(uid)[&#34;characters&#34;]]
 
     server = recognize_server(uid)
     data = fetch_endpoint(
         &#34;game_record/genshin/api/character&#34;,
         chinese=is_chinese(uid),
         cookie=cookie,
-        method=&#39;POST&#39;,
-        json=dict(character_ids=character_ids, role_id=uid, server=server),  # POST uses the body instead
-        headers={&#39;x-rpc-language&#39;: lang},
+        method=&#34;POST&#34;,
+        json=dict(
+            character_ids=character_ids, role_id=uid, server=server
+        ),  # POST uses the body instead
+        headers={&#34;x-rpc-language&#34;: lang},
     )[&#34;avatars&#34;]
     return prettify_characters(data)</code></pre>
 </details>
@@ -523,11 +599,11 @@ Talents are not included.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/genshinstats.py#L265-L278" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/genshinstats.py#L320-L333" class="git-link">Browse git</a>
 </summary>
-<pre><code class="python">def get_notes(uid: int, lang: str = &#39;en-us&#39;, cookie: Mapping[str, Any] = None) -&gt; Dict[str, Any]:
+<pre><code class="python">def get_notes(uid: int, lang: str = &#34;en-us&#34;, cookie: Mapping[str, Any] = None) -&gt; Dict[str, Any]:
     &#34;&#34;&#34;Gets the real-time notes of the user
-    
+
     Contains current resin, expeditions, daily commissions and similar.
     &#34;&#34;&#34;
     server = recognize_server(uid)
@@ -536,7 +612,7 @@ Talents are not included.</p>
         chinese=is_chinese(uid),
         cookie=cookie,
         params=dict(server=server, role_id=uid),
-        headers={&#39;x-rpc-language&#39;: lang},
+        headers={&#34;x-rpc-language&#34;: lang},
     )
     return prettify_notes(data)</code></pre>
 </details>
@@ -550,9 +626,11 @@ Talents are not included.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/genshinstats.py#L235-L248" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/genshinstats.py#L284-L299" class="git-link">Browse git</a>
 </summary>
-<pre><code class="python">def get_spiral_abyss(uid: int, previous: bool = False, cookie: Mapping[str, Any] = None) -&gt; Dict[str, Any]:
+<pre><code class="python">def get_spiral_abyss(
+    uid: int, previous: bool = False, cookie: Mapping[str, Any] = None
+) -&gt; Dict[str, Any]:
     &#34;&#34;&#34;Gets spiral abyss runs of a user and details about them.
 
     Every season these stats refresh and you can get the previous stats with `previous`.
@@ -563,7 +641,7 @@ Talents are not included.</p>
         &#34;game_record/genshin/api/spiralAbyss&#34;,
         chinese=is_chinese(uid),
         cookie=cookie,
-        params=dict(server=server, role_id=uid, schedule_type=schedule_type)
+        params=dict(server=server, role_id=uid, schedule_type=schedule_type),
     )
     return prettify_abyss(data)</code></pre>
 </details>
@@ -577,9 +655,11 @@ Talents are not included.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/genshinstats.py#L195-L211" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/genshinstats.py#L234-L254" class="git-link">Browse git</a>
 </summary>
-<pre><code class="python">def get_user_stats(uid: int, equipment: bool = False, lang: str = &#39;en-us&#39;, cookie: Mapping[str, Any] = None) -&gt; Dict[str, Any]:
+<pre><code class="python">def get_user_stats(
+    uid: int, equipment: bool = False, lang: str = &#34;en-us&#34;, cookie: Mapping[str, Any] = None
+) -&gt; Dict[str, Any]:
     &#34;&#34;&#34;Gets basic user information and stats.
 
     If equipment is True an additional request will be made to get the character equipment
@@ -590,11 +670,13 @@ Talents are not included.</p>
         chinese=is_chinese(uid),
         cookie=cookie,
         params=dict(server=server, role_id=uid),
-        headers={&#39;x-rpc-language&#39;: lang},
+        headers={&#34;x-rpc-language&#34;: lang},
     )
     data = prettify_stats(data)
     if equipment:
-        data[&#39;characters&#39;] = get_characters(uid, [i[&#39;id&#39;] for i in data[&#39;characters&#39;]], lang, cookie)
+        data[&#34;characters&#34;] = get_characters(
+            uid, [i[&#34;id&#34;] for i in data[&#34;characters&#34;]], lang, cookie
+        )
     return data</code></pre>
 </details>
 </dd>
@@ -612,7 +694,7 @@ Talents are not included.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/genshinstats.py#L54-L66" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/genshinstats.py#L64-L76" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def set_cookie(cookie: Union[Mapping[str, Any], str] = None, **kwargs: Any) -&gt; None:
     &#34;&#34;&#34;Logs-in using a cookie.
@@ -642,7 +724,7 @@ Avalible browsers: chrome, chromium, opera, edge, firefox</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/genshinstats.py#L110-L120" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/genshinstats.py#L125-L135" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def set_cookie_auto(browser: str = None) -&gt; None:
     &#34;&#34;&#34;Like set_cookie, but gets the cookies by itself from your browser.
@@ -668,7 +750,7 @@ This is so far the only way to circumvent the rate limit.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/genshinstats.py#L68-L86" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/genshinstats.py#L79-L97" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def set_cookies(*args: Union[Mapping[str, Any], str], clear: bool = True) -&gt; None:
     &#34;&#34;&#34;Sets multiple cookies at once to cycle between. Takes same arguments as set_cookie.
@@ -683,7 +765,7 @@ This is so far the only way to circumvent the rate limit.</p>
 
     for cookie in args:
         if isinstance(cookie, Mapping):
-            cookie = {k: str(v) for k, v in cookie.items()} # SimpleCookie needs a string
+            cookie = {k: str(v) for k, v in cookie.items()}  # SimpleCookie needs a string
         cookie = SimpleCookie(cookie)
 
         jar = RequestsCookieJar()
@@ -704,7 +786,7 @@ Avalible browsers: chrome, chromium, opera, edge, firefox</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/genshinstats.py#L110-L120" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/genshinstats.py#L125-L135" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def set_cookie_auto(browser: str = None) -&gt; None:
     &#34;&#34;&#34;Like set_cookie, but gets the cookies by itself from your browser.

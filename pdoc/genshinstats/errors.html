@@ -28,87 +28,119 @@ It's possible to add retcodes and the original api response message with <code>.
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/errors.py#L1-L81" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/errors.py#L1-L113" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">&#34;&#34;&#34;Genshinstats errors.
 
 These take in only a single argument: msg.
 It&#39;s possible to add retcodes and the original api response message with `.set_reponse()`.
 &#34;&#34;&#34;
+
+
 class GenshinStatsException(Exception):
     &#34;&#34;&#34;Base Exception for all genshinstats errors.&#34;&#34;&#34;
+
     retcode: int = 0
-    orig_msg: str = &#39;&#39;
+    orig_msg: str = &#34;&#34;
+
     def __init__(self, msg: str) -&gt; None:
         self.msg = msg
-    
+
     def set_response(self, response: dict) -&gt; None:
         &#34;&#34;&#34;Adds an optional response object to the error.&#34;&#34;&#34;
-        self.retcode = response[&#39;retcode&#39;]
-        self.orig_msg = response[&#39;message&#39;]
+        self.retcode = response[&#34;retcode&#34;]
+        self.orig_msg = response[&#34;message&#34;]
         self.msg = self.msg.format(self.retcode, self.orig_msg)
 
     @property
     def msg(self) -&gt; str:
         return self.args[0]
+
     @msg.setter
     def msg(self, msg) -&gt; None:
         self.args = (msg,)
 
+
 class TooManyRequests(GenshinStatsException):
     &#34;&#34;&#34;Made too many requests and got ratelimited&#34;&#34;&#34;
+
+
 class NotLoggedIn(GenshinStatsException):
     &#34;&#34;&#34;Cookies have not been provided.&#34;&#34;&#34;
+
+
 class AccountNotFound(GenshinStatsException):
     &#34;&#34;&#34;Tried to get data with an invalid uid.&#34;&#34;&#34;
+
+
 class DataNotPublic(GenshinStatsException):
     &#34;&#34;&#34;User hasn&#39;t set their data to public.&#34;&#34;&#34;
 
+
 class CodeRedeemException(GenshinStatsException):
     &#34;&#34;&#34;Code redemption failed.&#34;&#34;&#34;
+
+
 class SignInException(GenshinStatsException):
     &#34;&#34;&#34;Sign-in failed&#34;&#34;&#34;
 
+
 class AuthkeyError(GenshinStatsException):
     &#34;&#34;&#34;Base GachaLog Exception.&#34;&#34;&#34;
+
+
 class InvalidAuthkey(AuthkeyError):
     &#34;&#34;&#34;An authkey is invalid.&#34;&#34;&#34;
+
+
 class AuthkeyTimeout(AuthkeyError):
     &#34;&#34;&#34;An authkey has timed out.&#34;&#34;&#34;
+
+
 class MissingAuthKey(AuthkeyError):
     &#34;&#34;&#34;No gacha authkey was found.&#34;&#34;&#34;
 
+
 def raise_for_error(response: dict):
     &#34;&#34;&#34;Raises a custom genshinstats error from a response.&#34;&#34;&#34;
-    # every error uses a different response code and message, 
+    # every error uses a different response code and message,
     # but the codes are not unique so we must check the message at some points too.
     error = {
         # general
         10101: TooManyRequests(&#34;Cannnot get data for more than 30 accounts per cookie per day.&#34;),
-        -100:  NotLoggedIn(&#39;Login cookies have not been provided or are incorrect.&#39;),
-        10001: NotLoggedIn(&#39;Login cookies have not been provided or are incorrect.&#39;),
-        10102: DataNotPublic(&#39;User\&#39;s data is not public&#39;),
-        1009:  AccountNotFound(&#39;Could not find user; uid may not be valid.&#39;),
-        -1:    AccountNotFound(&#39;Could not find user; uid may not be valid.&#39;),
-        -10002:AccountNotFound(&#39;Cannot get rewards info. Account has no game account binded to it.&#39;),
-        -108:  GenshinStatsException(&#39;Language is not valid.&#39;),
-        10103: NotLoggedIn(&#39;Cookies are correct but do not have a hoyolab account bound to them.&#39;),
+        -100: NotLoggedIn(&#34;Login cookies have not been provided or are incorrect.&#34;),
+        10001: NotLoggedIn(&#34;Login cookies have not been provided or are incorrect.&#34;),
+        10102: DataNotPublic(&#34;User&#39;s data is not public&#34;),
+        1009: AccountNotFound(&#34;Could not find user; uid may not be valid.&#34;),
+        -1: AccountNotFound(&#34;Could not find user; uid may not be valid.&#34;),
+        -10002: AccountNotFound(
+            &#34;Cannot get rewards info. Account has no game account binded to it.&#34;
+        ),
+        -108: GenshinStatsException(&#34;Language is not valid.&#34;),
+        10103: NotLoggedIn(&#34;Cookies are correct but do not have a hoyolab account bound to them.&#34;),
         # code redemption
-        -2003: CodeRedeemException(&#39;Invalid redemption code&#39;),
-        -2017: CodeRedeemException(&#39;Redemption code has been claimed already.&#39;),
-        -2001: CodeRedeemException(&#39;Redemption code has expired.&#39;),
-        -2021: CodeRedeemException(&#39;Cannot claim codes for account with adventure rank lower than 10.&#39;),
-        -1073: CodeRedeemException(&#39;Cannot claim code. Account has no game account bound to it.&#39;),
-        -1071: NotLoggedIn(&#39;Login cookies from redeem_code() have not been provided or are incorrect. &#39;
-                           &#39;Make sure you use account_id and cookie_token cookies.&#39;),
+        -2003: CodeRedeemException(&#34;Invalid redemption code&#34;),
+        -2017: CodeRedeemException(&#34;Redemption code has been claimed already.&#34;),
+        -2001: CodeRedeemException(&#34;Redemption code has expired.&#34;),
+        -2021: CodeRedeemException(
+            &#34;Cannot claim codes for account with adventure rank lower than 10.&#34;
+        ),
+        -1073: CodeRedeemException(&#34;Cannot claim code. Account has no game account bound to it.&#34;),
+        -1071: NotLoggedIn(
+            &#34;Login cookies from redeem_code() have not been provided or are incorrect. &#34;
+            &#34;Make sure you use account_id and cookie_token cookies.&#34;
+        ),
         # sign in
-        -5003: SignInException(&#39;Already claimed daily reward today.&#39;),
-        2001:  SignInException(&#39;Already checked into hoyolab today.&#39;),
+        -5003: SignInException(&#34;Already claimed daily reward today.&#34;),
+        2001: SignInException(&#34;Already checked into hoyolab today.&#34;),
         # gacha log
-        -100:  InvalidAuthkey(&#39;Authkey is not valid.&#39;) if response[&#39;message&#39;]==&#39;authkey error&#39; else 
-                NotLoggedIn(&#39;Login cookies have not been provided or are incorrect.&#39;),
-        -101:  AuthkeyTimeout(&#39;Authkey has timed-out. Update it by opening the history page in Genshin.&#39;)
-    }.get(response[&#39;retcode&#39;], GenshinStatsException(&#34;{} Error ({})&#34;))
+        -100: InvalidAuthkey(&#34;Authkey is not valid.&#34;)
+        if response[&#34;message&#34;] == &#34;authkey error&#34;
+        else NotLoggedIn(&#34;Login cookies have not been provided or are incorrect.&#34;),
+        -101: AuthkeyTimeout(
+            &#34;Authkey has timed-out. Update it by opening the history page in Genshin.&#34;
+        ),
+    }.get(response[&#34;retcode&#34;], GenshinStatsException(&#34;{} Error ({})&#34;))
     error.set_response(response)
     raise error</code></pre>
 </details>
@@ -128,39 +160,48 @@ def raise_for_error(response: dict):
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/errors.py#L49-L81" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/errors.py#L72-L113" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def raise_for_error(response: dict):
     &#34;&#34;&#34;Raises a custom genshinstats error from a response.&#34;&#34;&#34;
-    # every error uses a different response code and message, 
+    # every error uses a different response code and message,
     # but the codes are not unique so we must check the message at some points too.
     error = {
         # general
         10101: TooManyRequests(&#34;Cannnot get data for more than 30 accounts per cookie per day.&#34;),
-        -100:  NotLoggedIn(&#39;Login cookies have not been provided or are incorrect.&#39;),
-        10001: NotLoggedIn(&#39;Login cookies have not been provided or are incorrect.&#39;),
-        10102: DataNotPublic(&#39;User\&#39;s data is not public&#39;),
-        1009:  AccountNotFound(&#39;Could not find user; uid may not be valid.&#39;),
-        -1:    AccountNotFound(&#39;Could not find user; uid may not be valid.&#39;),
-        -10002:AccountNotFound(&#39;Cannot get rewards info. Account has no game account binded to it.&#39;),
-        -108:  GenshinStatsException(&#39;Language is not valid.&#39;),
-        10103: NotLoggedIn(&#39;Cookies are correct but do not have a hoyolab account bound to them.&#39;),
+        -100: NotLoggedIn(&#34;Login cookies have not been provided or are incorrect.&#34;),
+        10001: NotLoggedIn(&#34;Login cookies have not been provided or are incorrect.&#34;),
+        10102: DataNotPublic(&#34;User&#39;s data is not public&#34;),
+        1009: AccountNotFound(&#34;Could not find user; uid may not be valid.&#34;),
+        -1: AccountNotFound(&#34;Could not find user; uid may not be valid.&#34;),
+        -10002: AccountNotFound(
+            &#34;Cannot get rewards info. Account has no game account binded to it.&#34;
+        ),
+        -108: GenshinStatsException(&#34;Language is not valid.&#34;),
+        10103: NotLoggedIn(&#34;Cookies are correct but do not have a hoyolab account bound to them.&#34;),
         # code redemption
-        -2003: CodeRedeemException(&#39;Invalid redemption code&#39;),
-        -2017: CodeRedeemException(&#39;Redemption code has been claimed already.&#39;),
-        -2001: CodeRedeemException(&#39;Redemption code has expired.&#39;),
-        -2021: CodeRedeemException(&#39;Cannot claim codes for account with adventure rank lower than 10.&#39;),
-        -1073: CodeRedeemException(&#39;Cannot claim code. Account has no game account bound to it.&#39;),
-        -1071: NotLoggedIn(&#39;Login cookies from redeem_code() have not been provided or are incorrect. &#39;
-                           &#39;Make sure you use account_id and cookie_token cookies.&#39;),
+        -2003: CodeRedeemException(&#34;Invalid redemption code&#34;),
+        -2017: CodeRedeemException(&#34;Redemption code has been claimed already.&#34;),
+        -2001: CodeRedeemException(&#34;Redemption code has expired.&#34;),
+        -2021: CodeRedeemException(
+            &#34;Cannot claim codes for account with adventure rank lower than 10.&#34;
+        ),
+        -1073: CodeRedeemException(&#34;Cannot claim code. Account has no game account bound to it.&#34;),
+        -1071: NotLoggedIn(
+            &#34;Login cookies from redeem_code() have not been provided or are incorrect. &#34;
+            &#34;Make sure you use account_id and cookie_token cookies.&#34;
+        ),
         # sign in
-        -5003: SignInException(&#39;Already claimed daily reward today.&#39;),
-        2001:  SignInException(&#39;Already checked into hoyolab today.&#39;),
+        -5003: SignInException(&#34;Already claimed daily reward today.&#34;),
+        2001: SignInException(&#34;Already checked into hoyolab today.&#34;),
         # gacha log
-        -100:  InvalidAuthkey(&#39;Authkey is not valid.&#39;) if response[&#39;message&#39;]==&#39;authkey error&#39; else 
-                NotLoggedIn(&#39;Login cookies have not been provided or are incorrect.&#39;),
-        -101:  AuthkeyTimeout(&#39;Authkey has timed-out. Update it by opening the history page in Genshin.&#39;)
-    }.get(response[&#39;retcode&#39;], GenshinStatsException(&#34;{} Error ({})&#34;))
+        -100: InvalidAuthkey(&#34;Authkey is not valid.&#34;)
+        if response[&#34;message&#34;] == &#34;authkey error&#34;
+        else NotLoggedIn(&#34;Login cookies have not been provided or are incorrect.&#34;),
+        -101: AuthkeyTimeout(
+            &#34;Authkey has timed-out. Update it by opening the history page in Genshin.&#34;
+        ),
+    }.get(response[&#34;retcode&#34;], GenshinStatsException(&#34;{} Error ({})&#34;))
     error.set_response(response)
     raise error</code></pre>
 </details>
@@ -179,7 +220,7 @@ def raise_for_error(response: dict):
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/errors.py#L30-L31" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/errors.py#L40-L41" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">class AccountNotFound(GenshinStatsException):
     &#34;&#34;&#34;Tried to get data with an invalid uid.&#34;&#34;&#34;</code></pre>
@@ -219,7 +260,7 @@ def raise_for_error(response: dict):
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/errors.py#L40-L41" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/errors.py#L56-L57" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">class AuthkeyError(GenshinStatsException):
     &#34;&#34;&#34;Base GachaLog Exception.&#34;&#34;&#34;</code></pre>
@@ -265,7 +306,7 @@ def raise_for_error(response: dict):
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/errors.py#L44-L45" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/errors.py#L64-L65" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">class AuthkeyTimeout(AuthkeyError):
     &#34;&#34;&#34;An authkey has timed out.&#34;&#34;&#34;</code></pre>
@@ -306,7 +347,7 @@ def raise_for_error(response: dict):
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/errors.py#L35-L36" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/errors.py#L48-L49" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">class CodeRedeemException(GenshinStatsException):
     &#34;&#34;&#34;Code redemption failed.&#34;&#34;&#34;</code></pre>
@@ -346,7 +387,7 @@ def raise_for_error(response: dict):
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/errors.py#L32-L33" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/errors.py#L44-L45" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">class DataNotPublic(GenshinStatsException):
     &#34;&#34;&#34;User hasn&#39;t set their data to public.&#34;&#34;&#34;</code></pre>
@@ -386,24 +427,27 @@ def raise_for_error(response: dict):
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/errors.py#L6-L24" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/errors.py#L8-L29" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">class GenshinStatsException(Exception):
     &#34;&#34;&#34;Base Exception for all genshinstats errors.&#34;&#34;&#34;
+
     retcode: int = 0
-    orig_msg: str = &#39;&#39;
+    orig_msg: str = &#34;&#34;
+
     def __init__(self, msg: str) -&gt; None:
         self.msg = msg
-    
+
     def set_response(self, response: dict) -&gt; None:
         &#34;&#34;&#34;Adds an optional response object to the error.&#34;&#34;&#34;
-        self.retcode = response[&#39;retcode&#39;]
-        self.orig_msg = response[&#39;message&#39;]
+        self.retcode = response[&#34;retcode&#34;]
+        self.orig_msg = response[&#34;message&#34;]
         self.msg = self.msg.format(self.retcode, self.orig_msg)
 
     @property
     def msg(self) -&gt; str:
         return self.args[0]
+
     @msg.setter
     def msg(self, msg) -&gt; None:
         self.args = (msg,)</code></pre>
@@ -442,7 +486,7 @@ def raise_for_error(response: dict):
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/errors.py#L19-L21" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/errors.py#L23-L25" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">@property
 def msg(self) -&gt; str:
@@ -460,12 +504,12 @@ def msg(self) -&gt; str:
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/errors.py#L13-L17" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/errors.py#L17-L21" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def set_response(self, response: dict) -&gt; None:
     &#34;&#34;&#34;Adds an optional response object to the error.&#34;&#34;&#34;
-    self.retcode = response[&#39;retcode&#39;]
-    self.orig_msg = response[&#39;message&#39;]
+    self.retcode = response[&#34;retcode&#34;]
+    self.orig_msg = response[&#34;message&#34;]
     self.msg = self.msg.format(self.retcode, self.orig_msg)</code></pre>
 </details>
 </dd>
@@ -480,7 +524,7 @@ def msg(self) -&gt; str:
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/errors.py#L42-L43" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/errors.py#L60-L61" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">class InvalidAuthkey(AuthkeyError):
     &#34;&#34;&#34;An authkey is invalid.&#34;&#34;&#34;</code></pre>
@@ -521,7 +565,7 @@ def msg(self) -&gt; str:
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/errors.py#L46-L47" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/errors.py#L68-L69" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">class MissingAuthKey(AuthkeyError):
     &#34;&#34;&#34;No gacha authkey was found.&#34;&#34;&#34;</code></pre>
@@ -562,7 +606,7 @@ def msg(self) -&gt; str:
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/errors.py#L28-L29" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/errors.py#L36-L37" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">class NotLoggedIn(GenshinStatsException):
     &#34;&#34;&#34;Cookies have not been provided.&#34;&#34;&#34;</code></pre>
@@ -602,7 +646,7 @@ def msg(self) -&gt; str:
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/errors.py#L37-L38" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/errors.py#L52-L53" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">class SignInException(GenshinStatsException):
     &#34;&#34;&#34;Sign-in failed&#34;&#34;&#34;</code></pre>
@@ -642,7 +686,7 @@ def msg(self) -&gt; str:
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/errors.py#L26-L27" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/errors.py#L32-L33" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">class TooManyRequests(GenshinStatsException):
     &#34;&#34;&#34;Made too many requests and got ratelimited&#34;&#34;&#34;</code></pre>

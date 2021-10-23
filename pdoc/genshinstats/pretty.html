@@ -28,7 +28,7 @@ that were leftover from during development</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/pretty.py#L1-L357" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/pretty.py#L1-L454" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">&#34;&#34;&#34;Prettifiers for genshinstats api returns.
 
@@ -50,10 +50,11 @@ character_icons = {
     &#34;Shougun&#34;: &#34;Raiden Shogun&#34;,
 }
 
+
 def _recognize_character_icon(url: str) -&gt; str:
     &#34;&#34;&#34;Recognizes a character&#39;s icon url and returns its name.&#34;&#34;&#34;
-    exp = r&#39;https://upload-os-bbs.mihoyo.com/game_record/genshin/character_.*_(\w+)(?:@\dx)?.png&#39;
-    match = re.fullmatch(exp,url)
+    exp = r&#34;https://upload-os-bbs.mihoyo.com/game_record/genshin/character_.*_(\w+)(?:@\dx)?.png&#34;
+    match = re.fullmatch(exp, url)
     if match is None:
         raise ValueError(f&#34;{url!r} is not a character icon or image url&#34;)
     character = match.group(1)
@@ -77,115 +78,141 @@ def prettify_stats(data):
             &#34;precious_chests&#34;: s[&#34;precious_chest_number&#34;],
             &#34;luxurious_chests&#34;: s[&#34;luxurious_chest_number&#34;],
             &#34;unlocked_waypoints&#34;: s[&#34;way_point_number&#34;],
-            &#34;unlocked_domains&#34;: s[&#34;domain_number&#34;]
+            &#34;unlocked_domains&#34;: s[&#34;domain_number&#34;],
         },
-        &#34;characters&#34;: [{
-            &#34;name&#34;: i[&#34;name&#34;],
-            &#34;rarity&#34;: i[&#34;rarity&#34;] if i[&#34;rarity&#34;] &lt; 100 else i[&#34;rarity&#34;] - 100, # aloy has 105 stars
-            &#34;element&#34;: i[&#34;element&#34;],
-            &#34;level&#34;: i[&#34;level&#34;],
-            &#34;friendship&#34;: i[&#34;fetter&#34;],
-            &#34;icon&#34;: i[&#34;image&#34;],
-            &#34;id&#34;: i[&#34;id&#34;],
-        } for i in data[&#34;avatars&#34;]],
+        &#34;characters&#34;: [
+            {
+                &#34;name&#34;: i[&#34;name&#34;],
+                &#34;rarity&#34;: i[&#34;rarity&#34;]
+                if i[&#34;rarity&#34;] &lt; 100
+                else i[&#34;rarity&#34;] - 100,  # aloy has 105 stars
+                &#34;element&#34;: i[&#34;element&#34;],
+                &#34;level&#34;: i[&#34;level&#34;],
+                &#34;friendship&#34;: i[&#34;fetter&#34;],
+                &#34;icon&#34;: i[&#34;image&#34;],
+                &#34;id&#34;: i[&#34;id&#34;],
+            }
+            for i in data[&#34;avatars&#34;]
+        ],
         &#34;teapot&#34;: {
             # only unique data between realms are names and icons
-            &#34;realms&#34;: [{
-                &#34;name&#34;: s[&#34;name&#34;],
-                &#34;icon&#34;: s[&#34;icon&#34;]
-            } for s in data[&#34;homes&#34;]],
+            &#34;realms&#34;: [{&#34;name&#34;: s[&#34;name&#34;], &#34;icon&#34;: s[&#34;icon&#34;]} for s in data[&#34;homes&#34;]],
             &#34;level&#34;: h[&#34;level&#34;],
             &#34;comfort&#34;: h[&#34;comfort_num&#34;],
             &#34;comfort_name&#34;: h[&#34;comfort_level_name&#34;],
             &#34;comfort_icon&#34;: h[&#34;comfort_level_icon&#34;],
             &#34;items&#34;: h[&#34;item_num&#34;],
-            &#34;visitors&#34;: h[&#34;visit_num&#34;] # currently not in use
-        } if h else None,
-        &#34;explorations&#34;: [{
-            &#34;name&#34;: i[&#34;name&#34;],
-            &#34;explored&#34;: round(i[&#34;exploration_percentage&#34;]/10, 1),
-            &#34;type&#34;: i[&#34;type&#34;],
-            &#34;level&#34;: i[&#34;level&#34;],
-            &#34;icon&#34;: i[&#34;icon&#34;],
-            &#34;offerings&#34;: i[&#34;offerings&#34;],
-        } for i in data[&#34;world_explorations&#34;]]
+            &#34;visitors&#34;: h[&#34;visit_num&#34;],  # currently not in use
+        }
+        if h
+        else None,
+        &#34;explorations&#34;: [
+            {
+                &#34;name&#34;: i[&#34;name&#34;],
+                &#34;explored&#34;: round(i[&#34;exploration_percentage&#34;] / 10, 1),
+                &#34;type&#34;: i[&#34;type&#34;],
+                &#34;level&#34;: i[&#34;level&#34;],
+                &#34;icon&#34;: i[&#34;icon&#34;],
+                &#34;offerings&#34;: i[&#34;offerings&#34;],
+            }
+            for i in data[&#34;world_explorations&#34;]
+        ],
     }
 
+
 def prettify_characters(data):
-    return [{
-        &#34;name&#34;: i[&#34;name&#34;],
-        &#34;rarity&#34;: i[&#34;rarity&#34;] if i[&#34;rarity&#34;] &lt; 100 else i[&#34;rarity&#34;] - 100, # aloy has 105 stars
-        &#34;element&#34;: i[&#34;element&#34;],
-        &#34;level&#34;: i[&#34;level&#34;],
-        &#34;friendship&#34;: i[&#34;fetter&#34;],
-        &#34;constellation&#34;: sum(c[&#34;is_actived&#34;] for c in i[&#34;constellations&#34;]),
-        &#34;icon&#34;: i[&#34;icon&#34;],
-        &#34;image&#34;: i[&#34;image&#34;],
-        &#34;id&#34;: i[&#34;id&#34;],
-        &#34;collab&#34;: i[&#34;rarity&#34;] &gt;= 100,
-        **({&#34;traveler_name&#34;: &#34;Aether&#34; if &#34;Boy&#34; in i[&#34;icon&#34;] else &#34;Lumine&#34;} if &#34;Player&#34; in i[&#34;icon&#34;] else {}),
-        &#34;weapon&#34;: {
-            &#34;name&#34;: i[&#34;weapon&#34;][&#34;name&#34;],
-            &#34;rarity&#34;: i[&#34;weapon&#34;][&#34;rarity&#34;],
-            &#34;type&#34;: i[&#34;weapon&#34;][&#34;type_name&#34;],
-            &#34;level&#34;: i[&#34;weapon&#34;][&#34;level&#34;],
-            &#34;ascension&#34;: i[&#34;weapon&#34;][&#34;promote_level&#34;],
-            &#34;refinement&#34;: i[&#34;weapon&#34;][&#34;affix_level&#34;],
-            &#34;description&#34;: i[&#34;weapon&#34;][&#34;desc&#34;],
-            &#34;icon&#34;: i[&#34;weapon&#34;][&#34;icon&#34;],
-            &#34;id&#34;: i[&#34;weapon&#34;][&#34;id&#34;],
-        },
-        &#34;artifacts&#34;: [{
-            &#34;name&#34;: a[&#34;name&#34;],
-            &#34;pos_name&#34;: {
-                1: &#34;flower&#34;,
-                2: &#34;feather&#34;,
-                3: &#34;hourglass&#34;,
-                4: &#34;goblet&#34;,
-                5: &#34;crown&#34;,
-            }[a[&#34;pos&#34;]],
-            &#34;full_pos_name&#34;: a[&#34;pos_name&#34;],
-            &#34;pos&#34;: a[&#34;pos&#34;],
-            &#34;rarity&#34;: a[&#34;rarity&#34;],
-            &#34;level&#34;: a[&#34;level&#34;],
-            &#34;set&#34;: {
-                &#34;name&#34;: a[&#34;set&#34;][&#34;name&#34;],
-                &#34;effect_type&#34;: [&#39;none&#39;,&#39;single&#39;,&#39;classic&#39;][len(a[&#34;set&#34;][&#34;affixes&#34;])],
-                &#34;effects&#34;: [{
-                    &#34;pieces&#34;: e[&#34;activation_number&#34;],
-                    &#34;effect&#34;: e[&#34;effect&#34;],
-                } for e in a[&#34;set&#34;][&#34;affixes&#34;]],
-                &#34;set_id&#34;: int(re.search(r&#39;UI_RelicIcon_(\d+)_\d+&#39;,a[&#34;icon&#34;]).group(1)), # type: ignore
-                &#34;id&#34;: a[&#34;set&#34;][&#34;id&#34;]
+    return [
+        {
+            &#34;name&#34;: i[&#34;name&#34;],
+            &#34;rarity&#34;: i[&#34;rarity&#34;] if i[&#34;rarity&#34;] &lt; 100 else i[&#34;rarity&#34;] - 100,  # aloy has 105 stars
+            &#34;element&#34;: i[&#34;element&#34;],
+            &#34;level&#34;: i[&#34;level&#34;],
+            &#34;friendship&#34;: i[&#34;fetter&#34;],
+            &#34;constellation&#34;: sum(c[&#34;is_actived&#34;] for c in i[&#34;constellations&#34;]),
+            &#34;icon&#34;: i[&#34;icon&#34;],
+            &#34;image&#34;: i[&#34;image&#34;],
+            &#34;id&#34;: i[&#34;id&#34;],
+            &#34;collab&#34;: i[&#34;rarity&#34;] &gt;= 100,
+            **(
+                {&#34;traveler_name&#34;: &#34;Aether&#34; if &#34;Boy&#34; in i[&#34;icon&#34;] else &#34;Lumine&#34;}
+                if &#34;Player&#34; in i[&#34;icon&#34;]
+                else {}
+            ),
+            &#34;weapon&#34;: {
+                &#34;name&#34;: i[&#34;weapon&#34;][&#34;name&#34;],
+                &#34;rarity&#34;: i[&#34;weapon&#34;][&#34;rarity&#34;],
+                &#34;type&#34;: i[&#34;weapon&#34;][&#34;type_name&#34;],
+                &#34;level&#34;: i[&#34;weapon&#34;][&#34;level&#34;],
+                &#34;ascension&#34;: i[&#34;weapon&#34;][&#34;promote_level&#34;],
+                &#34;refinement&#34;: i[&#34;weapon&#34;][&#34;affix_level&#34;],
+                &#34;description&#34;: i[&#34;weapon&#34;][&#34;desc&#34;],
+                &#34;icon&#34;: i[&#34;weapon&#34;][&#34;icon&#34;],
+                &#34;id&#34;: i[&#34;weapon&#34;][&#34;id&#34;],
             },
-            &#34;icon&#34;: a[&#34;icon&#34;],
-            &#34;id&#34;: a[&#34;id&#34;],
-        } for a in i[&#34;reliquaries&#34;]],
-        &#34;constellations&#34;: [{
-            &#34;name&#34;: c[&#34;name&#34;],
-            &#34;effect&#34;: c[&#34;effect&#34;],
-            &#34;is_activated&#34;: c[&#34;is_actived&#34;],
-            &#34;index&#34;: c[&#34;pos&#34;],
-            &#34;icon&#34;: c[&#34;icon&#34;],
-            &#34;id&#34;: c[&#34;id&#34;],
-        } for c in i[&#34;constellations&#34;]],
-        &#34;outfits&#34;: [{
-            &#34;name&#34;: c[&#34;name&#34;],
-            &#34;icon&#34;: c[&#34;icon&#34;],
-            &#34;id&#34;: c[&#34;id&#34;]
-        } for c in i[&#34;costumes&#34;]],
-    } for i in data]
+            &#34;artifacts&#34;: [
+                {
+                    &#34;name&#34;: a[&#34;name&#34;],
+                    &#34;pos_name&#34;: {
+                        1: &#34;flower&#34;,
+                        2: &#34;feather&#34;,
+                        3: &#34;hourglass&#34;,
+                        4: &#34;goblet&#34;,
+                        5: &#34;crown&#34;,
+                    }[a[&#34;pos&#34;]],
+                    &#34;full_pos_name&#34;: a[&#34;pos_name&#34;],
+                    &#34;pos&#34;: a[&#34;pos&#34;],
+                    &#34;rarity&#34;: a[&#34;rarity&#34;],
+                    &#34;level&#34;: a[&#34;level&#34;],
+                    &#34;set&#34;: {
+                        &#34;name&#34;: a[&#34;set&#34;][&#34;name&#34;],
+                        &#34;effect_type&#34;: [&#34;none&#34;, &#34;single&#34;, &#34;classic&#34;][len(a[&#34;set&#34;][&#34;affixes&#34;])],
+                        &#34;effects&#34;: [
+                            {
+                                &#34;pieces&#34;: e[&#34;activation_number&#34;],
+                                &#34;effect&#34;: e[&#34;effect&#34;],
+                            }
+                            for e in a[&#34;set&#34;][&#34;affixes&#34;]
+                        ],
+                        &#34;set_id&#34;: int(re.search(r&#34;UI_RelicIcon_(\d+)_\d+&#34;, a[&#34;icon&#34;]).group(1)),  # type: ignore
+                        &#34;id&#34;: a[&#34;set&#34;][&#34;id&#34;],
+                    },
+                    &#34;icon&#34;: a[&#34;icon&#34;],
+                    &#34;id&#34;: a[&#34;id&#34;],
+                }
+                for a in i[&#34;reliquaries&#34;]
+            ],
+            &#34;constellations&#34;: [
+                {
+                    &#34;name&#34;: c[&#34;name&#34;],
+                    &#34;effect&#34;: c[&#34;effect&#34;],
+                    &#34;is_activated&#34;: c[&#34;is_actived&#34;],
+                    &#34;index&#34;: c[&#34;pos&#34;],
+                    &#34;icon&#34;: c[&#34;icon&#34;],
+                    &#34;id&#34;: c[&#34;id&#34;],
+                }
+                for c in i[&#34;constellations&#34;]
+            ],
+            &#34;outfits&#34;: [
+                {&#34;name&#34;: c[&#34;name&#34;], &#34;icon&#34;: c[&#34;icon&#34;], &#34;id&#34;: c[&#34;id&#34;]} for c in i[&#34;costumes&#34;]
+            ],
+        }
+        for i in data
+    ]
+
 
 def prettify_abyss(data):
-    fchars = lambda d: [{
-        &#34;value&#34;: a[&#34;value&#34;],
-        &#34;name&#34;: _recognize_character_icon(a[&#34;avatar_icon&#34;]),
-        &#34;rarity&#34;: a[&#34;rarity&#34;] if a[&#34;rarity&#34;] &lt; 100 else a[&#34;rarity&#34;] - 100, # aloy has 105 stars
-        &#34;icon&#34;: a[&#34;avatar_icon&#34;],
-        &#34;id&#34;: a[&#34;avatar_id&#34;],
-    } for a in d]
+    fchars = lambda d: [
+        {
+            &#34;value&#34;: a[&#34;value&#34;],
+            &#34;name&#34;: _recognize_character_icon(a[&#34;avatar_icon&#34;]),
+            &#34;rarity&#34;: a[&#34;rarity&#34;] if a[&#34;rarity&#34;] &lt; 100 else a[&#34;rarity&#34;] - 100,  # aloy has 105 stars
+            &#34;icon&#34;: a[&#34;avatar_icon&#34;],
+            &#34;id&#34;: a[&#34;avatar_id&#34;],
+        }
+        for a in d
+    ]
     todate = lambda x: datetime.fromtimestamp(int(x)).strftime(&#34;%Y-%m-%d&#34;)
-    totime = lambda x: datetime.fromtimestamp(int(x)).isoformat(&#39; &#39;)
+    totime = lambda x: datetime.fromtimestamp(int(x)).isoformat(&#34; &#34;)
     return {
         &#34;season&#34;: data[&#34;schedule_id&#34;],
         &#34;season_start_time&#34;: todate(data[&#34;start_time&#34;]),
@@ -204,61 +231,85 @@ def prettify_abyss(data):
             &#34;most_bursts_used&#34;: fchars(data[&#34;normal_skill_rank&#34;]),
             &#34;most_skills_used&#34;: fchars(data[&#34;energy_skill_rank&#34;]),
         },
-        &#34;floors&#34;: [{
-            &#34;floor&#34;: f[&#34;index&#34;],
-            &#34;stars&#34;: f[&#34;star&#34;],
-            &#34;max_stars&#34;: f[&#34;max_star&#34;],
-            &#34;start&#34;: totime(f[&#34;levels&#34;][0][&#34;battles&#34;][0][&#34;timestamp&#34;]),
-            &#34;icon&#34;: f[&#34;icon&#34;],
-            &#34;chambers&#34;: [{
-                &#34;chamber&#34;: l[&#34;index&#34;],
-                &#34;stars&#34;: l[&#34;star&#34;],
-                &#34;max_stars&#34;: l[&#34;max_star&#34;],
-                &#34;has_halves&#34;: len(l[&#34;battles&#34;]) == 2,
-                &#34;battles&#34;: [{
-                    &#34;half&#34;: b[&#34;index&#34;],
-                    &#34;timestamp&#34;: totime(b[&#34;timestamp&#34;]),
-                    &#34;characters&#34;: [{
-                        &#34;name&#34;: _recognize_character_icon(c[&#34;icon&#34;]),
-                        &#34;rarity&#34;: c[&#34;rarity&#34;] if c[&#34;rarity&#34;] &lt; 100 else c[&#34;rarity&#34;] - 100, # aloy has 105 stars
-                        &#34;level&#34;: c[&#34;level&#34;],
-                        &#34;icon&#34;: c[&#34;icon&#34;],
-                        &#34;id&#34;: c[&#34;id&#34;],
-
-                    } for c in b[&#34;avatars&#34;]]
-                } for b in l[&#34;battles&#34;]]
-            } for l in f[&#34;levels&#34;]]
-        } for f in data[&#34;floors&#34;]]
+        &#34;floors&#34;: [
+            {
+                &#34;floor&#34;: f[&#34;index&#34;],
+                &#34;stars&#34;: f[&#34;star&#34;],
+                &#34;max_stars&#34;: f[&#34;max_star&#34;],
+                &#34;start&#34;: totime(f[&#34;levels&#34;][0][&#34;battles&#34;][0][&#34;timestamp&#34;]),
+                &#34;icon&#34;: f[&#34;icon&#34;],
+                &#34;chambers&#34;: [
+                    {
+                        &#34;chamber&#34;: l[&#34;index&#34;],
+                        &#34;stars&#34;: l[&#34;star&#34;],
+                        &#34;max_stars&#34;: l[&#34;max_star&#34;],
+                        &#34;has_halves&#34;: len(l[&#34;battles&#34;]) == 2,
+                        &#34;battles&#34;: [
+                            {
+                                &#34;half&#34;: b[&#34;index&#34;],
+                                &#34;timestamp&#34;: totime(b[&#34;timestamp&#34;]),
+                                &#34;characters&#34;: [
+                                    {
+                                        &#34;name&#34;: _recognize_character_icon(c[&#34;icon&#34;]),
+                                        &#34;rarity&#34;: c[&#34;rarity&#34;]
+                                        if c[&#34;rarity&#34;] &lt; 100
+                                        else c[&#34;rarity&#34;] - 100,  # aloy has 105 stars
+                                        &#34;level&#34;: c[&#34;level&#34;],
+                                        &#34;icon&#34;: c[&#34;icon&#34;],
+                                        &#34;id&#34;: c[&#34;id&#34;],
+                                    }
+                                    for c in b[&#34;avatars&#34;]
+                                ],
+                            }
+                            for b in l[&#34;battles&#34;]
+                        ],
+                    }
+                    for l in f[&#34;levels&#34;]
+                ],
+            }
+            for f in data[&#34;floors&#34;]
+        ],
     }
+
 
 def prettify_activities(data):
-    activities = data[&#39;activities&#39;][0]
+    activities = data[&#34;activities&#34;][0]
     return {
-        &#39;hyakunin&#39;: [{
-            &#34;id&#34;: r[&#39;challenge_id&#39;],
-            &#34;name&#34;: r[&#39;challenge_name&#39;],
-            &#34;difficulty&#34;: r[&#34;difficulty&#34;],
-            &#34;medal_icon&#34;: r[&#34;heraldry_icon&#34;],
-            &#34;score&#34;: r[&#34;max_score&#34;],
-            &#34;multiplier&#34;: r[&#34;score_multiple&#34;],
-            &#34;lineups&#34;: [{
-                &#34;characters&#34;: [{
-                    &#34;name&#34;: _recognize_character_icon(c[&#34;icon&#34;]),
-                    &#34;rarity&#34;: c[&#34;rarity&#34;] if c[&#34;rarity&#34;] &lt; 100 else c[&#34;rarity&#34;] - 100, # aloy has 105 stars
-                    &#34;level&#34;: c[&#34;level&#34;],
-                    &#34;icon&#34;: c[&#34;icon&#34;],
-                    &#34;id&#34;: c[&#34;id&#34;],
-                    &#34;trial&#34;: c[&#34;is_trail_avatar&#34;],
-                } for c in l[&#34;avatars&#34;]],
-                &#34;skills&#34;: [{
-                    &#34;name&#34;: s[&#34;name&#34;],
-                    &#34;desc&#34;: s[&#34;desc&#34;],
-                    &#34;icon&#34;: s[&#34;icon&#34;],
-                    &#34;id&#34;: s[&#34;id&#34;]
-                } for s in l[&#34;skills&#34;]]
-            } for l in r[&#34;lineups&#34;]]
-        } for r in activities[&#39;sumo&#39;][&#39;records&#39;]]
+        &#34;hyakunin&#34;: [
+            {
+                &#34;id&#34;: r[&#34;challenge_id&#34;],
+                &#34;name&#34;: r[&#34;challenge_name&#34;],
+                &#34;difficulty&#34;: r[&#34;difficulty&#34;],
+                &#34;medal_icon&#34;: r[&#34;heraldry_icon&#34;],
+                &#34;score&#34;: r[&#34;max_score&#34;],
+                &#34;multiplier&#34;: r[&#34;score_multiple&#34;],
+                &#34;lineups&#34;: [
+                    {
+                        &#34;characters&#34;: [
+                            {
+                                &#34;name&#34;: _recognize_character_icon(c[&#34;icon&#34;]),
+                                &#34;rarity&#34;: c[&#34;rarity&#34;]
+                                if c[&#34;rarity&#34;] &lt; 100
+                                else c[&#34;rarity&#34;] - 100,  # aloy has 105 stars
+                                &#34;level&#34;: c[&#34;level&#34;],
+                                &#34;icon&#34;: c[&#34;icon&#34;],
+                                &#34;id&#34;: c[&#34;id&#34;],
+                                &#34;trial&#34;: c[&#34;is_trail_avatar&#34;],
+                            }
+                            for c in l[&#34;avatars&#34;]
+                        ],
+                        &#34;skills&#34;: [
+                            {&#34;name&#34;: s[&#34;name&#34;], &#34;desc&#34;: s[&#34;desc&#34;], &#34;icon&#34;: s[&#34;icon&#34;], &#34;id&#34;: s[&#34;id&#34;]}
+                            for s in l[&#34;skills&#34;]
+                        ],
+                    }
+                    for l in r[&#34;lineups&#34;]
+                ],
+            }
+            for r in activities[&#34;sumo&#34;][&#34;records&#34;]
+        ]
     }
+
 
 def prettify_notes(data):
     return {
@@ -270,123 +321,169 @@ def prettify_notes(data):
         &#34;claimed_commission_reward&#34;: data[&#34;is_extra_task_reward_received&#34;],
         &#34;max_boss_discounts&#34;: data[&#34;resin_discount_num_limit&#34;],
         &#34;remaining_boss_discounts&#34;: data[&#34;remain_resin_discount_num&#34;],
-        &#34;expeditions&#34;: [{
-            &#34;icon&#34;: exp[&#34;avatar_side_icon&#34;],
-            &#34;remaining_time&#34;: exp[&#34;remained_time&#34;],
-            &#34;status&#34;: exp[&#34;status&#34;]
-        } for exp in data[&#34;expeditions&#34;]],
-        &#34;max_expeditions&#34;: data[&#34;max_expedition_num&#34;]
+        &#34;expeditions&#34;: [
+            {
+                &#34;icon&#34;: exp[&#34;avatar_side_icon&#34;],
+                &#34;remaining_time&#34;: exp[&#34;remained_time&#34;],
+                &#34;status&#34;: exp[&#34;status&#34;],
+            }
+            for exp in data[&#34;expeditions&#34;]
+        ],
+        &#34;max_expeditions&#34;: data[&#34;max_expedition_num&#34;],
     }
 
-def prettify_game_accounts(data):
-    return [{
-        &#34;uid&#34;: int(a[&#34;game_uid&#34;]),
-        &#34;server&#34;: a[&#34;region_name&#34;],
-        &#34;level&#34;: a[&#34;level&#34;],
-        &#34;nickname&#34;: a[&#34;nickname&#34;],
-        # idk what these are for:
-        &#34;biz&#34;: a[&#34;game_biz&#34;],
-        &#34;is_chosen&#34;: a[&#34;is_chosen&#34;],
-        &#34;is_official&#34;: a[&#34;is_official&#34;],
-    } for a in data]
 
-def prettify_wish_history(data, banner_name = None):
-    return [{
-        &#34;type&#34;: i[&#34;item_type&#34;],
-        &#34;name&#34;: i[&#34;name&#34;],
-        &#34;rarity&#34;: int(i[&#34;rank_type&#34;]),
-        &#34;time&#34;: i[&#34;time&#34;],
-        &#34;id&#34;: int(i[&#34;id&#34;]),
-        &#34;banner&#34;: banner_name,
-        &#34;banner_type&#34;: int(i[&#34;gacha_type&#34;]),
-        &#34;uid&#34;: int(i[&#34;uid&#34;]),
-    } for i in data]
+def prettify_game_accounts(data):
+    return [
+        {
+            &#34;uid&#34;: int(a[&#34;game_uid&#34;]),
+            &#34;server&#34;: a[&#34;region_name&#34;],
+            &#34;level&#34;: a[&#34;level&#34;],
+            &#34;nickname&#34;: a[&#34;nickname&#34;],
+            # idk what these are for:
+            &#34;biz&#34;: a[&#34;game_biz&#34;],
+            &#34;is_chosen&#34;: a[&#34;is_chosen&#34;],
+            &#34;is_official&#34;: a[&#34;is_official&#34;],
+        }
+        for a in data
+    ]
+
+
+def prettify_wish_history(data, banner_name=None):
+    return [
+        {
+            &#34;type&#34;: i[&#34;item_type&#34;],
+            &#34;name&#34;: i[&#34;name&#34;],
+            &#34;rarity&#34;: int(i[&#34;rank_type&#34;]),
+            &#34;time&#34;: i[&#34;time&#34;],
+            &#34;id&#34;: int(i[&#34;id&#34;]),
+            &#34;banner&#34;: banner_name,
+            &#34;banner_type&#34;: int(i[&#34;gacha_type&#34;]),
+            &#34;uid&#34;: int(i[&#34;uid&#34;]),
+        }
+        for i in data
+    ]
+
 
 def prettify_gacha_items(data):
-    return [{
-        &#34;name&#34;: i[&#34;name&#34;],
-        &#34;type&#34;: i[&#34;item_type&#34;],
-        &#34;rarity&#34;: int(i[&#34;rank_type&#34;]),
-        &#34;id&#34;: 10000000+int(i[&#34;item_id&#34;])-1000 if len(i[&#34;item_id&#34;])==4 else int(i[&#34;item_id&#34;]),
-    } for i in data]
+    return [
+        {
+            &#34;name&#34;: i[&#34;name&#34;],
+            &#34;type&#34;: i[&#34;item_type&#34;],
+            &#34;rarity&#34;: int(i[&#34;rank_type&#34;]),
+            &#34;id&#34;: 10000000 + int(i[&#34;item_id&#34;]) - 1000
+            if len(i[&#34;item_id&#34;]) == 4
+            else int(i[&#34;item_id&#34;]),
+        }
+        for i in data
+    ]
+
 
 def prettify_banner_details(data):
-    per = lambda p: None if p==&#39;0%&#39; else float(p[: -1].replace(&#39;,&#39;,&#39;.&#39;))
-    fprobs = lambda l: [{
-        &#34;type&#34;: i[&#34;item_type&#34;],
-        &#34;name&#34;: i[&#34;item_name&#34;],
-        &#34;rarity&#34;: int(i[&#34;rank&#34;]),
-        &#34;is_up&#34;: bool(i[&#34;is_up&#34;]),
-        &#34;order_value&#34;: i[&#34;order_value&#34;],
-    } for i in l] if l else []
-    fitems = lambda l: [{
-        &#34;type&#34;: i[&#34;item_type&#34;],
-        &#34;name&#34;: i[&#34;item_name&#34;],
-        &#34;element&#34;: {
-            &#34;风&#34;: &#34;Anemo&#34;,
-            &#34;火&#34;: &#34;Pyro&#34;,
-            &#34;水&#34;: &#34;Hydro&#34;,
-            &#34;雷&#34;: &#34;Electro&#34;,
-            &#34;冰&#34;: &#34;Cryo&#34;,
-            &#34;岩&#34;: &#34;Geo&#34;,
-            &#34;？&#34;: &#34;Dendro&#34;,
-            &#34;&#34;: None
-        }[i[&#34;item_attr&#34;]],
-        &#34;icon&#34;: i[&#34;item_img&#34;],
-    } for i in l] if l else []
+    per = lambda p: None if p == &#34;0%&#34; else float(p[:-1].replace(&#34;,&#34;, &#34;.&#34;))
+    fprobs = (
+        lambda l: [
+            {
+                &#34;type&#34;: i[&#34;item_type&#34;],
+                &#34;name&#34;: i[&#34;item_name&#34;],
+                &#34;rarity&#34;: int(i[&#34;rank&#34;]),
+                &#34;is_up&#34;: bool(i[&#34;is_up&#34;]),
+                &#34;order_value&#34;: i[&#34;order_value&#34;],
+            }
+            for i in l
+        ]
+        if l
+        else []
+    )
+    fitems = (
+        lambda l: [
+            {
+                &#34;type&#34;: i[&#34;item_type&#34;],
+                &#34;name&#34;: i[&#34;item_name&#34;],
+                &#34;element&#34;: {
+                    &#34;风&#34;: &#34;Anemo&#34;,
+                    &#34;火&#34;: &#34;Pyro&#34;,
+                    &#34;水&#34;: &#34;Hydro&#34;,
+                    &#34;雷&#34;: &#34;Electro&#34;,
+                    &#34;冰&#34;: &#34;Cryo&#34;,
+                    &#34;岩&#34;: &#34;Geo&#34;,
+                    &#34;？&#34;: &#34;Dendro&#34;,
+                    &#34;&#34;: None,
+                }[i[&#34;item_attr&#34;]],
+                &#34;icon&#34;: i[&#34;item_img&#34;],
+            }
+            for i in l
+        ]
+        if l
+        else []
+    )
     return {
         &#34;banner_type_name&#34;: {
             100: &#34;Novice Wishes&#34;,
             200: &#34;Permanent Wish&#34;,
             301: &#34;Character Event Wish&#34;,
-            302: &#34;Weapon Event Wish&#34;
+            302: &#34;Weapon Event Wish&#34;,
         }[int(data[&#34;gacha_type&#34;])],
         &#34;banner_type&#34;: int(data[&#34;gacha_type&#34;]),
-        &#34;banner&#34;: re.sub(r&#39;&lt;.*?&gt;&#39;,&#39;&#39;,data[&#34;title&#34;]).strip(),
+        &#34;banner&#34;: re.sub(r&#34;&lt;.*?&gt;&#34;, &#34;&#34;, data[&#34;title&#34;]).strip(),
         &#34;title&#34;: data[&#34;title&#34;],
         &#34;content&#34;: data[&#34;content&#34;],
         &#34;date_range&#34;: data[&#34;date_range&#34;],
-        &#34;r5_up_prob&#34;: per(data[&#34;r5_up_prob&#34;]), # probability for rate-up 5*
-        &#34;r4_up_prob&#34;: per(data[&#34;r4_up_prob&#34;]), # probability for rate-up 4*
-        &#34;r5_prob&#34;: per(data[&#34;r5_prob&#34;]), # probability for 5*
-        &#34;r4_prob&#34;: per(data[&#34;r4_prob&#34;]), # probability for 4*
-        &#34;r3_prob&#34;: per(data[&#34;r3_prob&#34;]), # probability for 3*
-        &#34;r5_guarantee_prob&#34;: per(data[&#34;r5_baodi_prob&#34;]), # probability for 5* incl. guarantee
-        &#34;r4_guarantee_prob&#34;: per(data[&#34;r4_baodi_prob&#34;]), # probability for 4* incl. guarantee
-        &#34;r3_guarantee_prob&#34;: per(data[&#34;r3_baodi_prob&#34;]), # probability for 3* incl. guarantee
-        &#34;r5_up_items&#34;: fitems(data[&#34;r5_up_items&#34;]), # list of 5* rate-up items that you can get from banner
-        &#34;r4_up_items&#34;: fitems(data[&#34;r4_up_items&#34;]), # list of 4* rate-up items that you can get from banner
-        &#34;r5_items&#34;: fprobs(data[&#34;r5_prob_list&#34;]), # list 5* of items that you can get from banner
-        &#34;r4_items&#34;: fprobs(data[&#34;r4_prob_list&#34;]), # list 4* of items that you can get from banner
-        &#34;r3_items&#34;: fprobs(data[&#34;r3_prob_list&#34;]), # list 3* of items that you can get from banner
-        &#34;items&#34;: fprobs(sorted(
-            data[&#34;r5_prob_list&#34;]+data[&#34;r4_prob_list&#34;]+data[&#34;r3_prob_list&#34;],
-            key=lambda x: x[&#34;order_value&#34;]))
+        &#34;r5_up_prob&#34;: per(data[&#34;r5_up_prob&#34;]),  # probability for rate-up 5*
+        &#34;r4_up_prob&#34;: per(data[&#34;r4_up_prob&#34;]),  # probability for rate-up 4*
+        &#34;r5_prob&#34;: per(data[&#34;r5_prob&#34;]),  # probability for 5*
+        &#34;r4_prob&#34;: per(data[&#34;r4_prob&#34;]),  # probability for 4*
+        &#34;r3_prob&#34;: per(data[&#34;r3_prob&#34;]),  # probability for 3*
+        &#34;r5_guarantee_prob&#34;: per(data[&#34;r5_baodi_prob&#34;]),  # probability for 5* incl. guarantee
+        &#34;r4_guarantee_prob&#34;: per(data[&#34;r4_baodi_prob&#34;]),  # probability for 4* incl. guarantee
+        &#34;r3_guarantee_prob&#34;: per(data[&#34;r3_baodi_prob&#34;]),  # probability for 3* incl. guarantee
+        &#34;r5_up_items&#34;: fitems(
+            data[&#34;r5_up_items&#34;]
+        ),  # list of 5* rate-up items that you can get from banner
+        &#34;r4_up_items&#34;: fitems(
+            data[&#34;r4_up_items&#34;]
+        ),  # list of 4* rate-up items that you can get from banner
+        &#34;r5_items&#34;: fprobs(data[&#34;r5_prob_list&#34;]),  # list 5* of items that you can get from banner
+        &#34;r4_items&#34;: fprobs(data[&#34;r4_prob_list&#34;]),  # list 4* of items that you can get from banner
+        &#34;r3_items&#34;: fprobs(data[&#34;r3_prob_list&#34;]),  # list 3* of items that you can get from banner
+        &#34;items&#34;: fprobs(
+            sorted(
+                data[&#34;r5_prob_list&#34;] + data[&#34;r4_prob_list&#34;] + data[&#34;r3_prob_list&#34;],
+                key=lambda x: x[&#34;order_value&#34;],
+            )
+        ),
     }
+
 
 def prettify_trans(data, reasons={}):
     if data and &#34;name&#34; in data[0]:
         # transaction item
-        return [{
-            &#34;time&#34;: i[&#34;time&#34;],
-            &#34;name&#34;: i[&#34;name&#34;],
-            &#34;rarity&#34;: int(i[&#34;rank&#34;]),
-            &#34;amount&#34;: int(i[&#34;add_num&#34;]),
-            &#34;reason&#34;: reasons.get(int(i[&#34;reason&#34;]), &#34;&#34;),
-            &#34;reason_id&#34;: int(i[&#34;reason&#34;]),
-            &#34;uid&#34;: int(i[&#34;uid&#34;]),
-            &#34;id&#34;: int(i[&#34;id&#34;]),
-        } for i in data]
+        return [
+            {
+                &#34;time&#34;: i[&#34;time&#34;],
+                &#34;name&#34;: i[&#34;name&#34;],
+                &#34;rarity&#34;: int(i[&#34;rank&#34;]),
+                &#34;amount&#34;: int(i[&#34;add_num&#34;]),
+                &#34;reason&#34;: reasons.get(int(i[&#34;reason&#34;]), &#34;&#34;),
+                &#34;reason_id&#34;: int(i[&#34;reason&#34;]),
+                &#34;uid&#34;: int(i[&#34;uid&#34;]),
+                &#34;id&#34;: int(i[&#34;id&#34;]),
+            }
+            for i in data
+        ]
     else:
         # transaction
-        return [{
-            &#34;time&#34;: i[&#34;time&#34;],
-            &#34;amount&#34;: int(i[&#34;add_num&#34;]),
-            &#34;reason&#34;: reasons.get(int(i[&#34;reason&#34;]), &#34;&#34;),
-            &#34;reason_id&#34;: int(i[&#34;reason&#34;]),
-            &#34;uid&#34;: int(i[&#34;uid&#34;]),
-            &#34;id&#34;: int(i[&#34;id&#34;]),
-        } for i in data]</code></pre>
+        return [
+            {
+                &#34;time&#34;: i[&#34;time&#34;],
+                &#34;amount&#34;: int(i[&#34;add_num&#34;]),
+                &#34;reason&#34;: reasons.get(int(i[&#34;reason&#34;]), &#34;&#34;),
+                &#34;reason_id&#34;: int(i[&#34;reason&#34;]),
+                &#34;uid&#34;: int(i[&#34;uid&#34;]),
+                &#34;id&#34;: int(i[&#34;id&#34;]),
+            }
+            for i in data
+        ]</code></pre>
 </details>
 </section>
 <section>
@@ -404,18 +501,21 @@ def prettify_trans(data, reasons={}):
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/pretty.py#L147-L200" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/pretty.py#L171-L240" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def prettify_abyss(data):
-    fchars = lambda d: [{
-        &#34;value&#34;: a[&#34;value&#34;],
-        &#34;name&#34;: _recognize_character_icon(a[&#34;avatar_icon&#34;]),
-        &#34;rarity&#34;: a[&#34;rarity&#34;] if a[&#34;rarity&#34;] &lt; 100 else a[&#34;rarity&#34;] - 100, # aloy has 105 stars
-        &#34;icon&#34;: a[&#34;avatar_icon&#34;],
-        &#34;id&#34;: a[&#34;avatar_id&#34;],
-    } for a in d]
+    fchars = lambda d: [
+        {
+            &#34;value&#34;: a[&#34;value&#34;],
+            &#34;name&#34;: _recognize_character_icon(a[&#34;avatar_icon&#34;]),
+            &#34;rarity&#34;: a[&#34;rarity&#34;] if a[&#34;rarity&#34;] &lt; 100 else a[&#34;rarity&#34;] - 100,  # aloy has 105 stars
+            &#34;icon&#34;: a[&#34;avatar_icon&#34;],
+            &#34;id&#34;: a[&#34;avatar_id&#34;],
+        }
+        for a in d
+    ]
     todate = lambda x: datetime.fromtimestamp(int(x)).strftime(&#34;%Y-%m-%d&#34;)
-    totime = lambda x: datetime.fromtimestamp(int(x)).isoformat(&#39; &#39;)
+    totime = lambda x: datetime.fromtimestamp(int(x)).isoformat(&#34; &#34;)
     return {
         &#34;season&#34;: data[&#34;schedule_id&#34;],
         &#34;season_start_time&#34;: todate(data[&#34;start_time&#34;]),
@@ -434,31 +534,44 @@ def prettify_trans(data, reasons={}):
             &#34;most_bursts_used&#34;: fchars(data[&#34;normal_skill_rank&#34;]),
             &#34;most_skills_used&#34;: fchars(data[&#34;energy_skill_rank&#34;]),
         },
-        &#34;floors&#34;: [{
-            &#34;floor&#34;: f[&#34;index&#34;],
-            &#34;stars&#34;: f[&#34;star&#34;],
-            &#34;max_stars&#34;: f[&#34;max_star&#34;],
-            &#34;start&#34;: totime(f[&#34;levels&#34;][0][&#34;battles&#34;][0][&#34;timestamp&#34;]),
-            &#34;icon&#34;: f[&#34;icon&#34;],
-            &#34;chambers&#34;: [{
-                &#34;chamber&#34;: l[&#34;index&#34;],
-                &#34;stars&#34;: l[&#34;star&#34;],
-                &#34;max_stars&#34;: l[&#34;max_star&#34;],
-                &#34;has_halves&#34;: len(l[&#34;battles&#34;]) == 2,
-                &#34;battles&#34;: [{
-                    &#34;half&#34;: b[&#34;index&#34;],
-                    &#34;timestamp&#34;: totime(b[&#34;timestamp&#34;]),
-                    &#34;characters&#34;: [{
-                        &#34;name&#34;: _recognize_character_icon(c[&#34;icon&#34;]),
-                        &#34;rarity&#34;: c[&#34;rarity&#34;] if c[&#34;rarity&#34;] &lt; 100 else c[&#34;rarity&#34;] - 100, # aloy has 105 stars
-                        &#34;level&#34;: c[&#34;level&#34;],
-                        &#34;icon&#34;: c[&#34;icon&#34;],
-                        &#34;id&#34;: c[&#34;id&#34;],
-
-                    } for c in b[&#34;avatars&#34;]]
-                } for b in l[&#34;battles&#34;]]
-            } for l in f[&#34;levels&#34;]]
-        } for f in data[&#34;floors&#34;]]
+        &#34;floors&#34;: [
+            {
+                &#34;floor&#34;: f[&#34;index&#34;],
+                &#34;stars&#34;: f[&#34;star&#34;],
+                &#34;max_stars&#34;: f[&#34;max_star&#34;],
+                &#34;start&#34;: totime(f[&#34;levels&#34;][0][&#34;battles&#34;][0][&#34;timestamp&#34;]),
+                &#34;icon&#34;: f[&#34;icon&#34;],
+                &#34;chambers&#34;: [
+                    {
+                        &#34;chamber&#34;: l[&#34;index&#34;],
+                        &#34;stars&#34;: l[&#34;star&#34;],
+                        &#34;max_stars&#34;: l[&#34;max_star&#34;],
+                        &#34;has_halves&#34;: len(l[&#34;battles&#34;]) == 2,
+                        &#34;battles&#34;: [
+                            {
+                                &#34;half&#34;: b[&#34;index&#34;],
+                                &#34;timestamp&#34;: totime(b[&#34;timestamp&#34;]),
+                                &#34;characters&#34;: [
+                                    {
+                                        &#34;name&#34;: _recognize_character_icon(c[&#34;icon&#34;]),
+                                        &#34;rarity&#34;: c[&#34;rarity&#34;]
+                                        if c[&#34;rarity&#34;] &lt; 100
+                                        else c[&#34;rarity&#34;] - 100,  # aloy has 105 stars
+                                        &#34;level&#34;: c[&#34;level&#34;],
+                                        &#34;icon&#34;: c[&#34;icon&#34;],
+                                        &#34;id&#34;: c[&#34;id&#34;],
+                                    }
+                                    for c in b[&#34;avatars&#34;]
+                                ],
+                            }
+                            for b in l[&#34;battles&#34;]
+                        ],
+                    }
+                    for l in f[&#34;levels&#34;]
+                ],
+            }
+            for f in data[&#34;floors&#34;]
+        ],
     }</code></pre>
 </details>
 </dd>
@@ -470,35 +583,44 @@ def prettify_trans(data, reasons={}):
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/pretty.py#L202-L229" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/pretty.py#L243-L279" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def prettify_activities(data):
-    activities = data[&#39;activities&#39;][0]
+    activities = data[&#34;activities&#34;][0]
     return {
-        &#39;hyakunin&#39;: [{
-            &#34;id&#34;: r[&#39;challenge_id&#39;],
-            &#34;name&#34;: r[&#39;challenge_name&#39;],
-            &#34;difficulty&#34;: r[&#34;difficulty&#34;],
-            &#34;medal_icon&#34;: r[&#34;heraldry_icon&#34;],
-            &#34;score&#34;: r[&#34;max_score&#34;],
-            &#34;multiplier&#34;: r[&#34;score_multiple&#34;],
-            &#34;lineups&#34;: [{
-                &#34;characters&#34;: [{
-                    &#34;name&#34;: _recognize_character_icon(c[&#34;icon&#34;]),
-                    &#34;rarity&#34;: c[&#34;rarity&#34;] if c[&#34;rarity&#34;] &lt; 100 else c[&#34;rarity&#34;] - 100, # aloy has 105 stars
-                    &#34;level&#34;: c[&#34;level&#34;],
-                    &#34;icon&#34;: c[&#34;icon&#34;],
-                    &#34;id&#34;: c[&#34;id&#34;],
-                    &#34;trial&#34;: c[&#34;is_trail_avatar&#34;],
-                } for c in l[&#34;avatars&#34;]],
-                &#34;skills&#34;: [{
-                    &#34;name&#34;: s[&#34;name&#34;],
-                    &#34;desc&#34;: s[&#34;desc&#34;],
-                    &#34;icon&#34;: s[&#34;icon&#34;],
-                    &#34;id&#34;: s[&#34;id&#34;]
-                } for s in l[&#34;skills&#34;]]
-            } for l in r[&#34;lineups&#34;]]
-        } for r in activities[&#39;sumo&#39;][&#39;records&#39;]]
+        &#34;hyakunin&#34;: [
+            {
+                &#34;id&#34;: r[&#34;challenge_id&#34;],
+                &#34;name&#34;: r[&#34;challenge_name&#34;],
+                &#34;difficulty&#34;: r[&#34;difficulty&#34;],
+                &#34;medal_icon&#34;: r[&#34;heraldry_icon&#34;],
+                &#34;score&#34;: r[&#34;max_score&#34;],
+                &#34;multiplier&#34;: r[&#34;score_multiple&#34;],
+                &#34;lineups&#34;: [
+                    {
+                        &#34;characters&#34;: [
+                            {
+                                &#34;name&#34;: _recognize_character_icon(c[&#34;icon&#34;]),
+                                &#34;rarity&#34;: c[&#34;rarity&#34;]
+                                if c[&#34;rarity&#34;] &lt; 100
+                                else c[&#34;rarity&#34;] - 100,  # aloy has 105 stars
+                                &#34;level&#34;: c[&#34;level&#34;],
+                                &#34;icon&#34;: c[&#34;icon&#34;],
+                                &#34;id&#34;: c[&#34;id&#34;],
+                                &#34;trial&#34;: c[&#34;is_trail_avatar&#34;],
+                            }
+                            for c in l[&#34;avatars&#34;]
+                        ],
+                        &#34;skills&#34;: [
+                            {&#34;name&#34;: s[&#34;name&#34;], &#34;desc&#34;: s[&#34;desc&#34;], &#34;icon&#34;: s[&#34;icon&#34;], &#34;id&#34;: s[&#34;id&#34;]}
+                            for s in l[&#34;skills&#34;]
+                        ],
+                    }
+                    for l in r[&#34;lineups&#34;]
+                ],
+            }
+            for r in activities[&#34;sumo&#34;][&#34;records&#34;]
+        ]
     }</code></pre>
 </details>
 </dd>
@@ -510,60 +632,81 @@ def prettify_trans(data, reasons={}):
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/pretty.py#L281-L333" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/pretty.py#L350-L423" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def prettify_banner_details(data):
-    per = lambda p: None if p==&#39;0%&#39; else float(p[: -1].replace(&#39;,&#39;,&#39;.&#39;))
-    fprobs = lambda l: [{
-        &#34;type&#34;: i[&#34;item_type&#34;],
-        &#34;name&#34;: i[&#34;item_name&#34;],
-        &#34;rarity&#34;: int(i[&#34;rank&#34;]),
-        &#34;is_up&#34;: bool(i[&#34;is_up&#34;]),
-        &#34;order_value&#34;: i[&#34;order_value&#34;],
-    } for i in l] if l else []
-    fitems = lambda l: [{
-        &#34;type&#34;: i[&#34;item_type&#34;],
-        &#34;name&#34;: i[&#34;item_name&#34;],
-        &#34;element&#34;: {
-            &#34;风&#34;: &#34;Anemo&#34;,
-            &#34;火&#34;: &#34;Pyro&#34;,
-            &#34;水&#34;: &#34;Hydro&#34;,
-            &#34;雷&#34;: &#34;Electro&#34;,
-            &#34;冰&#34;: &#34;Cryo&#34;,
-            &#34;岩&#34;: &#34;Geo&#34;,
-            &#34;？&#34;: &#34;Dendro&#34;,
-            &#34;&#34;: None
-        }[i[&#34;item_attr&#34;]],
-        &#34;icon&#34;: i[&#34;item_img&#34;],
-    } for i in l] if l else []
+    per = lambda p: None if p == &#34;0%&#34; else float(p[:-1].replace(&#34;,&#34;, &#34;.&#34;))
+    fprobs = (
+        lambda l: [
+            {
+                &#34;type&#34;: i[&#34;item_type&#34;],
+                &#34;name&#34;: i[&#34;item_name&#34;],
+                &#34;rarity&#34;: int(i[&#34;rank&#34;]),
+                &#34;is_up&#34;: bool(i[&#34;is_up&#34;]),
+                &#34;order_value&#34;: i[&#34;order_value&#34;],
+            }
+            for i in l
+        ]
+        if l
+        else []
+    )
+    fitems = (
+        lambda l: [
+            {
+                &#34;type&#34;: i[&#34;item_type&#34;],
+                &#34;name&#34;: i[&#34;item_name&#34;],
+                &#34;element&#34;: {
+                    &#34;风&#34;: &#34;Anemo&#34;,
+                    &#34;火&#34;: &#34;Pyro&#34;,
+                    &#34;水&#34;: &#34;Hydro&#34;,
+                    &#34;雷&#34;: &#34;Electro&#34;,
+                    &#34;冰&#34;: &#34;Cryo&#34;,
+                    &#34;岩&#34;: &#34;Geo&#34;,
+                    &#34;？&#34;: &#34;Dendro&#34;,
+                    &#34;&#34;: None,
+                }[i[&#34;item_attr&#34;]],
+                &#34;icon&#34;: i[&#34;item_img&#34;],
+            }
+            for i in l
+        ]
+        if l
+        else []
+    )
     return {
         &#34;banner_type_name&#34;: {
             100: &#34;Novice Wishes&#34;,
             200: &#34;Permanent Wish&#34;,
             301: &#34;Character Event Wish&#34;,
-            302: &#34;Weapon Event Wish&#34;
+            302: &#34;Weapon Event Wish&#34;,
         }[int(data[&#34;gacha_type&#34;])],
         &#34;banner_type&#34;: int(data[&#34;gacha_type&#34;]),
-        &#34;banner&#34;: re.sub(r&#39;&lt;.*?&gt;&#39;,&#39;&#39;,data[&#34;title&#34;]).strip(),
+        &#34;banner&#34;: re.sub(r&#34;&lt;.*?&gt;&#34;, &#34;&#34;, data[&#34;title&#34;]).strip(),
         &#34;title&#34;: data[&#34;title&#34;],
         &#34;content&#34;: data[&#34;content&#34;],
         &#34;date_range&#34;: data[&#34;date_range&#34;],
-        &#34;r5_up_prob&#34;: per(data[&#34;r5_up_prob&#34;]), # probability for rate-up 5*
-        &#34;r4_up_prob&#34;: per(data[&#34;r4_up_prob&#34;]), # probability for rate-up 4*
-        &#34;r5_prob&#34;: per(data[&#34;r5_prob&#34;]), # probability for 5*
-        &#34;r4_prob&#34;: per(data[&#34;r4_prob&#34;]), # probability for 4*
-        &#34;r3_prob&#34;: per(data[&#34;r3_prob&#34;]), # probability for 3*
-        &#34;r5_guarantee_prob&#34;: per(data[&#34;r5_baodi_prob&#34;]), # probability for 5* incl. guarantee
-        &#34;r4_guarantee_prob&#34;: per(data[&#34;r4_baodi_prob&#34;]), # probability for 4* incl. guarantee
-        &#34;r3_guarantee_prob&#34;: per(data[&#34;r3_baodi_prob&#34;]), # probability for 3* incl. guarantee
-        &#34;r5_up_items&#34;: fitems(data[&#34;r5_up_items&#34;]), # list of 5* rate-up items that you can get from banner
-        &#34;r4_up_items&#34;: fitems(data[&#34;r4_up_items&#34;]), # list of 4* rate-up items that you can get from banner
-        &#34;r5_items&#34;: fprobs(data[&#34;r5_prob_list&#34;]), # list 5* of items that you can get from banner
-        &#34;r4_items&#34;: fprobs(data[&#34;r4_prob_list&#34;]), # list 4* of items that you can get from banner
-        &#34;r3_items&#34;: fprobs(data[&#34;r3_prob_list&#34;]), # list 3* of items that you can get from banner
-        &#34;items&#34;: fprobs(sorted(
-            data[&#34;r5_prob_list&#34;]+data[&#34;r4_prob_list&#34;]+data[&#34;r3_prob_list&#34;],
-            key=lambda x: x[&#34;order_value&#34;]))
+        &#34;r5_up_prob&#34;: per(data[&#34;r5_up_prob&#34;]),  # probability for rate-up 5*
+        &#34;r4_up_prob&#34;: per(data[&#34;r4_up_prob&#34;]),  # probability for rate-up 4*
+        &#34;r5_prob&#34;: per(data[&#34;r5_prob&#34;]),  # probability for 5*
+        &#34;r4_prob&#34;: per(data[&#34;r4_prob&#34;]),  # probability for 4*
+        &#34;r3_prob&#34;: per(data[&#34;r3_prob&#34;]),  # probability for 3*
+        &#34;r5_guarantee_prob&#34;: per(data[&#34;r5_baodi_prob&#34;]),  # probability for 5* incl. guarantee
+        &#34;r4_guarantee_prob&#34;: per(data[&#34;r4_baodi_prob&#34;]),  # probability for 4* incl. guarantee
+        &#34;r3_guarantee_prob&#34;: per(data[&#34;r3_baodi_prob&#34;]),  # probability for 3* incl. guarantee
+        &#34;r5_up_items&#34;: fitems(
+            data[&#34;r5_up_items&#34;]
+        ),  # list of 5* rate-up items that you can get from banner
+        &#34;r4_up_items&#34;: fitems(
+            data[&#34;r4_up_items&#34;]
+        ),  # list of 4* rate-up items that you can get from banner
+        &#34;r5_items&#34;: fprobs(data[&#34;r5_prob_list&#34;]),  # list 5* of items that you can get from banner
+        &#34;r4_items&#34;: fprobs(data[&#34;r4_prob_list&#34;]),  # list 4* of items that you can get from banner
+        &#34;r3_items&#34;: fprobs(data[&#34;r3_prob_list&#34;]),  # list 3* of items that you can get from banner
+        &#34;items&#34;: fprobs(
+            sorted(
+                data[&#34;r5_prob_list&#34;] + data[&#34;r4_prob_list&#34;] + data[&#34;r3_prob_list&#34;],
+                key=lambda x: x[&#34;order_value&#34;],
+            )
+        ),
     }</code></pre>
 </details>
 </dd>
@@ -575,72 +718,86 @@ def prettify_trans(data, reasons={}):
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/pretty.py#L82-L145" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/pretty.py#L91-L168" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def prettify_characters(data):
-    return [{
-        &#34;name&#34;: i[&#34;name&#34;],
-        &#34;rarity&#34;: i[&#34;rarity&#34;] if i[&#34;rarity&#34;] &lt; 100 else i[&#34;rarity&#34;] - 100, # aloy has 105 stars
-        &#34;element&#34;: i[&#34;element&#34;],
-        &#34;level&#34;: i[&#34;level&#34;],
-        &#34;friendship&#34;: i[&#34;fetter&#34;],
-        &#34;constellation&#34;: sum(c[&#34;is_actived&#34;] for c in i[&#34;constellations&#34;]),
-        &#34;icon&#34;: i[&#34;icon&#34;],
-        &#34;image&#34;: i[&#34;image&#34;],
-        &#34;id&#34;: i[&#34;id&#34;],
-        &#34;collab&#34;: i[&#34;rarity&#34;] &gt;= 100,
-        **({&#34;traveler_name&#34;: &#34;Aether&#34; if &#34;Boy&#34; in i[&#34;icon&#34;] else &#34;Lumine&#34;} if &#34;Player&#34; in i[&#34;icon&#34;] else {}),
-        &#34;weapon&#34;: {
-            &#34;name&#34;: i[&#34;weapon&#34;][&#34;name&#34;],
-            &#34;rarity&#34;: i[&#34;weapon&#34;][&#34;rarity&#34;],
-            &#34;type&#34;: i[&#34;weapon&#34;][&#34;type_name&#34;],
-            &#34;level&#34;: i[&#34;weapon&#34;][&#34;level&#34;],
-            &#34;ascension&#34;: i[&#34;weapon&#34;][&#34;promote_level&#34;],
-            &#34;refinement&#34;: i[&#34;weapon&#34;][&#34;affix_level&#34;],
-            &#34;description&#34;: i[&#34;weapon&#34;][&#34;desc&#34;],
-            &#34;icon&#34;: i[&#34;weapon&#34;][&#34;icon&#34;],
-            &#34;id&#34;: i[&#34;weapon&#34;][&#34;id&#34;],
-        },
-        &#34;artifacts&#34;: [{
-            &#34;name&#34;: a[&#34;name&#34;],
-            &#34;pos_name&#34;: {
-                1: &#34;flower&#34;,
-                2: &#34;feather&#34;,
-                3: &#34;hourglass&#34;,
-                4: &#34;goblet&#34;,
-                5: &#34;crown&#34;,
-            }[a[&#34;pos&#34;]],
-            &#34;full_pos_name&#34;: a[&#34;pos_name&#34;],
-            &#34;pos&#34;: a[&#34;pos&#34;],
-            &#34;rarity&#34;: a[&#34;rarity&#34;],
-            &#34;level&#34;: a[&#34;level&#34;],
-            &#34;set&#34;: {
-                &#34;name&#34;: a[&#34;set&#34;][&#34;name&#34;],
-                &#34;effect_type&#34;: [&#39;none&#39;,&#39;single&#39;,&#39;classic&#39;][len(a[&#34;set&#34;][&#34;affixes&#34;])],
-                &#34;effects&#34;: [{
-                    &#34;pieces&#34;: e[&#34;activation_number&#34;],
-                    &#34;effect&#34;: e[&#34;effect&#34;],
-                } for e in a[&#34;set&#34;][&#34;affixes&#34;]],
-                &#34;set_id&#34;: int(re.search(r&#39;UI_RelicIcon_(\d+)_\d+&#39;,a[&#34;icon&#34;]).group(1)), # type: ignore
-                &#34;id&#34;: a[&#34;set&#34;][&#34;id&#34;]
+    return [
+        {
+            &#34;name&#34;: i[&#34;name&#34;],
+            &#34;rarity&#34;: i[&#34;rarity&#34;] if i[&#34;rarity&#34;] &lt; 100 else i[&#34;rarity&#34;] - 100,  # aloy has 105 stars
+            &#34;element&#34;: i[&#34;element&#34;],
+            &#34;level&#34;: i[&#34;level&#34;],
+            &#34;friendship&#34;: i[&#34;fetter&#34;],
+            &#34;constellation&#34;: sum(c[&#34;is_actived&#34;] for c in i[&#34;constellations&#34;]),
+            &#34;icon&#34;: i[&#34;icon&#34;],
+            &#34;image&#34;: i[&#34;image&#34;],
+            &#34;id&#34;: i[&#34;id&#34;],
+            &#34;collab&#34;: i[&#34;rarity&#34;] &gt;= 100,
+            **(
+                {&#34;traveler_name&#34;: &#34;Aether&#34; if &#34;Boy&#34; in i[&#34;icon&#34;] else &#34;Lumine&#34;}
+                if &#34;Player&#34; in i[&#34;icon&#34;]
+                else {}
+            ),
+            &#34;weapon&#34;: {
+                &#34;name&#34;: i[&#34;weapon&#34;][&#34;name&#34;],
+                &#34;rarity&#34;: i[&#34;weapon&#34;][&#34;rarity&#34;],
+                &#34;type&#34;: i[&#34;weapon&#34;][&#34;type_name&#34;],
+                &#34;level&#34;: i[&#34;weapon&#34;][&#34;level&#34;],
+                &#34;ascension&#34;: i[&#34;weapon&#34;][&#34;promote_level&#34;],
+                &#34;refinement&#34;: i[&#34;weapon&#34;][&#34;affix_level&#34;],
+                &#34;description&#34;: i[&#34;weapon&#34;][&#34;desc&#34;],
+                &#34;icon&#34;: i[&#34;weapon&#34;][&#34;icon&#34;],
+                &#34;id&#34;: i[&#34;weapon&#34;][&#34;id&#34;],
             },
-            &#34;icon&#34;: a[&#34;icon&#34;],
-            &#34;id&#34;: a[&#34;id&#34;],
-        } for a in i[&#34;reliquaries&#34;]],
-        &#34;constellations&#34;: [{
-            &#34;name&#34;: c[&#34;name&#34;],
-            &#34;effect&#34;: c[&#34;effect&#34;],
-            &#34;is_activated&#34;: c[&#34;is_actived&#34;],
-            &#34;index&#34;: c[&#34;pos&#34;],
-            &#34;icon&#34;: c[&#34;icon&#34;],
-            &#34;id&#34;: c[&#34;id&#34;],
-        } for c in i[&#34;constellations&#34;]],
-        &#34;outfits&#34;: [{
-            &#34;name&#34;: c[&#34;name&#34;],
-            &#34;icon&#34;: c[&#34;icon&#34;],
-            &#34;id&#34;: c[&#34;id&#34;]
-        } for c in i[&#34;costumes&#34;]],
-    } for i in data]</code></pre>
+            &#34;artifacts&#34;: [
+                {
+                    &#34;name&#34;: a[&#34;name&#34;],
+                    &#34;pos_name&#34;: {
+                        1: &#34;flower&#34;,
+                        2: &#34;feather&#34;,
+                        3: &#34;hourglass&#34;,
+                        4: &#34;goblet&#34;,
+                        5: &#34;crown&#34;,
+                    }[a[&#34;pos&#34;]],
+                    &#34;full_pos_name&#34;: a[&#34;pos_name&#34;],
+                    &#34;pos&#34;: a[&#34;pos&#34;],
+                    &#34;rarity&#34;: a[&#34;rarity&#34;],
+                    &#34;level&#34;: a[&#34;level&#34;],
+                    &#34;set&#34;: {
+                        &#34;name&#34;: a[&#34;set&#34;][&#34;name&#34;],
+                        &#34;effect_type&#34;: [&#34;none&#34;, &#34;single&#34;, &#34;classic&#34;][len(a[&#34;set&#34;][&#34;affixes&#34;])],
+                        &#34;effects&#34;: [
+                            {
+                                &#34;pieces&#34;: e[&#34;activation_number&#34;],
+                                &#34;effect&#34;: e[&#34;effect&#34;],
+                            }
+                            for e in a[&#34;set&#34;][&#34;affixes&#34;]
+                        ],
+                        &#34;set_id&#34;: int(re.search(r&#34;UI_RelicIcon_(\d+)_\d+&#34;, a[&#34;icon&#34;]).group(1)),  # type: ignore
+                        &#34;id&#34;: a[&#34;set&#34;][&#34;id&#34;],
+                    },
+                    &#34;icon&#34;: a[&#34;icon&#34;],
+                    &#34;id&#34;: a[&#34;id&#34;],
+                }
+                for a in i[&#34;reliquaries&#34;]
+            ],
+            &#34;constellations&#34;: [
+                {
+                    &#34;name&#34;: c[&#34;name&#34;],
+                    &#34;effect&#34;: c[&#34;effect&#34;],
+                    &#34;is_activated&#34;: c[&#34;is_actived&#34;],
+                    &#34;index&#34;: c[&#34;pos&#34;],
+                    &#34;icon&#34;: c[&#34;icon&#34;],
+                    &#34;id&#34;: c[&#34;id&#34;],
+                }
+                for c in i[&#34;constellations&#34;]
+            ],
+            &#34;outfits&#34;: [
+                {&#34;name&#34;: c[&#34;name&#34;], &#34;icon&#34;: c[&#34;icon&#34;], &#34;id&#34;: c[&#34;id&#34;]} for c in i[&#34;costumes&#34;]
+            ],
+        }
+        for i in data
+    ]</code></pre>
 </details>
 </dd>
 <dt id="genshinstats.pretty.prettify_gacha_items"><code class="name flex">
@@ -651,15 +808,20 @@ def prettify_trans(data, reasons={}):
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/pretty.py#L273-L279" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/pretty.py#L336-L347" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def prettify_gacha_items(data):
-    return [{
-        &#34;name&#34;: i[&#34;name&#34;],
-        &#34;type&#34;: i[&#34;item_type&#34;],
-        &#34;rarity&#34;: int(i[&#34;rank_type&#34;]),
-        &#34;id&#34;: 10000000+int(i[&#34;item_id&#34;])-1000 if len(i[&#34;item_id&#34;])==4 else int(i[&#34;item_id&#34;]),
-    } for i in data]</code></pre>
+    return [
+        {
+            &#34;name&#34;: i[&#34;name&#34;],
+            &#34;type&#34;: i[&#34;item_type&#34;],
+            &#34;rarity&#34;: int(i[&#34;rank_type&#34;]),
+            &#34;id&#34;: 10000000 + int(i[&#34;item_id&#34;]) - 1000
+            if len(i[&#34;item_id&#34;]) == 4
+            else int(i[&#34;item_id&#34;]),
+        }
+        for i in data
+    ]</code></pre>
 </details>
 </dd>
 <dt id="genshinstats.pretty.prettify_game_accounts"><code class="name flex">
@@ -670,19 +832,22 @@ def prettify_trans(data, reasons={}):
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/pretty.py#L249-L259" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/pretty.py#L304-L317" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def prettify_game_accounts(data):
-    return [{
-        &#34;uid&#34;: int(a[&#34;game_uid&#34;]),
-        &#34;server&#34;: a[&#34;region_name&#34;],
-        &#34;level&#34;: a[&#34;level&#34;],
-        &#34;nickname&#34;: a[&#34;nickname&#34;],
-        # idk what these are for:
-        &#34;biz&#34;: a[&#34;game_biz&#34;],
-        &#34;is_chosen&#34;: a[&#34;is_chosen&#34;],
-        &#34;is_official&#34;: a[&#34;is_official&#34;],
-    } for a in data]</code></pre>
+    return [
+        {
+            &#34;uid&#34;: int(a[&#34;game_uid&#34;]),
+            &#34;server&#34;: a[&#34;region_name&#34;],
+            &#34;level&#34;: a[&#34;level&#34;],
+            &#34;nickname&#34;: a[&#34;nickname&#34;],
+            # idk what these are for:
+            &#34;biz&#34;: a[&#34;game_biz&#34;],
+            &#34;is_chosen&#34;: a[&#34;is_chosen&#34;],
+            &#34;is_official&#34;: a[&#34;is_official&#34;],
+        }
+        for a in data
+    ]</code></pre>
 </details>
 </dd>
 <dt id="genshinstats.pretty.prettify_notes"><code class="name flex">
@@ -693,7 +858,7 @@ def prettify_trans(data, reasons={}):
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/pretty.py#L231-L247" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/pretty.py#L282-L301" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def prettify_notes(data):
     return {
@@ -705,12 +870,15 @@ def prettify_trans(data, reasons={}):
         &#34;claimed_commission_reward&#34;: data[&#34;is_extra_task_reward_received&#34;],
         &#34;max_boss_discounts&#34;: data[&#34;resin_discount_num_limit&#34;],
         &#34;remaining_boss_discounts&#34;: data[&#34;remain_resin_discount_num&#34;],
-        &#34;expeditions&#34;: [{
-            &#34;icon&#34;: exp[&#34;avatar_side_icon&#34;],
-            &#34;remaining_time&#34;: exp[&#34;remained_time&#34;],
-            &#34;status&#34;: exp[&#34;status&#34;]
-        } for exp in data[&#34;expeditions&#34;]],
-        &#34;max_expeditions&#34;: data[&#34;max_expedition_num&#34;]
+        &#34;expeditions&#34;: [
+            {
+                &#34;icon&#34;: exp[&#34;avatar_side_icon&#34;],
+                &#34;remaining_time&#34;: exp[&#34;remained_time&#34;],
+                &#34;status&#34;: exp[&#34;status&#34;],
+            }
+            for exp in data[&#34;expeditions&#34;]
+        ],
+        &#34;max_expeditions&#34;: data[&#34;max_expedition_num&#34;],
     }</code></pre>
 </details>
 </dd>
@@ -722,7 +890,7 @@ def prettify_trans(data, reasons={}):
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/pretty.py#L31-L80" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/pretty.py#L32-L88" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def prettify_stats(data):
     s = data[&#34;stats&#34;]
@@ -741,38 +909,45 @@ def prettify_trans(data, reasons={}):
             &#34;precious_chests&#34;: s[&#34;precious_chest_number&#34;],
             &#34;luxurious_chests&#34;: s[&#34;luxurious_chest_number&#34;],
             &#34;unlocked_waypoints&#34;: s[&#34;way_point_number&#34;],
-            &#34;unlocked_domains&#34;: s[&#34;domain_number&#34;]
+            &#34;unlocked_domains&#34;: s[&#34;domain_number&#34;],
         },
-        &#34;characters&#34;: [{
-            &#34;name&#34;: i[&#34;name&#34;],
-            &#34;rarity&#34;: i[&#34;rarity&#34;] if i[&#34;rarity&#34;] &lt; 100 else i[&#34;rarity&#34;] - 100, # aloy has 105 stars
-            &#34;element&#34;: i[&#34;element&#34;],
-            &#34;level&#34;: i[&#34;level&#34;],
-            &#34;friendship&#34;: i[&#34;fetter&#34;],
-            &#34;icon&#34;: i[&#34;image&#34;],
-            &#34;id&#34;: i[&#34;id&#34;],
-        } for i in data[&#34;avatars&#34;]],
+        &#34;characters&#34;: [
+            {
+                &#34;name&#34;: i[&#34;name&#34;],
+                &#34;rarity&#34;: i[&#34;rarity&#34;]
+                if i[&#34;rarity&#34;] &lt; 100
+                else i[&#34;rarity&#34;] - 100,  # aloy has 105 stars
+                &#34;element&#34;: i[&#34;element&#34;],
+                &#34;level&#34;: i[&#34;level&#34;],
+                &#34;friendship&#34;: i[&#34;fetter&#34;],
+                &#34;icon&#34;: i[&#34;image&#34;],
+                &#34;id&#34;: i[&#34;id&#34;],
+            }
+            for i in data[&#34;avatars&#34;]
+        ],
         &#34;teapot&#34;: {
             # only unique data between realms are names and icons
-            &#34;realms&#34;: [{
-                &#34;name&#34;: s[&#34;name&#34;],
-                &#34;icon&#34;: s[&#34;icon&#34;]
-            } for s in data[&#34;homes&#34;]],
+            &#34;realms&#34;: [{&#34;name&#34;: s[&#34;name&#34;], &#34;icon&#34;: s[&#34;icon&#34;]} for s in data[&#34;homes&#34;]],
             &#34;level&#34;: h[&#34;level&#34;],
             &#34;comfort&#34;: h[&#34;comfort_num&#34;],
             &#34;comfort_name&#34;: h[&#34;comfort_level_name&#34;],
             &#34;comfort_icon&#34;: h[&#34;comfort_level_icon&#34;],
             &#34;items&#34;: h[&#34;item_num&#34;],
-            &#34;visitors&#34;: h[&#34;visit_num&#34;] # currently not in use
-        } if h else None,
-        &#34;explorations&#34;: [{
-            &#34;name&#34;: i[&#34;name&#34;],
-            &#34;explored&#34;: round(i[&#34;exploration_percentage&#34;]/10, 1),
-            &#34;type&#34;: i[&#34;type&#34;],
-            &#34;level&#34;: i[&#34;level&#34;],
-            &#34;icon&#34;: i[&#34;icon&#34;],
-            &#34;offerings&#34;: i[&#34;offerings&#34;],
-        } for i in data[&#34;world_explorations&#34;]]
+            &#34;visitors&#34;: h[&#34;visit_num&#34;],  # currently not in use
+        }
+        if h
+        else None,
+        &#34;explorations&#34;: [
+            {
+                &#34;name&#34;: i[&#34;name&#34;],
+                &#34;explored&#34;: round(i[&#34;exploration_percentage&#34;] / 10, 1),
+                &#34;type&#34;: i[&#34;type&#34;],
+                &#34;level&#34;: i[&#34;level&#34;],
+                &#34;icon&#34;: i[&#34;icon&#34;],
+                &#34;offerings&#34;: i[&#34;offerings&#34;],
+            }
+            for i in data[&#34;world_explorations&#34;]
+        ],
     }</code></pre>
 </details>
 </dd>
@@ -784,31 +959,37 @@ def prettify_trans(data, reasons={}):
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/pretty.py#L335-L357" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/pretty.py#L426-L454" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def prettify_trans(data, reasons={}):
     if data and &#34;name&#34; in data[0]:
         # transaction item
-        return [{
-            &#34;time&#34;: i[&#34;time&#34;],
-            &#34;name&#34;: i[&#34;name&#34;],
-            &#34;rarity&#34;: int(i[&#34;rank&#34;]),
-            &#34;amount&#34;: int(i[&#34;add_num&#34;]),
-            &#34;reason&#34;: reasons.get(int(i[&#34;reason&#34;]), &#34;&#34;),
-            &#34;reason_id&#34;: int(i[&#34;reason&#34;]),
-            &#34;uid&#34;: int(i[&#34;uid&#34;]),
-            &#34;id&#34;: int(i[&#34;id&#34;]),
-        } for i in data]
+        return [
+            {
+                &#34;time&#34;: i[&#34;time&#34;],
+                &#34;name&#34;: i[&#34;name&#34;],
+                &#34;rarity&#34;: int(i[&#34;rank&#34;]),
+                &#34;amount&#34;: int(i[&#34;add_num&#34;]),
+                &#34;reason&#34;: reasons.get(int(i[&#34;reason&#34;]), &#34;&#34;),
+                &#34;reason_id&#34;: int(i[&#34;reason&#34;]),
+                &#34;uid&#34;: int(i[&#34;uid&#34;]),
+                &#34;id&#34;: int(i[&#34;id&#34;]),
+            }
+            for i in data
+        ]
     else:
         # transaction
-        return [{
-            &#34;time&#34;: i[&#34;time&#34;],
-            &#34;amount&#34;: int(i[&#34;add_num&#34;]),
-            &#34;reason&#34;: reasons.get(int(i[&#34;reason&#34;]), &#34;&#34;),
-            &#34;reason_id&#34;: int(i[&#34;reason&#34;]),
-            &#34;uid&#34;: int(i[&#34;uid&#34;]),
-            &#34;id&#34;: int(i[&#34;id&#34;]),
-        } for i in data]</code></pre>
+        return [
+            {
+                &#34;time&#34;: i[&#34;time&#34;],
+                &#34;amount&#34;: int(i[&#34;add_num&#34;]),
+                &#34;reason&#34;: reasons.get(int(i[&#34;reason&#34;]), &#34;&#34;),
+                &#34;reason_id&#34;: int(i[&#34;reason&#34;]),
+                &#34;uid&#34;: int(i[&#34;uid&#34;]),
+                &#34;id&#34;: int(i[&#34;id&#34;]),
+            }
+            for i in data
+        ]</code></pre>
 </details>
 </dd>
 <dt id="genshinstats.pretty.prettify_wish_history"><code class="name flex">
@@ -819,19 +1000,22 @@ def prettify_trans(data, reasons={}):
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/pretty.py#L261-L271" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/pretty.py#L320-L333" class="git-link">Browse git</a>
 </summary>
-<pre><code class="python">def prettify_wish_history(data, banner_name = None):
-    return [{
-        &#34;type&#34;: i[&#34;item_type&#34;],
-        &#34;name&#34;: i[&#34;name&#34;],
-        &#34;rarity&#34;: int(i[&#34;rank_type&#34;]),
-        &#34;time&#34;: i[&#34;time&#34;],
-        &#34;id&#34;: int(i[&#34;id&#34;]),
-        &#34;banner&#34;: banner_name,
-        &#34;banner_type&#34;: int(i[&#34;gacha_type&#34;]),
-        &#34;uid&#34;: int(i[&#34;uid&#34;]),
-    } for i in data]</code></pre>
+<pre><code class="python">def prettify_wish_history(data, banner_name=None):
+    return [
+        {
+            &#34;type&#34;: i[&#34;item_type&#34;],
+            &#34;name&#34;: i[&#34;name&#34;],
+            &#34;rarity&#34;: int(i[&#34;rank_type&#34;]),
+            &#34;time&#34;: i[&#34;time&#34;],
+            &#34;id&#34;: int(i[&#34;id&#34;]),
+            &#34;banner&#34;: banner_name,
+            &#34;banner_type&#34;: int(i[&#34;gacha_type&#34;]),
+            &#34;uid&#34;: int(i[&#34;uid&#34;]),
+        }
+        for i in data
+    ]</code></pre>
 </details>
 </dd>
 </dl>

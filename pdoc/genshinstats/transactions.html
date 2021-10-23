@@ -28,7 +28,7 @@ You may view a history of everything you have gained in the last 3 months.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/transactions.py#L1-L171" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/transactions.py#L1-L194" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">&#34;&#34;&#34;Logs for currency &#34;transactions&#34;.
 
@@ -59,7 +59,9 @@ __all__ = [
 YSULOG_URL = &#34;https://hk4e-api-os.mihoyo.com/ysulog/api/&#34;
 
 
-def fetch_transaction_endpoint(endpoint: str, authkey: Optional[str] = None, **kwargs) -&gt; Dict[str, Any]:
+def fetch_transaction_endpoint(
+    endpoint: str, authkey: Optional[str] = None, **kwargs
+) -&gt; Dict[str, Any]:
     &#34;&#34;&#34;Fetch an enpoint from mihoyo&#39;s transaction logs api.
 
     Takes in an endpoint url which is joined with the base url.
@@ -70,19 +72,23 @@ def fetch_transaction_endpoint(endpoint: str, authkey: Optional[str] = None, **k
     return fetch_gacha_endpoint(url, authkey, **kwargs)
 
 
-@permanent_cache(&#39;lang&#39;)
-def _get_reasons(lang: str = &#39;en-us&#39;) -&gt; Dict[int, str]:
+@permanent_cache(&#34;lang&#34;)
+def _get_reasons(lang: str = &#34;en-us&#34;) -&gt; Dict[int, str]:
     r = static_session.get(
         f&#34;https://mi18n-os.mihoyo.com/webstatic/admin/mi18n/hk4e_global/m02251421001311/m02251421001311-{lang}.json&#34;
     )
     r.raise_for_status()
     data = r.json()
 
-    return {int(k.split(&#34;_&#34;)[-1]): v for k, v in data.items() if k.startswith(&#34;selfinquiry_general_reason_&#34;)}
+    return {
+        int(k.split(&#34;_&#34;)[-1]): v
+        for k, v in data.items()
+        if k.startswith(&#34;selfinquiry_general_reason_&#34;)
+    }
 
 
 def _get_transactions(
-    endpoint: str, size: int = None, authkey: str = None, lang: str = &#39;en-us&#39;, end_id: int = 0
+    endpoint: str, size: int = None, authkey: str = None, lang: str = &#34;en-us&#34;, end_id: int = 0
 ) -&gt; Iterator[Dict[str, Any]]:
     &#34;&#34;&#34;A paginator that uses mihoyo&#39;s id paginator algorithm to yield pages&#34;&#34;&#34;
     if size is not None and size &lt;= 0:
@@ -93,9 +99,7 @@ def _get_transactions(
 
     while True:
         data = fetch_transaction_endpoint(
-            endpoint, 
-            authkey=authkey, 
-            params=dict(size=min(page_size, size), end_id=end_id)
+            endpoint, authkey=authkey, params=dict(size=min(page_size, size), end_id=end_id)
         )[&#34;list&#34;]
         data = prettify_trans(data, _get_reasons(lang))
         yield from data
@@ -107,7 +111,9 @@ def _get_transactions(
         end_id = data[-1][&#34;id&#34;]
 
 
-def get_primogem_log(size: int = None, authkey: str = None, lang: str = &#39;en-us&#39;, end_id: int = 0) -&gt; Iterator[Dict[str, Any]]:
+def get_primogem_log(
+    size: int = None, authkey: str = None, lang: str = &#34;en-us&#34;, end_id: int = 0
+) -&gt; Iterator[Dict[str, Any]]:
     &#34;&#34;&#34;Gets all transactions of primogems
 
     This means stuff like getting primogems from rewards and explorations or making wishes.
@@ -115,14 +121,20 @@ def get_primogem_log(size: int = None, authkey: str = None, lang: str = &#39;en-
     &#34;&#34;&#34;
     return _get_transactions(&#34;getPrimogemLog&#34;, size, authkey, lang, end_id)
 
-def get_crystal_log(size: int = None, authkey: str = None, lang: str = &#39;en-us&#39;, end_id: int = 0) -&gt; Iterator[Dict[str, Any]]:
+
+def get_crystal_log(
+    size: int = None, authkey: str = None, lang: str = &#34;en-us&#34;, end_id: int = 0
+) -&gt; Iterator[Dict[str, Any]]:
     &#34;&#34;&#34;Get all transactions of genesis crystals
 
     Records go only 3 months back.
     &#34;&#34;&#34;
     return _get_transactions(&#34;getCrystalLog&#34;, size, authkey, lang, end_id)
 
-def get_resin_log(size: int = None, authkey: str = None, lang: str = &#39;en-us&#39;, end_id: int = 0) -&gt; Iterator[Dict[str, Any]]:
+
+def get_resin_log(
+    size: int = None, authkey: str = None, lang: str = &#34;en-us&#34;, end_id: int = 0
+) -&gt; Iterator[Dict[str, Any]]:
     &#34;&#34;&#34;Gets all usage of resin
 
     This means using them in ley lines, domains, crafting and weekly bosses.
@@ -130,54 +142,65 @@ def get_resin_log(size: int = None, authkey: str = None, lang: str = &#39;en-us&
     &#34;&#34;&#34;
     return _get_transactions(&#34;getResinLog&#34;, size, authkey, lang, end_id)
 
-def get_artifact_log(size: int = None, authkey: str = None, lang: str = &#39;en-us&#39;, end_id: int = 0) -&gt; Iterator[Dict[str, Any]]:
+
+def get_artifact_log(
+    size: int = None, authkey: str = None, lang: str = &#34;en-us&#34;, end_id: int = 0
+) -&gt; Iterator[Dict[str, Any]]:
     &#34;&#34;&#34;Get the log of all artifacts gotten or destroyed in the last 3 months&#34;&#34;&#34;
     return _get_transactions(&#34;getArtifactLog&#34;, size, authkey, lang, end_id)
 
 
-def get_weapon_log(size: int = None, authkey: str = None, lang: str = &#39;en-us&#39;, end_id: int = 0) -&gt; Iterator[Dict[str, Any]]:
+def get_weapon_log(
+    size: int = None, authkey: str = None, lang: str = &#34;en-us&#34;, end_id: int = 0
+) -&gt; Iterator[Dict[str, Any]]:
     &#34;&#34;&#34;Get the log of all weapons gotten or destroyed in the last 3 months&#34;&#34;&#34;
     return _get_transactions(&#34;getWeaponLog&#34;, size, authkey, lang, end_id)
 
 
-def current_resin(last_resin_time: datetime, last_resin_amount: float, current_time: datetime = None, authkey: str = None):
+def current_resin(
+    last_resin_time: datetime,
+    last_resin_amount: float,
+    current_time: datetime = None,
+    authkey: str = None,
+):
     &#34;&#34;&#34;Gets the current resin based off an amount of resin you&#39;ve had at any time before
-    
+
     Works by getting all usages after the last resin time and emulating how the resin would be generated.
     Keep in mind that this approach works only if the user hasn&#39;t played in the last hour.
     &#34;&#34;&#34;
     current_time = current_time or datetime.utcnow()
-    
+
     resin_usage: List[Dict[str, Any]] = [{&#34;time&#34;: str(current_time), &#34;amount&#34;: 0}]
     for usage in get_resin_log(authkey=authkey):
-        if datetime.fromisoformat(usage[&#39;time&#39;]) &lt; last_resin_time:
+        if datetime.fromisoformat(usage[&#34;time&#34;]) &lt; last_resin_time:
             break
         resin_usage.append(usage)
     resin_usage.reverse()
-    
+
     resin = last_resin_amount
-    
+
     for usage in resin_usage:
-        usage_time = datetime.fromisoformat(usage[&#39;time&#39;])
+        usage_time = datetime.fromisoformat(usage[&#34;time&#34;])
         recovered_resin = (usage_time - last_resin_time).total_seconds() / (8 * 60)
-        
-        resin = min(resin + recovered_resin, 160) + usage[&#39;amount&#39;]
-        
+
+        resin = min(resin + recovered_resin, 160) + usage[&#34;amount&#34;]
+
         last_resin_time = usage_time
         # better raise an error than to leave users confused
         if resin &lt; 0:
             raise ValueError(&#34;Last resin time is wrong or amount is too low&#34;)
-    
+
     return resin
+
 
 def approximate_current_resin(time: datetime = None, authkey: str = None):
     &#34;&#34;&#34;Roughly approximates how much resin using a minmax calculation
-    
+
     The result can have an offset of around 5 resin in some cases.
     &#34;&#34;&#34;
     # if any algorithm peeps can help with this one I&#39;d appreciate it
     recovery_rate = 8 * 60
-    
+
     current_max = shadow_max = 160.0
     current_min = shadow_min = 0.0
     time = time or datetime.utcnow()
@@ -197,9 +220,9 @@ def approximate_current_resin(time: datetime = None, authkey: str = None):
         last_amount = usage[&#34;amount&#34;]
         if math.isclose(current_max, current_min):
             break
-    
+
     resin = (current_max + current_min) / 2
-    
+
     return resin</code></pre>
 </details>
 </section>
@@ -219,16 +242,16 @@ def approximate_current_resin(time: datetime = None, authkey: str = None):
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/transactions.py#L141-L171" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/transactions.py#L164-L194" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def approximate_current_resin(time: datetime = None, authkey: str = None):
     &#34;&#34;&#34;Roughly approximates how much resin using a minmax calculation
-    
+
     The result can have an offset of around 5 resin in some cases.
     &#34;&#34;&#34;
     # if any algorithm peeps can help with this one I&#39;d appreciate it
     recovery_rate = 8 * 60
-    
+
     current_max = shadow_max = 160.0
     current_min = shadow_min = 0.0
     time = time or datetime.utcnow()
@@ -248,9 +271,9 @@ def approximate_current_resin(time: datetime = None, authkey: str = None):
         last_amount = usage[&#34;amount&#34;]
         if math.isclose(current_max, current_min):
             break
-    
+
     resin = (current_max + current_min) / 2
-    
+
     return resin</code></pre>
 </details>
 </dd>
@@ -264,36 +287,41 @@ Keep in mind that this approach works only if the user hasn't played in the last
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/transactions.py#L111-L139" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/transactions.py#L128-L161" class="git-link">Browse git</a>
 </summary>
-<pre><code class="python">def current_resin(last_resin_time: datetime, last_resin_amount: float, current_time: datetime = None, authkey: str = None):
+<pre><code class="python">def current_resin(
+    last_resin_time: datetime,
+    last_resin_amount: float,
+    current_time: datetime = None,
+    authkey: str = None,
+):
     &#34;&#34;&#34;Gets the current resin based off an amount of resin you&#39;ve had at any time before
-    
+
     Works by getting all usages after the last resin time and emulating how the resin would be generated.
     Keep in mind that this approach works only if the user hasn&#39;t played in the last hour.
     &#34;&#34;&#34;
     current_time = current_time or datetime.utcnow()
-    
+
     resin_usage: List[Dict[str, Any]] = [{&#34;time&#34;: str(current_time), &#34;amount&#34;: 0}]
     for usage in get_resin_log(authkey=authkey):
-        if datetime.fromisoformat(usage[&#39;time&#39;]) &lt; last_resin_time:
+        if datetime.fromisoformat(usage[&#34;time&#34;]) &lt; last_resin_time:
             break
         resin_usage.append(usage)
     resin_usage.reverse()
-    
+
     resin = last_resin_amount
-    
+
     for usage in resin_usage:
-        usage_time = datetime.fromisoformat(usage[&#39;time&#39;])
+        usage_time = datetime.fromisoformat(usage[&#34;time&#34;])
         recovered_resin = (usage_time - last_resin_time).total_seconds() / (8 * 60)
-        
-        resin = min(resin + recovered_resin, 160) + usage[&#39;amount&#39;]
-        
+
+        resin = min(resin + recovered_resin, 160) + usage[&#34;amount&#34;]
+
         last_resin_time = usage_time
         # better raise an error than to leave users confused
         if resin &lt; 0:
             raise ValueError(&#34;Last resin time is wrong or amount is too low&#34;)
-    
+
     return resin</code></pre>
 </details>
 </dd>
@@ -308,9 +336,11 @@ A request is then sent and returns a parsed response.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/transactions.py#L30-L38" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/transactions.py#L30-L40" class="git-link">Browse git</a>
 </summary>
-<pre><code class="python">def fetch_transaction_endpoint(endpoint: str, authkey: Optional[str] = None, **kwargs) -&gt; Dict[str, Any]:
+<pre><code class="python">def fetch_transaction_endpoint(
+    endpoint: str, authkey: Optional[str] = None, **kwargs
+) -&gt; Dict[str, Any]:
     &#34;&#34;&#34;Fetch an enpoint from mihoyo&#39;s transaction logs api.
 
     Takes in an endpoint url which is joined with the base url.
@@ -329,9 +359,11 @@ A request is then sent and returns a parsed response.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/transactions.py#L101-L103" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/transactions.py#L114-L118" class="git-link">Browse git</a>
 </summary>
-<pre><code class="python">def get_artifact_log(size: int = None, authkey: str = None, lang: str = &#39;en-us&#39;, end_id: int = 0) -&gt; Iterator[Dict[str, Any]]:
+<pre><code class="python">def get_artifact_log(
+    size: int = None, authkey: str = None, lang: str = &#34;en-us&#34;, end_id: int = 0
+) -&gt; Iterator[Dict[str, Any]]:
     &#34;&#34;&#34;Get the log of all artifacts gotten or destroyed in the last 3 months&#34;&#34;&#34;
     return _get_transactions(&#34;getArtifactLog&#34;, size, authkey, lang, end_id)</code></pre>
 </details>
@@ -345,9 +377,11 @@ A request is then sent and returns a parsed response.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/transactions.py#L86-L91" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/transactions.py#L93-L100" class="git-link">Browse git</a>
 </summary>
-<pre><code class="python">def get_crystal_log(size: int = None, authkey: str = None, lang: str = &#39;en-us&#39;, end_id: int = 0) -&gt; Iterator[Dict[str, Any]]:
+<pre><code class="python">def get_crystal_log(
+    size: int = None, authkey: str = None, lang: str = &#34;en-us&#34;, end_id: int = 0
+) -&gt; Iterator[Dict[str, Any]]:
     &#34;&#34;&#34;Get all transactions of genesis crystals
 
     Records go only 3 months back.
@@ -365,9 +399,11 @@ Records go only 3 months back.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/transactions.py#L78-L84" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/transactions.py#L82-L90" class="git-link">Browse git</a>
 </summary>
-<pre><code class="python">def get_primogem_log(size: int = None, authkey: str = None, lang: str = &#39;en-us&#39;, end_id: int = 0) -&gt; Iterator[Dict[str, Any]]:
+<pre><code class="python">def get_primogem_log(
+    size: int = None, authkey: str = None, lang: str = &#34;en-us&#34;, end_id: int = 0
+) -&gt; Iterator[Dict[str, Any]]:
     &#34;&#34;&#34;Gets all transactions of primogems
 
     This means stuff like getting primogems from rewards and explorations or making wishes.
@@ -386,9 +422,11 @@ Records go only 3 months back.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/transactions.py#L93-L99" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/transactions.py#L103-L111" class="git-link">Browse git</a>
 </summary>
-<pre><code class="python">def get_resin_log(size: int = None, authkey: str = None, lang: str = &#39;en-us&#39;, end_id: int = 0) -&gt; Iterator[Dict[str, Any]]:
+<pre><code class="python">def get_resin_log(
+    size: int = None, authkey: str = None, lang: str = &#34;en-us&#34;, end_id: int = 0
+) -&gt; Iterator[Dict[str, Any]]:
     &#34;&#34;&#34;Gets all usage of resin
 
     This means using them in ley lines, domains, crafting and weekly bosses.
@@ -405,9 +443,11 @@ Records go only 3 months back.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/transactions.py#L106-L108" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/transactions.py#L121-L125" class="git-link">Browse git</a>
 </summary>
-<pre><code class="python">def get_weapon_log(size: int = None, authkey: str = None, lang: str = &#39;en-us&#39;, end_id: int = 0) -&gt; Iterator[Dict[str, Any]]:
+<pre><code class="python">def get_weapon_log(
+    size: int = None, authkey: str = None, lang: str = &#34;en-us&#34;, end_id: int = 0
+) -&gt; Iterator[Dict[str, Any]]:
     &#34;&#34;&#34;Get the log of all weapons gotten or destroyed in the last 3 months&#34;&#34;&#34;
     return _get_transactions(&#34;getWeaponLog&#34;, size, authkey, lang, end_id)</code></pre>
 </details>

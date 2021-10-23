@@ -26,7 +26,7 @@
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/utils.py#L1-L106" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/utils.py#L1-L119" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">&#34;&#34;&#34;Various utility functions for genshinstats.&#34;&#34;&#34;
 import inspect
@@ -51,20 +51,22 @@ T = TypeVar(&#34;T&#34;)
 
 USER_AGENT = &#34;Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36&#34;
 
+
 def recognize_server(uid: int) -&gt; str:
     &#34;&#34;&#34;Recognizes which server a UID is from.&#34;&#34;&#34;
     server = {
-        &#39;1&#39;:&#39;cn_gf01&#39;,
-        &#39;5&#39;:&#39;cn_qd01&#39;,
-        &#39;6&#39;:&#39;os_usa&#39;,
-        &#39;7&#39;:&#39;os_euro&#39;,
-        &#39;8&#39;:&#39;os_asia&#39;,
-        &#39;9&#39;:&#39;os_cht&#39;,
+        &#34;1&#34;: &#34;cn_gf01&#34;,
+        &#34;5&#34;: &#34;cn_qd01&#34;,
+        &#34;6&#34;: &#34;os_usa&#34;,
+        &#34;7&#34;: &#34;os_euro&#34;,
+        &#34;8&#34;: &#34;os_asia&#34;,
+        &#34;9&#34;: &#34;os_cht&#34;,
     }.get(str(uid)[0])
     if server:
         return server
     else:
         raise AccountNotFound(f&#34;UID {uid} isn&#39;t associated with any server&#34;)
+
 
 def recognize_id(id: int) -&gt; Optional[str]:
     &#34;&#34;&#34;Attempts to recognize what item type an id is&#34;&#34;&#34;
@@ -84,17 +86,20 @@ def recognize_id(id: int) -&gt; Optional[str]:
         return &#34;transaction&#34;
     # not sure about these ones:
     elif 1 &lt;= id &lt;= 4:
-        return &#34;exploration&#34; 
+        return &#34;exploration&#34;
     else:
         return None
+
 
 def is_game_uid(uid: int) -&gt; bool:
     &#34;&#34;&#34;Recognizes whether the uid is a game uid.&#34;&#34;&#34;
     return bool(re.fullmatch(r&#34;[6789]\d{8}&#34;, str(uid)))
 
+
 def is_chinese(x: Union[int, str]) -&gt; bool:
     &#34;&#34;&#34;Recognizes whether the server/uid is chinese.&#34;&#34;&#34;
     return str(x).startswith((&#34;cn&#34;, &#34;1&#34;, &#34;5&#34;))
+
 
 def get_logfile() -&gt; Optional[str]:
     &#34;&#34;&#34;Find and return the Genshin Impact logfile. None if not found.&#34;&#34;&#34;
@@ -103,12 +108,16 @@ def get_logfile() -&gt; Optional[str]:
         output_log = os.path.join(mihoyo_dir, name, &#34;output_log.txt&#34;)
         if os.path.isfile(output_log):
             return output_log
-    return None # no genshin installation
+    return None  # no genshin installation
 
-def retry(tries: int = 3, exceptions: Union[Type[BaseException], Iterable[Type[BaseException]]] = Exception) -&gt; Callable[[T], T]:
+
+def retry(
+    tries: int = 3,
+    exceptions: Union[Type[BaseException], Iterable[Type[BaseException]]] = Exception,
+) -&gt; Callable[[T], T]:
     &#34;&#34;&#34;A classic retry() decorator&#34;&#34;&#34;
+
     def wrapper(func):
-        
         @wraps(func)
         def inner(*args, **kwargs):
             for _ in range(tries):
@@ -117,23 +126,27 @@ def retry(tries: int = 3, exceptions: Union[Type[BaseException], Iterable[Type[B
                 except exceptions as e:
                     exc = e
             else:
-                raise Exception(f&#34;Maximum tries ({tries}) exceeded: {exc}&#34;) from exc # type: ignore
-        
-        return inner
-    
-    return wrapper # type: ignore
+                raise Exception(f&#34;Maximum tries ({tries}) exceeded: {exc}&#34;) from exc  # type: ignore
 
-def deprecated(message: str = &#34;{} is deprecated and will be removed in future versions&#34;) -&gt; Callable[[T], T]:
+        return inner
+
+    return wrapper  # type: ignore
+
+
+def deprecated(
+    message: str = &#34;{} is deprecated and will be removed in future versions&#34;,
+) -&gt; Callable[[T], T]:
     &#34;&#34;&#34;Shows a warning when a function is attempted to be used&#34;&#34;&#34;
+
     def wrapper(func):
-        
         @wraps(func)
         def inner(*args, **kwargs):
             warnings.warn(message.format(func.__name__), PendingDeprecationWarning)
             return func(*args, **kwargs)
 
         return inner
-    return wrapper # type: ignore</code></pre>
+
+    return wrapper  # type: ignore</code></pre>
 </details>
 </section>
 <section>
@@ -151,7 +164,7 @@ def deprecated(message: str = &#34;{} is deprecated and will be removed in futur
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/utils.py#L69-L76" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/utils.py#L74-L81" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def get_logfile() -&gt; Optional[str]:
     &#34;&#34;&#34;Find and return the Genshin Impact logfile. None if not found.&#34;&#34;&#34;
@@ -160,7 +173,7 @@ def deprecated(message: str = &#34;{} is deprecated and will be removed in futur
         output_log = os.path.join(mihoyo_dir, name, &#34;output_log.txt&#34;)
         if os.path.isfile(output_log):
             return output_log
-    return None # no genshin installation</code></pre>
+    return None  # no genshin installation</code></pre>
 </details>
 </dd>
 <dt id="genshinstats.utils.is_chinese"><code class="name flex">
@@ -171,7 +184,7 @@ def deprecated(message: str = &#34;{} is deprecated and will be removed in futur
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/utils.py#L65-L67" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/utils.py#L69-L71" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def is_chinese(x: Union[int, str]) -&gt; bool:
     &#34;&#34;&#34;Recognizes whether the server/uid is chinese.&#34;&#34;&#34;
@@ -186,7 +199,7 @@ def deprecated(message: str = &#34;{} is deprecated and will be removed in futur
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/utils.py#L61-L63" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/utils.py#L64-L66" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def is_game_uid(uid: int) -&gt; bool:
     &#34;&#34;&#34;Recognizes whether the uid is a game uid.&#34;&#34;&#34;
@@ -201,7 +214,7 @@ def deprecated(message: str = &#34;{} is deprecated and will be removed in futur
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/utils.py#L39-L59" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/utils.py#L41-L61" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def recognize_id(id: int) -&gt; Optional[str]:
     &#34;&#34;&#34;Attempts to recognize what item type an id is&#34;&#34;&#34;
@@ -221,7 +234,7 @@ def deprecated(message: str = &#34;{} is deprecated and will be removed in futur
         return &#34;transaction&#34;
     # not sure about these ones:
     elif 1 &lt;= id &lt;= 4:
-        return &#34;exploration&#34; 
+        return &#34;exploration&#34;
     else:
         return None</code></pre>
 </details>
@@ -234,17 +247,17 @@ def deprecated(message: str = &#34;{} is deprecated and will be removed in futur
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/utils.py#L24-L37" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/utils.py#L25-L38" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def recognize_server(uid: int) -&gt; str:
     &#34;&#34;&#34;Recognizes which server a UID is from.&#34;&#34;&#34;
     server = {
-        &#39;1&#39;:&#39;cn_gf01&#39;,
-        &#39;5&#39;:&#39;cn_qd01&#39;,
-        &#39;6&#39;:&#39;os_usa&#39;,
-        &#39;7&#39;:&#39;os_euro&#39;,
-        &#39;8&#39;:&#39;os_asia&#39;,
-        &#39;9&#39;:&#39;os_cht&#39;,
+        &#34;1&#34;: &#34;cn_gf01&#34;,
+        &#34;5&#34;: &#34;cn_qd01&#34;,
+        &#34;6&#34;: &#34;os_usa&#34;,
+        &#34;7&#34;: &#34;os_euro&#34;,
+        &#34;8&#34;: &#34;os_asia&#34;,
+        &#34;9&#34;: &#34;os_cht&#34;,
     }.get(str(uid)[0])
     if server:
         return server

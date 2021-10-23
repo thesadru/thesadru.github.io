@@ -27,7 +27,7 @@
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/daily.py#L1-L104" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/daily.py#L1-L106" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">&#34;&#34;&#34;Automatic sign-in for hoyolab&#39;s daily rewards.
 
@@ -49,71 +49,78 @@ __all__ = [
     &#34;claim_daily_reward&#34;,
 ]
 
-OS_URL = &#34;https://hk4e-api-os.mihoyo.com/event/sol/&#34; # overseas
+OS_URL = &#34;https://hk4e-api-os.mihoyo.com/event/sol/&#34;  # overseas
 OS_ACT_ID = &#34;e202102251931481&#34;
-CN_URL = &#34;https://api-takumi.mihoyo.com/event/bbs_sign_reward/&#34; # chinese
+CN_URL = &#34;https://api-takumi.mihoyo.com/event/bbs_sign_reward/&#34;  # chinese
 CN_ACT_ID = &#34;e202009291139501&#34;
+
 
 class DailyRewardInfo(NamedTuple):
     signed_in: bool
     claimed_rewards: int
 
+
 def fetch_daily_endpoint(endpoint: str, chinese: bool = False, **kwargs) -&gt; Dict[str, Any]:
     &#34;&#34;&#34;Fetch an enpoint for daily rewards&#34;&#34;&#34;
-    url,act_id = (CN_URL,CN_ACT_ID) if chinese else (OS_URL,OS_ACT_ID)
-    kwargs.setdefault(&#39;params&#39;,{})[&#39;act_id&#39;] = act_id
+    url, act_id = (CN_URL, CN_ACT_ID) if chinese else (OS_URL, OS_ACT_ID)
+    kwargs.setdefault(&#34;params&#34;, {})[&#34;act_id&#34;] = act_id
     url = urljoin(url, endpoint)
-    
+
     return fetch_endpoint(url, **kwargs)
 
 
-def get_daily_reward_info(chinese: bool = False, cookie: Mapping[str, Any] = None) -&gt; DailyRewardInfo:
+def get_daily_reward_info(
+    chinese: bool = False, cookie: Mapping[str, Any] = None
+) -&gt; DailyRewardInfo:
     &#34;&#34;&#34;Fetches daily award info for the currently logged-in user.
-    
+
     Returns a tuple - whether the user is logged in, how many total rewards the user has claimed so far
     &#34;&#34;&#34;
     data = fetch_daily_endpoint(&#34;info&#34;, chinese, cookie=cookie)
-    return DailyRewardInfo(data[&#39;is_sign&#39;], data[&#39;total_sign_day&#39;])
+    return DailyRewardInfo(data[&#34;is_sign&#34;], data[&#34;total_sign_day&#34;])
 
-@permanent_cache(&#39;chinese&#39;, &#39;lang&#39;)
-def get_monthly_rewards(chinese: bool = False, lang: str = &#39;en-us&#39;, cookie: Mapping[str, Any] = None) -&gt; List[Dict[str, Any]]:
+
+@permanent_cache(&#34;chinese&#34;, &#34;lang&#34;)
+def get_monthly_rewards(
+    chinese: bool = False, lang: str = &#34;en-us&#34;, cookie: Mapping[str, Any] = None
+) -&gt; List[Dict[str, Any]]:
     &#34;&#34;&#34;Gets a list of avalible rewards for the current month&#34;&#34;&#34;
-    return fetch_daily_endpoint(
-        &#34;home&#34;, chinese,
-        cookie=cookie,
-        params=dict(lang=lang)
-    )[&#39;awards&#39;]
+    return fetch_daily_endpoint(&#34;home&#34;, chinese, cookie=cookie, params=dict(lang=lang))[&#34;awards&#34;]
 
-def get_claimed_rewards(chinese: bool = False, cookie: Mapping[str, Any] = None) -&gt; Iterator[Dict[str, Any]]:
+
+def get_claimed_rewards(
+    chinese: bool = False, cookie: Mapping[str, Any] = None
+) -&gt; Iterator[Dict[str, Any]]:
     &#34;&#34;&#34;Gets all claimed awards for the currently logged-in user&#34;&#34;&#34;
     current_page = 1
     while True:
         data = fetch_daily_endpoint(
-            &#34;award&#34;, chinese,
-            cookie=cookie,
-            params=dict(current_page=current_page)
-        )[&#39;list&#39;]
+            &#34;award&#34;, chinese, cookie=cookie, params=dict(current_page=current_page)
+        )[&#34;list&#34;]
         yield from data
         if len(data) &lt; 10:
             break
         current_page += 1
 
-def claim_daily_reward(uid: int = None, chinese: bool = False, lang: str = &#39;en-us&#39;, cookie: Mapping[str, Any] = None) -&gt; Optional[Dict[str, Any]]:
+
+def claim_daily_reward(
+    uid: int = None, chinese: bool = False, lang: str = &#34;en-us&#34;, cookie: Mapping[str, Any] = None
+) -&gt; Optional[Dict[str, Any]]:
     &#34;&#34;&#34;Signs into hoyolab and claims the daily rewards.
-    
+
     Chinese and overseas servers work a bit differently,
     so you must specify whether you want to claim rewards for chinese accounts.
-    
+
     When claiming rewards for other users you may add a cookie argument.
-    
+
     Returns the claimed reward or None if the reward cannot be claimed yet.
     &#34;&#34;&#34;
     signed_in, claimed_rewards = get_daily_reward_info(chinese, cookie)
     if signed_in:
         return None
-    
+
     params = {}
-    
+
     if chinese:
         if uid is None:
             accounts = get_game_accounts(chinese=True, cookie=cookie)
@@ -122,15 +129,10 @@ def claim_daily_reward(uid: int = None, chinese: bool = False, lang: str = &#39;
         else:
             params[&#34;game_uid&#34;] = uid
             params[&#34;region&#34;] = recognize_server(uid)
-    
+
     params[&#34;lang&#34;] = lang
-    
-    fetch_daily_endpoint(
-        &#34;sign&#34;, chinese,
-        cookie=cookie,
-        method=&#34;POST&#34;,
-        params=params
-    )
+
+    fetch_daily_endpoint(&#34;sign&#34;, chinese, cookie=cookie, method=&#34;POST&#34;, params=params)
     rewards = get_monthly_rewards(chinese, lang, cookie)
     return rewards[claimed_rewards]</code></pre>
 </details>
@@ -154,24 +156,26 @@ so you must specify whether you want to claim rewards for chinese accounts.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/daily.py#L70-L104" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/daily.py#L75-L106" class="git-link">Browse git</a>
 </summary>
-<pre><code class="python">def claim_daily_reward(uid: int = None, chinese: bool = False, lang: str = &#39;en-us&#39;, cookie: Mapping[str, Any] = None) -&gt; Optional[Dict[str, Any]]:
+<pre><code class="python">def claim_daily_reward(
+    uid: int = None, chinese: bool = False, lang: str = &#34;en-us&#34;, cookie: Mapping[str, Any] = None
+) -&gt; Optional[Dict[str, Any]]:
     &#34;&#34;&#34;Signs into hoyolab and claims the daily rewards.
-    
+
     Chinese and overseas servers work a bit differently,
     so you must specify whether you want to claim rewards for chinese accounts.
-    
+
     When claiming rewards for other users you may add a cookie argument.
-    
+
     Returns the claimed reward or None if the reward cannot be claimed yet.
     &#34;&#34;&#34;
     signed_in, claimed_rewards = get_daily_reward_info(chinese, cookie)
     if signed_in:
         return None
-    
+
     params = {}
-    
+
     if chinese:
         if uid is None:
             accounts = get_game_accounts(chinese=True, cookie=cookie)
@@ -180,15 +184,10 @@ so you must specify whether you want to claim rewards for chinese accounts.</p>
         else:
             params[&#34;game_uid&#34;] = uid
             params[&#34;region&#34;] = recognize_server(uid)
-    
+
     params[&#34;lang&#34;] = lang
-    
-    fetch_daily_endpoint(
-        &#34;sign&#34;, chinese,
-        cookie=cookie,
-        method=&#34;POST&#34;,
-        params=params
-    )
+
+    fetch_daily_endpoint(&#34;sign&#34;, chinese, cookie=cookie, method=&#34;POST&#34;, params=params)
     rewards = get_monthly_rewards(chinese, lang, cookie)
     return rewards[claimed_rewards]</code></pre>
 </details>
@@ -201,14 +200,14 @@ so you must specify whether you want to claim rewards for chinese accounts.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/daily.py#L30-L36" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/daily.py#L32-L38" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def fetch_daily_endpoint(endpoint: str, chinese: bool = False, **kwargs) -&gt; Dict[str, Any]:
     &#34;&#34;&#34;Fetch an enpoint for daily rewards&#34;&#34;&#34;
-    url,act_id = (CN_URL,CN_ACT_ID) if chinese else (OS_URL,OS_ACT_ID)
-    kwargs.setdefault(&#39;params&#39;,{})[&#39;act_id&#39;] = act_id
+    url, act_id = (CN_URL, CN_ACT_ID) if chinese else (OS_URL, OS_ACT_ID)
+    kwargs.setdefault(&#34;params&#34;, {})[&#34;act_id&#34;] = act_id
     url = urljoin(url, endpoint)
-    
+
     return fetch_endpoint(url, **kwargs)</code></pre>
 </details>
 </dd>
@@ -220,17 +219,17 @@ so you must specify whether you want to claim rewards for chinese accounts.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/daily.py#L56-L68" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/daily.py#L60-L72" class="git-link">Browse git</a>
 </summary>
-<pre><code class="python">def get_claimed_rewards(chinese: bool = False, cookie: Mapping[str, Any] = None) -&gt; Iterator[Dict[str, Any]]:
+<pre><code class="python">def get_claimed_rewards(
+    chinese: bool = False, cookie: Mapping[str, Any] = None
+) -&gt; Iterator[Dict[str, Any]]:
     &#34;&#34;&#34;Gets all claimed awards for the currently logged-in user&#34;&#34;&#34;
     current_page = 1
     while True:
         data = fetch_daily_endpoint(
-            &#34;award&#34;, chinese,
-            cookie=cookie,
-            params=dict(current_page=current_page)
-        )[&#39;list&#39;]
+            &#34;award&#34;, chinese, cookie=cookie, params=dict(current_page=current_page)
+        )[&#34;list&#34;]
         yield from data
         if len(data) &lt; 10:
             break
@@ -246,15 +245,17 @@ so you must specify whether you want to claim rewards for chinese accounts.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/daily.py#L39-L45" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/daily.py#L41-L49" class="git-link">Browse git</a>
 </summary>
-<pre><code class="python">def get_daily_reward_info(chinese: bool = False, cookie: Mapping[str, Any] = None) -&gt; DailyRewardInfo:
+<pre><code class="python">def get_daily_reward_info(
+    chinese: bool = False, cookie: Mapping[str, Any] = None
+) -&gt; DailyRewardInfo:
     &#34;&#34;&#34;Fetches daily award info for the currently logged-in user.
-    
+
     Returns a tuple - whether the user is logged in, how many total rewards the user has claimed so far
     &#34;&#34;&#34;
     data = fetch_daily_endpoint(&#34;info&#34;, chinese, cookie=cookie)
-    return DailyRewardInfo(data[&#39;is_sign&#39;], data[&#39;total_sign_day&#39;])</code></pre>
+    return DailyRewardInfo(data[&#34;is_sign&#34;], data[&#34;total_sign_day&#34;])</code></pre>
 </details>
 </dd>
 <dt id="genshinstats.daily.get_monthly_rewards"><code class="name flex">
@@ -265,16 +266,14 @@ so you must specify whether you want to claim rewards for chinese accounts.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/daily.py#L47-L54" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/daily.py#L52-L57" class="git-link">Browse git</a>
 </summary>
-<pre><code class="python">@permanent_cache(&#39;chinese&#39;, &#39;lang&#39;)
-def get_monthly_rewards(chinese: bool = False, lang: str = &#39;en-us&#39;, cookie: Mapping[str, Any] = None) -&gt; List[Dict[str, Any]]:
+<pre><code class="python">@permanent_cache(&#34;chinese&#34;, &#34;lang&#34;)
+def get_monthly_rewards(
+    chinese: bool = False, lang: str = &#34;en-us&#34;, cookie: Mapping[str, Any] = None
+) -&gt; List[Dict[str, Any]]:
     &#34;&#34;&#34;Gets a list of avalible rewards for the current month&#34;&#34;&#34;
-    return fetch_daily_endpoint(
-        &#34;home&#34;, chinese,
-        cookie=cookie,
-        params=dict(lang=lang)
-    )[&#39;awards&#39;]</code></pre>
+    return fetch_daily_endpoint(&#34;home&#34;, chinese, cookie=cookie, params=dict(lang=lang))[&#34;awards&#34;]</code></pre>
 </details>
 </dd>
 </dl>

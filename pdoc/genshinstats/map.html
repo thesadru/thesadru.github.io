@@ -27,7 +27,7 @@
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/map.py#L1-L74" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/map.py#L1-L84" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">&#34;&#34;&#34;The official genshin map
 
@@ -72,26 +72,33 @@ def get_map_image() -&gt; str:
     data = fetch_map_endpoint(&#34;info&#34;)[&#34;info&#34;][&#34;detail&#34;]
     return json.loads(data)[&#34;slices&#34;][0][0][&#34;url&#34;]
 
+
 @permanent_cache()
 def get_map_icons() -&gt; Dict[int, str]:
     &#34;&#34;&#34;Get all icons for the map&#34;&#34;&#34;
     data = fetch_map_endpoint(&#34;spot_kind/get_icon_list&#34;)[&#34;icons&#34;]
     return {i[&#34;id&#34;]: i[&#34;url&#34;] for i in data}
 
+
 @permanent_cache()
 def get_map_labels() -&gt; List[Dict[str, Any]]:
     &#34;&#34;&#34;Get labels and label categories&#34;&#34;&#34;
     return fetch_map_endpoint(&#34;label/tree&#34;)[&#34;tree&#34;]
 
+
 def get_map_locations() -&gt; List[Dict[str, Any]]:
     &#34;&#34;&#34;Get all locations on the map&#34;&#34;&#34;
     return fetch_map_endpoint(&#34;map_anchor/list&#34;)[&#34;list&#34;]
+
 
 def get_map_points() -&gt; List[Dict[str, Any]]:
     &#34;&#34;&#34;Get points on the map&#34;&#34;&#34;
     return fetch_map_endpoint(&#34;point/list&#34;)[&#34;point_list&#34;]
 
-def get_map_tile(x: int, y: int, width: int, height: int, resolution: int = 1, image: str = None) -&gt; str:
+
+def get_map_tile(
+    x: int, y: int, width: int, height: int, resolution: int = 1, image: str = None
+) -&gt; str:
     &#34;&#34;&#34;Gets a map tile at a position
 
     You may set an x, y, width and height of the resulting image
@@ -102,7 +109,10 @@ def get_map_tile(x: int, y: int, width: int, height: int, resolution: int = 1, i
     You should pick values from 100, 50, 25 and 12.5
     &#34;&#34;&#34;
     image = image or get_map_image()
-    return image + f&#34;?x-oss-process=image/resize,p_{round(resolution)}/crop,x_{x},y_{y},w_{width},h_{height}&#34;</code></pre>
+    return (
+        image
+        + f&#34;?x-oss-process=image/resize,p_{round(resolution)}/crop,x_{x},y_{y},w_{width},h_{height}&#34;
+    )</code></pre>
 </details>
 </section>
 <section>
@@ -146,7 +156,7 @@ A request is then sent and returns a parsed response.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/map.py#L44-L48" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/map.py#L45-L49" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">@permanent_cache()
 def get_map_icons() -&gt; Dict[int, str]:
@@ -180,7 +190,7 @@ def get_map_image() -&gt; str:
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/map.py#L50-L53" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/map.py#L52-L55" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">@permanent_cache()
 def get_map_labels() -&gt; List[Dict[str, Any]]:
@@ -196,7 +206,7 @@ def get_map_labels() -&gt; List[Dict[str, Any]]:
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/map.py#L55-L57" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/map.py#L58-L60" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def get_map_locations() -&gt; List[Dict[str, Any]]:
     &#34;&#34;&#34;Get all locations on the map&#34;&#34;&#34;
@@ -211,7 +221,7 @@ def get_map_labels() -&gt; List[Dict[str, Any]]:
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/map.py#L59-L61" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/map.py#L63-L65" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def get_map_points() -&gt; List[Dict[str, Any]]:
     &#34;&#34;&#34;Get points on the map&#34;&#34;&#34;
@@ -231,9 +241,11 @@ You should pick values from 100, 50, 25 and 12.5</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/map.py#L63-L74" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/map.py#L68-L84" class="git-link">Browse git</a>
 </summary>
-<pre><code class="python">def get_map_tile(x: int, y: int, width: int, height: int, resolution: int = 1, image: str = None) -&gt; str:
+<pre><code class="python">def get_map_tile(
+    x: int, y: int, width: int, height: int, resolution: int = 1, image: str = None
+) -&gt; str:
     &#34;&#34;&#34;Gets a map tile at a position
 
     You may set an x, y, width and height of the resulting image
@@ -244,7 +256,10 @@ You should pick values from 100, 50, 25 and 12.5</p></div>
     You should pick values from 100, 50, 25 and 12.5
     &#34;&#34;&#34;
     image = image or get_map_image()
-    return image + f&#34;?x-oss-process=image/resize,p_{round(resolution)}/crop,x_{x},y_{y},w_{width},h_{height}&#34;</code></pre>
+    return (
+        image
+        + f&#34;?x-oss-process=image/resize,p_{round(resolution)}/crop,x_{x},y_{y},w_{width},h_{height}&#34;
+    )</code></pre>
 </details>
 </dd>
 </dl>

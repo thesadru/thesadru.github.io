@@ -28,7 +28,7 @@ Requires an authkey that is fetched automatically from a logfile.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/wishes.py#L1-L256" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/wishes.py#L1-L277" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">&#34;&#34;&#34;Genshin Impact wish history.
 
@@ -68,13 +68,15 @@ __all__ = [
 
 GENSHIN_LOG = get_logfile()
 GACHA_INFO_URL = &#34;https://hk4e-api-os.mihoyo.com/event/gacha_info/api/&#34;
-AUTHKEY_FILE = os.path.join(gettempdir(), &#39;genshinstats_authkey.txt&#39;)
+AUTHKEY_FILE = os.path.join(gettempdir(), &#34;genshinstats_authkey.txt&#34;)
 
 session = Session()
-session.headers.update({
-    # recommended header
-    &#34;user-agent&#34;: USER_AGENT
-})
+session.headers.update(
+    {
+        # recommended header
+        &#34;user-agent&#34;: USER_AGENT
+    }
+)
 session.params = {
     # required params
     &#34;authkey_ver&#34;: &#34;1&#34;,
@@ -86,23 +88,27 @@ session.params = {
 }
 static_session = Session()  # extra session for static resources
 
+
 def _get_short_lang_code(lang: str) -&gt; str:
     &#34;&#34;&#34;Returns an alternative short lang code&#34;&#34;&#34;
-    return lang if &#39;zh&#39; in lang else lang.split(&#39;-&#39;)[0]
+    return lang if &#34;zh&#34; in lang else lang.split(&#34;-&#34;)[0]
+
 
 def _read_logfile(logfile: str = None) -&gt; str:
     &#34;&#34;&#34;Returns the contents of a logfile&#34;&#34;&#34;
     if GENSHIN_LOG is None:
-        raise FileNotFoundError(&#39;No Genshin Installation was found, could not get gacha data.&#39;)
+        raise FileNotFoundError(&#34;No Genshin Installation was found, could not get gacha data.&#34;)
     with open(logfile or GENSHIN_LOG) as file:
         return file.read()
 
+
 def extract_authkey(string: str) -&gt; Optional[str]:
     &#34;&#34;&#34;Extracts an authkey from the provided string. Returns None if not found.&#34;&#34;&#34;
-    match = re.search(r&#39;https://.+?authkey=([^&amp;#]+)&#39;, string, re.MULTILINE)
+    match = re.search(r&#34;https://.+?authkey=([^&amp;#]+)&#34;, string, re.MULTILINE)
     if match is not None:
         return unquote(match.group(1))
     return None
+
 
 def get_authkey(logfile: str = None) -&gt; str:
     &#34;&#34;&#34;Gets the query for log requests.
@@ -112,7 +118,7 @@ def get_authkey(logfile: str = None) -&gt; str:
     # first try the log
     authkey = extract_authkey(_read_logfile(logfile))
     if authkey is not None:
-        with open(AUTHKEY_FILE, &#39;w&#39;) as file:
+        with open(AUTHKEY_FILE, &#34;w&#34;) as file:
             file.write(authkey)
         return authkey
     # otherwise try the tempfile (may be expired!)
@@ -120,20 +126,24 @@ def get_authkey(logfile: str = None) -&gt; str:
         with open(AUTHKEY_FILE) as file:
             return file.read()
 
-    raise MissingAuthKey(&#39;No authkey could be found in the logs or in a tempfile. &#39;
-                         &#39;Open the history in-game first before attempting to request it.&#39;)
+    raise MissingAuthKey(
+        &#34;No authkey could be found in the logs or in a tempfile. &#34;
+        &#34;Open the history in-game first before attempting to request it.&#34;
+    )
+
 
 def set_authkey(authkey: str = None) -&gt; None:
     &#34;&#34;&#34;Sets an authkey for log requests.
 
-    You may pass in an authkey, a url with an authkey 
+    You may pass in an authkey, a url with an authkey
     or a path to a logfile with the authkey.
     &#34;&#34;&#34;
     if authkey is None or os.path.isfile(authkey):
         authkey = get_authkey(authkey)
     else:
         authkey = extract_authkey(authkey) or authkey
-    session.params[&#39;authkey&#39;] = authkey # type: ignore
+    session.params[&#34;authkey&#34;] = authkey  # type: ignore
+
 
 def get_banner_ids(logfile: str = None) -&gt; List[str]:
     &#34;&#34;&#34;Gets all banner ids from a log file.
@@ -141,8 +151,9 @@ def get_banner_ids(logfile: str = None) -&gt; List[str]:
     You need to open the details of all banners for this to work.
     &#34;&#34;&#34;
     log = _read_logfile(logfile)
-    ids = re.findall(r&#39;OnGetWebViewPageFinish:https://.+?gacha_id=([^&amp;#]+)&#39;, log)
+    ids = re.findall(r&#34;OnGetWebViewPageFinish:https://.+?gacha_id=([^&amp;#]+)&#34;, log)
     return list(set(ids))
+
 
 def fetch_gacha_endpoint(endpoint: str, authkey: str = None, **kwargs) -&gt; Dict[str, Any]:
     &#34;&#34;&#34;Fetch an enpoint from mihoyo&#39;s gacha info.
@@ -153,42 +164,45 @@ def fetch_gacha_endpoint(endpoint: str, authkey: str = None, **kwargs) -&gt; Dic
     Includes error handling and getting the authkey.
     &#34;&#34;&#34;
     if authkey is None:
-        session.params[&#39;authkey&#39;] = session.params[&#39;authkey&#39;] or get_authkey() # type: ignore
+        session.params[&#34;authkey&#34;] = session.params[&#34;authkey&#34;] or get_authkey()  # type: ignore
     else:
-        kwargs.setdefault(&#39;params&#39;, {})[&#39;authkey&#39;] = authkey
-    method = kwargs.pop(&#39;method&#39;, &#39;get&#39;)
+        kwargs.setdefault(&#34;params&#34;, {})[&#34;authkey&#34;] = authkey
+    method = kwargs.pop(&#34;method&#34;, &#34;get&#34;)
     url = urljoin(GACHA_INFO_URL, endpoint)
-    
+
     r = session.request(method, url, **kwargs)
     r.raise_for_status()
 
     data = r.json()
-    if data[&#39;retcode&#39;] == 0:
-        return data[&#39;data&#39;]
+    if data[&#34;retcode&#34;] == 0:
+        return data[&#34;data&#34;]
 
     raise_for_error(data)
 
-@permanent_cache(&#39;lang&#39;)
-def get_banner_types(authkey: str = None, lang: str = &#39;en&#39;) -&gt; Dict[int, str]:
+
+@permanent_cache(&#34;lang&#34;)
+def get_banner_types(authkey: str = None, lang: str = &#34;en&#34;) -&gt; Dict[int, str]:
     &#34;&#34;&#34;Gets ids for all banners and their names&#34;&#34;&#34;
     banners = fetch_gacha_endpoint(
-        &#34;getConfigList&#34;,
-        authkey=authkey,
-        params=dict(lang=_get_short_lang_code(lang))
-    )[&#39;gacha_type_list&#39;]
-    return {int(i[&#39;key&#39;]): i[&#39;name&#39;] for i in banners}
+        &#34;getConfigList&#34;, authkey=authkey, params=dict(lang=_get_short_lang_code(lang))
+    )[&#34;gacha_type_list&#34;]
+    return {int(i[&#34;key&#34;]): i[&#34;name&#34;] for i in banners}
+
 
 def get_wish_history(
-    banner_type: int = None, size: int = None, 
-    authkey: str = None, end_id: int = 0, lang: str = &#39;en&#39;
+    banner_type: int = None,
+    size: int = None,
+    authkey: str = None,
+    end_id: int = 0,
+    lang: str = &#34;en&#34;,
 ) -&gt; Iterator[Dict[str, Any]]:
     &#34;&#34;&#34;Gets wish history.
-    
+
     Note that pulls are yielded and not returned to account for pagination.
-    
+
     When a banner_type is set, only data from that banner type is retuned.
     You can get banner types and their names from get_banner_types.
-    
+
     If a size is set the total returned amount of pulls will be equal to or lower than the size.
 
     To be able to get history starting from somewhere other than the last pull
@@ -196,27 +210,31 @@ def get_wish_history(
     &#34;&#34;&#34;
     if size is not None and size &lt;= 0:
         return
-    
+
     if banner_type is None:
         # we get data from all banners by getting data from every individual banner
         # and then sorting it by pull date with heapq.merge
-        gens = [get_wish_history(banner_type, None, authkey, end_id, lang)
-                for banner_type in get_banner_types(authkey)]
-        yield from islice(heapq.merge(*gens, key=lambda x: x[&#39;time&#39;], reverse=True), size)
+        gens = [
+            get_wish_history(banner_type, None, authkey, end_id, lang)
+            for banner_type in get_banner_types(authkey)
+        ]
+        yield from islice(heapq.merge(*gens, key=lambda x: x[&#34;time&#34;], reverse=True), size)
         return
 
     # we create banner_name outside prettify so we don&#39;t make extra requests
     banner_name = get_banner_types(authkey, lang)[banner_type]
     lang = _get_short_lang_code(lang)
-    page_size = 20 
+    page_size = 20
     size = size or sys.maxsize
-    
+
     while True:
         data = fetch_gacha_endpoint(
             &#34;getGachaLog&#34;,
             authkey=authkey,
-            params=dict(gacha_type=banner_type, size=min(page_size, size), end_id=end_id, lang=lang)
-        )[&#39;list&#39;]
+            params=dict(
+                gacha_type=banner_type, size=min(page_size, size), end_id=end_id, lang=lang
+            ),
+        )[&#34;list&#34;]
         data = prettify_wish_history(data, banner_name)
         yield from data
 
@@ -224,10 +242,10 @@ def get_wish_history(
         if len(data) &lt; page_size or size &lt;= 0:
             break
 
-        end_id = data[-1][&#39;id&#39;]
+        end_id = data[-1][&#34;id&#34;]
 
 
-def get_gacha_items(lang: str = &#39;en-us&#39;) -&gt; List[Dict[str, Any]]:
+def get_gacha_items(lang: str = &#34;en-us&#34;) -&gt; List[Dict[str, Any]]:
     &#34;&#34;&#34;Gets the list of characters and weapons that can be gotten from the gacha.&#34;&#34;&#34;
     r = static_session.get(
         f&#34;https://webstatic-sea.mihoyo.com/hk4e/gacha_info/os_asia/items/{lang}.json&#34;
@@ -235,13 +253,14 @@ def get_gacha_items(lang: str = &#39;en-us&#39;) -&gt; List[Dict[str, Any]]:
     r.raise_for_status()
     return prettify_gacha_items(r.json())
 
-def get_banner_details(banner_id: str, lang: str = &#39;en-us&#39;) -&gt; Dict[str, Any]:
+
+def get_banner_details(banner_id: str, lang: str = &#34;en-us&#34;) -&gt; Dict[str, Any]:
     &#34;&#34;&#34;Gets details of a specific banner.
 
     This requires the banner&#39;s id.
     These keep rotating so you need to get them with get_banner_ids().
     example standard wish: &#34;a37a19624270b092e7250edfabce541a3435c2&#34;
-    
+
     The newbie gacha has no json resource tied to it so you can&#39;t get info about it.
     &#34;&#34;&#34;
     r = static_session.get(
@@ -250,8 +269,9 @@ def get_banner_details(banner_id: str, lang: str = &#39;en-us&#39;) -&gt; Dict[s
     r.raise_for_status()
     return prettify_banner_details(r.json())
 
+
 def get_uid_from_authkey(authkey: str = None) -&gt; int:
-    &#34;&#34;&#34;Gets a uid from an authkey. 
+    &#34;&#34;&#34;Gets a uid from an authkey.
 
     If an authkey is not passed in the function uses the currently set authkey.
     &#34;&#34;&#34;
@@ -259,32 +279,33 @@ def get_uid_from_authkey(authkey: str = None) -&gt; int:
     # they are sorted from most to least pulled on for speed
     histories = [get_wish_history(i, 1, authkey) for i in (301, 200, 302, 100)]
     pull = next(chain.from_iterable(histories), None)
-    if pull is None: # very rare but possible
-        raise Exception(&#39;User has never made a wish&#39;)
-    return pull[&#39;uid&#39;]
+    if pull is None:  # very rare but possible
+        raise Exception(&#34;User has never made a wish&#34;)
+    return pull[&#34;uid&#34;]
+
 
 def validate_authkey(authkey: Any, previous_authkey: str = None) -&gt; bool:
     &#34;&#34;&#34;Checks whether an authkey is valid by sending a request
-    
+
     If a previous authkey is provided the function also checks if the
     authkey belongs to the same person as the previous one.
     &#34;&#34;&#34;
     if not isinstance(authkey, str) or len(authkey) != 1024:
-        return False # invalid format
-    
+        return False  # invalid format
+
     try:
         base64.b64decode(authkey)
     except:
-        return False # invalid base64 format
-    
+        return False  # invalid base64 format
+
     if previous_authkey and authkey[:682] != previous_authkey[:682]:
         return False
-    
+
     try:
         fetch_gacha_endpoint(&#34;getConfigList&#34;, authkey=authkey)
     except AuthkeyError:
         return False
-    
+
     return True</code></pre>
 </details>
 </section>
@@ -303,11 +324,11 @@ def validate_authkey(authkey: Any, previous_authkey: str = None) -&gt; bool:
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/wishes.py#L68-L73" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/wishes.py#L73-L78" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def extract_authkey(string: str) -&gt; Optional[str]:
     &#34;&#34;&#34;Extracts an authkey from the provided string. Returns None if not found.&#34;&#34;&#34;
-    match = re.search(r&#39;https://.+?authkey=([^&amp;#]+)&#39;, string, re.MULTILINE)
+    match = re.search(r&#34;https://.+?authkey=([^&amp;#]+)&#34;, string, re.MULTILINE)
     if match is not None:
         return unquote(match.group(1))
     return None</code></pre>
@@ -325,7 +346,7 @@ Includes error handling and getting the authkey.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/wishes.py#L115-L137" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/wishes.py#L126-L148" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def fetch_gacha_endpoint(endpoint: str, authkey: str = None, **kwargs) -&gt; Dict[str, Any]:
     &#34;&#34;&#34;Fetch an enpoint from mihoyo&#39;s gacha info.
@@ -336,18 +357,18 @@ Includes error handling and getting the authkey.</p></div>
     Includes error handling and getting the authkey.
     &#34;&#34;&#34;
     if authkey is None:
-        session.params[&#39;authkey&#39;] = session.params[&#39;authkey&#39;] or get_authkey() # type: ignore
+        session.params[&#34;authkey&#34;] = session.params[&#34;authkey&#34;] or get_authkey()  # type: ignore
     else:
-        kwargs.setdefault(&#39;params&#39;, {})[&#39;authkey&#39;] = authkey
-    method = kwargs.pop(&#39;method&#39;, &#39;get&#39;)
+        kwargs.setdefault(&#34;params&#34;, {})[&#34;authkey&#34;] = authkey
+    method = kwargs.pop(&#34;method&#34;, &#34;get&#34;)
     url = urljoin(GACHA_INFO_URL, endpoint)
-    
+
     r = session.request(method, url, **kwargs)
     r.raise_for_status()
 
     data = r.json()
-    if data[&#39;retcode&#39;] == 0:
-        return data[&#39;data&#39;]
+    if data[&#34;retcode&#34;] == 0:
+        return data[&#34;data&#34;]
 
     raise_for_error(data)</code></pre>
 </details>
@@ -361,7 +382,7 @@ Includes error handling and getting the authkey.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/wishes.py#L75-L92" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/wishes.py#L81-L100" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def get_authkey(logfile: str = None) -&gt; str:
     &#34;&#34;&#34;Gets the query for log requests.
@@ -371,7 +392,7 @@ Includes error handling and getting the authkey.</p></div>
     # first try the log
     authkey = extract_authkey(_read_logfile(logfile))
     if authkey is not None:
-        with open(AUTHKEY_FILE, &#39;w&#39;) as file:
+        with open(AUTHKEY_FILE, &#34;w&#34;) as file:
             file.write(authkey)
         return authkey
     # otherwise try the tempfile (may be expired!)
@@ -379,8 +400,10 @@ Includes error handling and getting the authkey.</p></div>
         with open(AUTHKEY_FILE) as file:
             return file.read()
 
-    raise MissingAuthKey(&#39;No authkey could be found in the logs or in a tempfile. &#39;
-                         &#39;Open the history in-game first before attempting to request it.&#39;)</code></pre>
+    raise MissingAuthKey(
+        &#34;No authkey could be found in the logs or in a tempfile. &#34;
+        &#34;Open the history in-game first before attempting to request it.&#34;
+    )</code></pre>
 </details>
 </dd>
 <dt id="genshinstats.wishes.get_banner_details"><code class="name flex">
@@ -395,15 +418,15 @@ example standard wish: "a37a19624270b092e7250edfabce541a3435c2"</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/wishes.py#L206-L219" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/wishes.py#L225-L238" class="git-link">Browse git</a>
 </summary>
-<pre><code class="python">def get_banner_details(banner_id: str, lang: str = &#39;en-us&#39;) -&gt; Dict[str, Any]:
+<pre><code class="python">def get_banner_details(banner_id: str, lang: str = &#34;en-us&#34;) -&gt; Dict[str, Any]:
     &#34;&#34;&#34;Gets details of a specific banner.
 
     This requires the banner&#39;s id.
     These keep rotating so you need to get them with get_banner_ids().
     example standard wish: &#34;a37a19624270b092e7250edfabce541a3435c2&#34;
-    
+
     The newbie gacha has no json resource tied to it so you can&#39;t get info about it.
     &#34;&#34;&#34;
     r = static_session.get(
@@ -422,7 +445,7 @@ example standard wish: "a37a19624270b092e7250edfabce541a3435c2"</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/wishes.py#L106-L113" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/wishes.py#L116-L123" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def get_banner_ids(logfile: str = None) -&gt; List[str]:
     &#34;&#34;&#34;Gets all banner ids from a log file.
@@ -430,7 +453,7 @@ example standard wish: "a37a19624270b092e7250edfabce541a3435c2"</p>
     You need to open the details of all banners for this to work.
     &#34;&#34;&#34;
     log = _read_logfile(logfile)
-    ids = re.findall(r&#39;OnGetWebViewPageFinish:https://.+?gacha_id=([^&amp;#]+)&#39;, log)
+    ids = re.findall(r&#34;OnGetWebViewPageFinish:https://.+?gacha_id=([^&amp;#]+)&#34;, log)
     return list(set(ids))</code></pre>
 </details>
 </dd>
@@ -442,17 +465,15 @@ example standard wish: "a37a19624270b092e7250edfabce541a3435c2"</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/wishes.py#L139-L147" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/wishes.py#L151-L157" class="git-link">Browse git</a>
 </summary>
-<pre><code class="python">@permanent_cache(&#39;lang&#39;)
-def get_banner_types(authkey: str = None, lang: str = &#39;en&#39;) -&gt; Dict[int, str]:
+<pre><code class="python">@permanent_cache(&#34;lang&#34;)
+def get_banner_types(authkey: str = None, lang: str = &#34;en&#34;) -&gt; Dict[int, str]:
     &#34;&#34;&#34;Gets ids for all banners and their names&#34;&#34;&#34;
     banners = fetch_gacha_endpoint(
-        &#34;getConfigList&#34;,
-        authkey=authkey,
-        params=dict(lang=_get_short_lang_code(lang))
-    )[&#39;gacha_type_list&#39;]
-    return {int(i[&#39;key&#39;]): i[&#39;name&#39;] for i in banners}</code></pre>
+        &#34;getConfigList&#34;, authkey=authkey, params=dict(lang=_get_short_lang_code(lang))
+    )[&#34;gacha_type_list&#34;]
+    return {int(i[&#34;key&#34;]): i[&#34;name&#34;] for i in banners}</code></pre>
 </details>
 </dd>
 <dt id="genshinstats.wishes.get_gacha_items"><code class="name flex">
@@ -463,9 +484,9 @@ def get_banner_types(authkey: str = None, lang: str = &#39;en&#39;) -&gt; Dict[i
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/wishes.py#L198-L204" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/wishes.py#L216-L222" class="git-link">Browse git</a>
 </summary>
-<pre><code class="python">def get_gacha_items(lang: str = &#39;en-us&#39;) -&gt; List[Dict[str, Any]]:
+<pre><code class="python">def get_gacha_items(lang: str = &#34;en-us&#34;) -&gt; List[Dict[str, Any]]:
     &#34;&#34;&#34;Gets the list of characters and weapons that can be gotten from the gacha.&#34;&#34;&#34;
     r = static_session.get(
         f&#34;https://webstatic-sea.mihoyo.com/hk4e/gacha_info/os_asia/items/{lang}.json&#34;
@@ -478,15 +499,15 @@ def get_banner_types(authkey: str = None, lang: str = &#39;en&#39;) -&gt; Dict[i
 <span>def <span class="ident">get_uid_from_authkey</span></span>(<span>authkey: str = None) ‑> int</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Gets a uid from an authkey. </p>
+<div class="desc"><p>Gets a uid from an authkey.</p>
 <p>If an authkey is not passed in the function uses the currently set authkey.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/wishes.py#L221-L232" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/wishes.py#L241-L252" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def get_uid_from_authkey(authkey: str = None) -&gt; int:
-    &#34;&#34;&#34;Gets a uid from an authkey. 
+    &#34;&#34;&#34;Gets a uid from an authkey.
 
     If an authkey is not passed in the function uses the currently set authkey.
     &#34;&#34;&#34;
@@ -494,9 +515,9 @@ def get_banner_types(authkey: str = None, lang: str = &#39;en&#39;) -&gt; Dict[i
     # they are sorted from most to least pulled on for speed
     histories = [get_wish_history(i, 1, authkey) for i in (301, 200, 302, 100)]
     pull = next(chain.from_iterable(histories), None)
-    if pull is None: # very rare but possible
-        raise Exception(&#39;User has never made a wish&#39;)
-    return pull[&#39;uid&#39;]</code></pre>
+    if pull is None:  # very rare but possible
+        raise Exception(&#34;User has never made a wish&#34;)
+    return pull[&#34;uid&#34;]</code></pre>
 </details>
 </dd>
 <dt id="genshinstats.wishes.get_wish_history"><code class="name flex">
@@ -513,19 +534,22 @@ you may pass in the id of the pull right chronologically after the one you want 
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/wishes.py#L149-L195" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/wishes.py#L160-L213" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def get_wish_history(
-    banner_type: int = None, size: int = None, 
-    authkey: str = None, end_id: int = 0, lang: str = &#39;en&#39;
+    banner_type: int = None,
+    size: int = None,
+    authkey: str = None,
+    end_id: int = 0,
+    lang: str = &#34;en&#34;,
 ) -&gt; Iterator[Dict[str, Any]]:
     &#34;&#34;&#34;Gets wish history.
-    
+
     Note that pulls are yielded and not returned to account for pagination.
-    
+
     When a banner_type is set, only data from that banner type is retuned.
     You can get banner types and their names from get_banner_types.
-    
+
     If a size is set the total returned amount of pulls will be equal to or lower than the size.
 
     To be able to get history starting from somewhere other than the last pull
@@ -533,27 +557,31 @@ you may pass in the id of the pull right chronologically after the one you want 
     &#34;&#34;&#34;
     if size is not None and size &lt;= 0:
         return
-    
+
     if banner_type is None:
         # we get data from all banners by getting data from every individual banner
         # and then sorting it by pull date with heapq.merge
-        gens = [get_wish_history(banner_type, None, authkey, end_id, lang)
-                for banner_type in get_banner_types(authkey)]
-        yield from islice(heapq.merge(*gens, key=lambda x: x[&#39;time&#39;], reverse=True), size)
+        gens = [
+            get_wish_history(banner_type, None, authkey, end_id, lang)
+            for banner_type in get_banner_types(authkey)
+        ]
+        yield from islice(heapq.merge(*gens, key=lambda x: x[&#34;time&#34;], reverse=True), size)
         return
 
     # we create banner_name outside prettify so we don&#39;t make extra requests
     banner_name = get_banner_types(authkey, lang)[banner_type]
     lang = _get_short_lang_code(lang)
-    page_size = 20 
+    page_size = 20
     size = size or sys.maxsize
-    
+
     while True:
         data = fetch_gacha_endpoint(
             &#34;getGachaLog&#34;,
             authkey=authkey,
-            params=dict(gacha_type=banner_type, size=min(page_size, size), end_id=end_id, lang=lang)
-        )[&#39;list&#39;]
+            params=dict(
+                gacha_type=banner_type, size=min(page_size, size), end_id=end_id, lang=lang
+            ),
+        )[&#34;list&#34;]
         data = prettify_wish_history(data, banner_name)
         yield from data
 
@@ -561,7 +589,7 @@ you may pass in the id of the pull right chronologically after the one you want 
         if len(data) &lt; page_size or size &lt;= 0:
             break
 
-        end_id = data[-1][&#39;id&#39;]</code></pre>
+        end_id = data[-1][&#34;id&#34;]</code></pre>
 </details>
 </dd>
 <dt id="genshinstats.wishes.set_authkey"><code class="name flex">
@@ -574,19 +602,19 @@ or a path to a logfile with the authkey.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/wishes.py#L94-L104" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/wishes.py#L103-L113" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def set_authkey(authkey: str = None) -&gt; None:
     &#34;&#34;&#34;Sets an authkey for log requests.
 
-    You may pass in an authkey, a url with an authkey 
+    You may pass in an authkey, a url with an authkey
     or a path to a logfile with the authkey.
     &#34;&#34;&#34;
     if authkey is None or os.path.isfile(authkey):
         authkey = get_authkey(authkey)
     else:
         authkey = extract_authkey(authkey) or authkey
-    session.params[&#39;authkey&#39;] = authkey # type: ignore</code></pre>
+    session.params[&#34;authkey&#34;] = authkey  # type: ignore</code></pre>
 </details>
 </dd>
 <dt id="genshinstats.wishes.validate_authkey"><code class="name flex">
@@ -599,30 +627,30 @@ authkey belongs to the same person as the previous one.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/wishes.py#L234-L256" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/wishes.py#L255-L277" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def validate_authkey(authkey: Any, previous_authkey: str = None) -&gt; bool:
     &#34;&#34;&#34;Checks whether an authkey is valid by sending a request
-    
+
     If a previous authkey is provided the function also checks if the
     authkey belongs to the same person as the previous one.
     &#34;&#34;&#34;
     if not isinstance(authkey, str) or len(authkey) != 1024:
-        return False # invalid format
-    
+        return False  # invalid format
+
     try:
         base64.b64decode(authkey)
     except:
-        return False # invalid base64 format
-    
+        return False  # invalid base64 format
+
     if previous_authkey and authkey[:682] != previous_authkey[:682]:
         return False
-    
+
     try:
         fetch_gacha_endpoint(&#34;getConfigList&#34;, authkey=authkey)
     except AuthkeyError:
         return False
-    
+
     return True</code></pre>
 </details>
 </dd>
