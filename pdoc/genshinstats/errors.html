@@ -112,7 +112,7 @@ def raise_for_error(response: dict):
         10001: NotLoggedIn(&#34;Login cookies have not been provided or are incorrect.&#34;),
         10102: DataNotPublic(&#34;User&#39;s data is not public&#34;),
         1009: AccountNotFound(&#34;Could not find user; uid may not be valid.&#34;),
-        -1: AccountNotFound(&#34;Could not find user; uid may not be valid.&#34;),
+        -1: GenshinStatsException(&#34;Internal database error, see original message&#34;),
         -10002: AccountNotFound(
             &#34;Cannot get rewards info. Account has no game account binded to it.&#34;
         ),
@@ -173,7 +173,7 @@ def raise_for_error(response: dict):
         10001: NotLoggedIn(&#34;Login cookies have not been provided or are incorrect.&#34;),
         10102: DataNotPublic(&#34;User&#39;s data is not public&#34;),
         1009: AccountNotFound(&#34;Could not find user; uid may not be valid.&#34;),
-        -1: AccountNotFound(&#34;Could not find user; uid may not be valid.&#34;),
+        -1: GenshinStatsException(&#34;Internal database error, see original message&#34;),
         -10002: AccountNotFound(
             &#34;Cannot get rewards info. Account has no game account binded to it.&#34;
         ),
