@@ -1,15 +1,15 @@
 URLS=[
 "genshinstats/index.html",
 "genshinstats/genshinstats.html",
-"genshinstats/errors.html",
-"genshinstats/wishes.html",
-"genshinstats/map.html",
-"genshinstats/transactions.html",
 "genshinstats/pretty.html",
-"genshinstats/hoyolab.html",
+"genshinstats/transactions.html",
 "genshinstats/utils.html",
+"genshinstats/errors.html",
+"genshinstats/hoyolab.html",
+"genshinstats/caching.html",
+"genshinstats/wishes.html",
 "genshinstats/daily.html",
-"genshinstats/caching.html"
+"genshinstats/map.html"
 ];
 INDEX=[
 {
@@ -95,586 +95,562 @@ INDEX=[
 "func":1
 },
 {
-"ref":"genshinstats.errors",
-"url":2,
-"doc":"Genshinstats errors. These take in only a single argument: msg. It's possible to add retcodes and the original api response message with  .set_reponse() ."
-},
-{
-"ref":"genshinstats.errors.GenshinStatsException",
-"url":2,
-"doc":"Base Exception for all genshinstats errors."
-},
-{
-"ref":"genshinstats.errors.GenshinStatsException.retcode",
-"url":2,
-"doc":""
-},
-{
-"ref":"genshinstats.errors.GenshinStatsException.orig_msg",
-"url":2,
-"doc":""
-},
-{
-"ref":"genshinstats.errors.GenshinStatsException.set_response",
-"url":2,
-"doc":"Adds an optional response object to the error.",
-"func":1
-},
-{
-"ref":"genshinstats.errors.GenshinStatsException.msg",
-"url":2,
-"doc":""
-},
-{
-"ref":"genshinstats.errors.TooManyRequests",
-"url":2,
-"doc":"Made too many requests and got ratelimited"
-},
-{
-"ref":"genshinstats.errors.TooManyRequests.retcode",
-"url":2,
-"doc":""
-},
-{
-"ref":"genshinstats.errors.TooManyRequests.orig_msg",
-"url":2,
-"doc":""
-},
-{
-"ref":"genshinstats.errors.TooManyRequests.set_response",
-"url":2,
-"doc":"Adds an optional response object to the error.",
-"func":1
-},
-{
-"ref":"genshinstats.errors.NotLoggedIn",
-"url":2,
-"doc":"Cookies have not been provided."
-},
-{
-"ref":"genshinstats.errors.NotLoggedIn.retcode",
-"url":2,
-"doc":""
-},
-{
-"ref":"genshinstats.errors.NotLoggedIn.orig_msg",
-"url":2,
-"doc":""
-},
-{
-"ref":"genshinstats.errors.NotLoggedIn.set_response",
-"url":2,
-"doc":"Adds an optional response object to the error.",
-"func":1
-},
-{
-"ref":"genshinstats.errors.AccountNotFound",
-"url":2,
-"doc":"Tried to get data with an invalid uid."
-},
-{
-"ref":"genshinstats.errors.AccountNotFound.retcode",
-"url":2,
-"doc":""
-},
-{
-"ref":"genshinstats.errors.AccountNotFound.orig_msg",
-"url":2,
-"doc":""
-},
-{
-"ref":"genshinstats.errors.AccountNotFound.set_response",
-"url":2,
-"doc":"Adds an optional response object to the error.",
-"func":1
-},
-{
-"ref":"genshinstats.errors.DataNotPublic",
-"url":2,
-"doc":"User hasn't set their data to public."
-},
-{
-"ref":"genshinstats.errors.DataNotPublic.retcode",
-"url":2,
-"doc":""
-},
-{
-"ref":"genshinstats.errors.DataNotPublic.orig_msg",
-"url":2,
-"doc":""
-},
-{
-"ref":"genshinstats.errors.DataNotPublic.set_response",
-"url":2,
-"doc":"Adds an optional response object to the error.",
-"func":1
-},
-{
-"ref":"genshinstats.errors.CodeRedeemException",
-"url":2,
-"doc":"Code redemption failed."
-},
-{
-"ref":"genshinstats.errors.CodeRedeemException.retcode",
-"url":2,
-"doc":""
-},
-{
-"ref":"genshinstats.errors.CodeRedeemException.orig_msg",
-"url":2,
-"doc":""
-},
-{
-"ref":"genshinstats.errors.CodeRedeemException.set_response",
-"url":2,
-"doc":"Adds an optional response object to the error.",
-"func":1
-},
-{
-"ref":"genshinstats.errors.SignInException",
-"url":2,
-"doc":"Sign-in failed"
-},
-{
-"ref":"genshinstats.errors.SignInException.retcode",
-"url":2,
-"doc":""
-},
-{
-"ref":"genshinstats.errors.SignInException.orig_msg",
-"url":2,
-"doc":""
-},
-{
-"ref":"genshinstats.errors.SignInException.set_response",
-"url":2,
-"doc":"Adds an optional response object to the error.",
-"func":1
-},
-{
-"ref":"genshinstats.errors.AuthkeyError",
-"url":2,
-"doc":"Base GachaLog Exception."
-},
-{
-"ref":"genshinstats.errors.AuthkeyError.retcode",
-"url":2,
-"doc":""
-},
-{
-"ref":"genshinstats.errors.AuthkeyError.orig_msg",
-"url":2,
-"doc":""
-},
-{
-"ref":"genshinstats.errors.AuthkeyError.set_response",
-"url":2,
-"doc":"Adds an optional response object to the error.",
-"func":1
-},
-{
-"ref":"genshinstats.errors.InvalidAuthkey",
-"url":2,
-"doc":"An authkey is invalid."
-},
-{
-"ref":"genshinstats.errors.InvalidAuthkey.retcode",
-"url":2,
-"doc":""
-},
-{
-"ref":"genshinstats.errors.InvalidAuthkey.orig_msg",
-"url":2,
-"doc":""
-},
-{
-"ref":"genshinstats.errors.InvalidAuthkey.set_response",
-"url":2,
-"doc":"Adds an optional response object to the error.",
-"func":1
-},
-{
-"ref":"genshinstats.errors.AuthkeyTimeout",
-"url":2,
-"doc":"An authkey has timed out."
-},
-{
-"ref":"genshinstats.errors.AuthkeyTimeout.retcode",
-"url":2,
-"doc":""
-},
-{
-"ref":"genshinstats.errors.AuthkeyTimeout.orig_msg",
-"url":2,
-"doc":""
-},
-{
-"ref":"genshinstats.errors.AuthkeyTimeout.set_response",
-"url":2,
-"doc":"Adds an optional response object to the error.",
-"func":1
-},
-{
-"ref":"genshinstats.errors.MissingAuthKey",
-"url":2,
-"doc":"No gacha authkey was found."
-},
-{
-"ref":"genshinstats.errors.MissingAuthKey.retcode",
-"url":2,
-"doc":""
-},
-{
-"ref":"genshinstats.errors.MissingAuthKey.orig_msg",
-"url":2,
-"doc":""
-},
-{
-"ref":"genshinstats.errors.MissingAuthKey.set_response",
-"url":2,
-"doc":"Adds an optional response object to the error.",
-"func":1
-},
-{
-"ref":"genshinstats.errors.raise_for_error",
-"url":2,
-"doc":"Raises a custom genshinstats error from a response.",
-"func":1
-},
-{
-"ref":"genshinstats.wishes",
-"url":3,
-"doc":"Genshin Impact wish history. Gets wish history from the current banners in a clean api. Requires an authkey that is fetched automatically from a logfile."
-},
-{
-"ref":"genshinstats.wishes.extract_authkey",
-"url":3,
-"doc":"Extracts an authkey from the provided string. Returns None if not found.",
-"func":1
-},
-{
-"ref":"genshinstats.wishes.get_authkey",
-"url":3,
-"doc":"Gets the query for log requests. This will either be done from the logs or from a tempfile.",
-"func":1
-},
-{
-"ref":"genshinstats.wishes.set_authkey",
-"url":3,
-"doc":"Sets an authkey for log requests. You may pass in an authkey, a url with an authkey or a path to a logfile with the authkey.",
-"func":1
-},
-{
-"ref":"genshinstats.wishes.get_banner_ids",
-"url":3,
-"doc":"Gets all banner ids from a log file. You need to open the details of all banners for this to work.",
-"func":1
-},
-{
-"ref":"genshinstats.wishes.fetch_gacha_endpoint",
-"url":3,
-"doc":"Fetch an enpoint from mihoyo's gacha info. Takes in an endpoint url which is joined with the base url. If an authkey is provided, it uses that authkey specifically. A request is then sent and returns a parsed response. Includes error handling and getting the authkey.",
-"func":1
-},
-{
-"ref":"genshinstats.wishes.get_banner_types",
-"url":3,
-"doc":"Gets ids for all banners and their names",
-"func":1
-},
-{
-"ref":"genshinstats.wishes.get_wish_history",
-"url":3,
-"doc":"Gets wish history. Note that pulls are yielded and not returned to account for pagination. When a banner_type is set, only data from that banner type is retuned. You can get banner types and their names from get_banner_types. If a size is set the total returned amount of pulls will be equal to or lower than the size. To be able to get history starting from somewhere other than the last pull you may pass in the id of the pull right chronologically after the one you want to start from as end_id.",
-"func":1
-},
-{
-"ref":"genshinstats.wishes.get_gacha_items",
-"url":3,
-"doc":"Gets the list of characters and weapons that can be gotten from the gacha.",
-"func":1
-},
-{
-"ref":"genshinstats.wishes.get_banner_details",
-"url":3,
-"doc":"Gets details of a specific banner. This requires the banner's id. These keep rotating so you need to get them with get_banner_ids(). example standard wish: \"a37a19624270b092e7250edfabce541a3435c2\" The newbie gacha has no json resource tied to it so you can't get info about it.",
-"func":1
-},
-{
-"ref":"genshinstats.wishes.get_uid_from_authkey",
-"url":3,
-"doc":"Gets a uid from an authkey. If an authkey is not passed in the function uses the currently set authkey.",
-"func":1
-},
-{
-"ref":"genshinstats.wishes.validate_authkey",
-"url":3,
-"doc":"Checks whether an authkey is valid by sending a request If a previous authkey is provided the function also checks if the authkey belongs to the same person as the previous one.",
-"func":1
-},
-{
-"ref":"genshinstats.map",
-"url":4,
-"doc":"The official genshin map Gets data from the official genshin map such as categories, points and similar."
-},
-{
-"ref":"genshinstats.map.fetch_map_endpoint",
-"url":4,
-"doc":"Fetch an enpoint from mihoyo's webstatic map api. Only currently liyue is supported. Takes in an endpoint url which is joined with the base url. A request is then sent and returns a parsed response.",
-"func":1
-},
-{
-"ref":"genshinstats.map.get_map_image",
-"url":4,
-"doc":"Get the url to the entire map image",
-"func":1
-},
-{
-"ref":"genshinstats.map.get_map_icons",
-"url":4,
-"doc":"Get all icons for the map",
-"func":1
-},
-{
-"ref":"genshinstats.map.get_map_labels",
-"url":4,
-"doc":"Get labels and label categories",
-"func":1
-},
-{
-"ref":"genshinstats.map.get_map_locations",
-"url":4,
-"doc":"Get all locations on the map",
-"func":1
-},
-{
-"ref":"genshinstats.map.get_map_points",
-"url":4,
-"doc":"Get points on the map",
-"func":1
-},
-{
-"ref":"genshinstats.map.get_map_tile",
-"url":4,
-"doc":"Gets a map tile at a position You may set an x, y, width and height of the resulting image however you shoudl prefer to use multiples of 256 because they are cached on the mihoyo servers. Resolution dictates the resolution of the image as a percentage. 100 is highest and 0 is lowest. You should pick values from 100, 50, 25 and 12.5",
-"func":1
-},
-{
-"ref":"genshinstats.transactions",
-"url":5,
-"doc":"Logs for currency \"transactions\". Logs for artifact, weapon, resin, genesis crystol and primogem \"transactions\". You may view a history of everything you have gained in the last 3 months."
-},
-{
-"ref":"genshinstats.transactions.fetch_transaction_endpoint",
-"url":5,
-"doc":"Fetch an enpoint from mihoyo's transaction logs api. Takes in an endpoint url which is joined with the base url. If an authkey is provided, it uses that authkey specifically. A request is then sent and returns a parsed response.",
-"func":1
-},
-{
-"ref":"genshinstats.transactions.get_primogem_log",
-"url":5,
-"doc":"Gets all transactions of primogems This means stuff like getting primogems from rewards and explorations or making wishes. Records go only 3 months back.",
-"func":1
-},
-{
-"ref":"genshinstats.transactions.get_resin_log",
-"url":5,
-"doc":"Gets all usage of resin This means using them in ley lines, domains, crafting and weekly bosses. Records go only 3 months back.",
-"func":1
-},
-{
-"ref":"genshinstats.transactions.get_crystal_log",
-"url":5,
-"doc":"Get all transactions of genesis crystals Records go only 3 months back.",
-"func":1
-},
-{
-"ref":"genshinstats.transactions.get_artifact_log",
-"url":5,
-"doc":"Get the log of all artifacts gotten or destroyed in the last 3 months",
-"func":1
-},
-{
-"ref":"genshinstats.transactions.get_weapon_log",
-"url":5,
-"doc":"Get the log of all weapons gotten or destroyed in the last 3 months",
-"func":1
-},
-{
-"ref":"genshinstats.transactions.current_resin",
-"url":5,
-"doc":"Gets the current resin based off an amount of resin you've had at any time before Works by getting all usages after the last resin time and emulating how the resin would be generated. Keep in mind that this approach works only if the user hasn't played in the last hour.",
-"func":1
-},
-{
-"ref":"genshinstats.transactions.approximate_current_resin",
-"url":5,
-"doc":"Roughly approximates how much resin using a minmax calculation The result can have an offset of around 5 resin in some cases.",
-"func":1
-},
-{
 "ref":"genshinstats.pretty",
-"url":6,
+"url":2,
 "doc":"Prettifiers for genshinstats api returns. Fixes the huge problem of outdated field names in the api, that were leftover from during development"
 },
 {
 "ref":"genshinstats.pretty.prettify_stats",
-"url":6,
+"url":2,
 "doc":"",
 "func":1
 },
 {
 "ref":"genshinstats.pretty.prettify_characters",
-"url":6,
+"url":2,
 "doc":"",
 "func":1
 },
 {
 "ref":"genshinstats.pretty.prettify_abyss",
-"url":6,
+"url":2,
 "doc":"",
 "func":1
 },
 {
 "ref":"genshinstats.pretty.prettify_activities",
-"url":6,
+"url":2,
 "doc":"",
 "func":1
 },
 {
 "ref":"genshinstats.pretty.prettify_notes",
-"url":6,
+"url":2,
 "doc":"",
 "func":1
 },
 {
 "ref":"genshinstats.pretty.prettify_game_accounts",
-"url":6,
+"url":2,
 "doc":"",
 "func":1
 },
 {
 "ref":"genshinstats.pretty.prettify_wish_history",
-"url":6,
+"url":2,
 "doc":"",
 "func":1
 },
 {
 "ref":"genshinstats.pretty.prettify_gacha_items",
-"url":6,
+"url":2,
 "doc":"",
 "func":1
 },
 {
 "ref":"genshinstats.pretty.prettify_banner_details",
-"url":6,
+"url":2,
 "doc":"",
 "func":1
 },
 {
 "ref":"genshinstats.pretty.prettify_trans",
-"url":6,
+"url":2,
 "doc":"",
 "func":1
 },
 {
-"ref":"genshinstats.hoyolab",
-"url":7,
-"doc":"Wrapper for the hoyolab.com community api. Can search users, get record cards, redeem codes ."
+"ref":"genshinstats.transactions",
+"url":3,
+"doc":"Logs for currency \"transactions\". Logs for artifact, weapon, resin, genesis crystol and primogem \"transactions\". You may view a history of everything you have gained in the last 3 months."
 },
 {
-"ref":"genshinstats.hoyolab.get_langs",
-"url":7,
-"doc":"Gets codes of all languages and their names",
+"ref":"genshinstats.transactions.fetch_transaction_endpoint",
+"url":3,
+"doc":"Fetch an enpoint from mihoyo's transaction logs api. Takes in an endpoint url which is joined with the base url. If an authkey is provided, it uses that authkey specifically. A request is then sent and returns a parsed response.",
 "func":1
 },
 {
-"ref":"genshinstats.hoyolab.search",
-"url":7,
-"doc":"Searches all users. Can return up to 20 results, based on size.",
+"ref":"genshinstats.transactions.get_primogem_log",
+"url":3,
+"doc":"Gets all transactions of primogems This means stuff like getting primogems from rewards and explorations or making wishes. Records go only 3 months back.",
 "func":1
 },
 {
-"ref":"genshinstats.hoyolab.set_visibility",
-"url":7,
-"doc":"Sets your data to public or private.",
+"ref":"genshinstats.transactions.get_resin_log",
+"url":3,
+"doc":"Gets all usage of resin This means using them in ley lines, domains, crafting and weekly bosses. Records go only 3 months back.",
 "func":1
 },
 {
-"ref":"genshinstats.hoyolab.hoyolab_check_in",
-"url":7,
-"doc":"Checks in the currently logged-in user to hoyolab. This function will not claim daily rewards !",
+"ref":"genshinstats.transactions.get_crystal_log",
+"url":3,
+"doc":"Get all transactions of genesis crystals Records go only 3 months back.",
 "func":1
 },
 {
-"ref":"genshinstats.hoyolab.get_game_accounts",
-"url":7,
-"doc":"Gets all game accounts of the currently signed in player. Can get accounts both for overseas and china.",
+"ref":"genshinstats.transactions.get_artifact_log",
+"url":3,
+"doc":"Get the log of all artifacts gotten or destroyed in the last 3 months",
 "func":1
 },
 {
-"ref":"genshinstats.hoyolab.get_record_card",
-"url":7,
-"doc":"Gets a game record card of a user based on their hoyolab uid. A record card contains data regarding the stats of a user for their displayed server. Their uid for a given server is also included. In case the user hasn't set their data to public or you are ratelimited the function returns None. You can get a hoyolab id with  search .",
+"ref":"genshinstats.transactions.get_weapon_log",
+"url":3,
+"doc":"Get the log of all weapons gotten or destroyed in the last 3 months",
 "func":1
 },
 {
-"ref":"genshinstats.hoyolab.get_uid_from_hoyolab_uid",
-"url":7,
-"doc":"Gets a uid with a community uid. This is so it's possible to search a user and then directly get the uid. In case the uid is private, returns None.",
+"ref":"genshinstats.transactions.current_resin",
+"url":3,
+"doc":"Gets the current resin based off an amount of resin you've had at any time before Works by getting all usages after the last resin time and emulating how the resin would be generated. Keep in mind that this approach works only if the user hasn't played in the last hour.",
 "func":1
 },
 {
-"ref":"genshinstats.hoyolab.redeem_code",
-"url":7,
-"doc":"Redeems a gift code for the currently signed in user. Api endpoint for https: genshin.mihoyo.com/en/gift.  ! This function requires account_id and cookie_token cookies  ! The code will be redeemed for every avalible account, specifying the uid will claim it only for that account. Returns the amount of users it managed to claim codes for. You can claim codes only every 5s so you must sleep between claims. The function sleeps for you when claiming for every account but you must sleep yourself when passing in a uid or when an error is encountered. Currently codes can only be claimed for overseas accounts, not chinese.",
-"func":1
-},
-{
-"ref":"genshinstats.hoyolab.get_recommended_users",
-"url":7,
-"doc":"Gets a list of recommended active users",
-"func":1
-},
-{
-"ref":"genshinstats.hoyolab.get_hot_posts",
-"url":7,
-"doc":"Fetches hot posts from the front page of hoyolabs Posts are split into different forums set by ids 1-5. There may be less posts returned than size.",
+"ref":"genshinstats.transactions.approximate_current_resin",
+"url":3,
+"doc":"Roughly approximates how much resin using a minmax calculation The result can have an offset of around 5 resin in some cases.",
 "func":1
 },
 {
 "ref":"genshinstats.utils",
-"url":8,
+"url":4,
 "doc":"Various utility functions for genshinstats."
 },
 {
 "ref":"genshinstats.utils.recognize_server",
-"url":8,
+"url":4,
 "doc":"Recognizes which server a UID is from.",
 "func":1
 },
 {
 "ref":"genshinstats.utils.recognize_id",
-"url":8,
+"url":4,
 "doc":"Attempts to recognize what item type an id is",
 "func":1
 },
 {
 "ref":"genshinstats.utils.is_game_uid",
-"url":8,
+"url":4,
 "doc":"Recognizes whether the uid is a game uid.",
 "func":1
 },
 {
 "ref":"genshinstats.utils.is_chinese",
-"url":8,
+"url":4,
 "doc":"Recognizes whether the server/uid is chinese.",
 "func":1
 },
 {
 "ref":"genshinstats.utils.get_logfile",
-"url":8,
+"url":4,
 "doc":"Find and return the Genshin Impact logfile. None if not found.",
+"func":1
+},
+{
+"ref":"genshinstats.errors",
+"url":5,
+"doc":"Genshinstats errors. These take in only a single argument: msg. It's possible to add retcodes and the original api response message with  .set_reponse() ."
+},
+{
+"ref":"genshinstats.errors.GenshinStatsException",
+"url":5,
+"doc":"Base Exception for all genshinstats errors."
+},
+{
+"ref":"genshinstats.errors.GenshinStatsException.retcode",
+"url":5,
+"doc":""
+},
+{
+"ref":"genshinstats.errors.GenshinStatsException.orig_msg",
+"url":5,
+"doc":""
+},
+{
+"ref":"genshinstats.errors.GenshinStatsException.set_response",
+"url":5,
+"doc":"Adds an optional response object to the error.",
+"func":1
+},
+{
+"ref":"genshinstats.errors.GenshinStatsException.msg",
+"url":5,
+"doc":""
+},
+{
+"ref":"genshinstats.errors.TooManyRequests",
+"url":5,
+"doc":"Made too many requests and got ratelimited"
+},
+{
+"ref":"genshinstats.errors.TooManyRequests.retcode",
+"url":5,
+"doc":""
+},
+{
+"ref":"genshinstats.errors.TooManyRequests.orig_msg",
+"url":5,
+"doc":""
+},
+{
+"ref":"genshinstats.errors.TooManyRequests.set_response",
+"url":5,
+"doc":"Adds an optional response object to the error.",
+"func":1
+},
+{
+"ref":"genshinstats.errors.NotLoggedIn",
+"url":5,
+"doc":"Cookies have not been provided."
+},
+{
+"ref":"genshinstats.errors.NotLoggedIn.retcode",
+"url":5,
+"doc":""
+},
+{
+"ref":"genshinstats.errors.NotLoggedIn.orig_msg",
+"url":5,
+"doc":""
+},
+{
+"ref":"genshinstats.errors.NotLoggedIn.set_response",
+"url":5,
+"doc":"Adds an optional response object to the error.",
+"func":1
+},
+{
+"ref":"genshinstats.errors.AccountNotFound",
+"url":5,
+"doc":"Tried to get data with an invalid uid."
+},
+{
+"ref":"genshinstats.errors.AccountNotFound.retcode",
+"url":5,
+"doc":""
+},
+{
+"ref":"genshinstats.errors.AccountNotFound.orig_msg",
+"url":5,
+"doc":""
+},
+{
+"ref":"genshinstats.errors.AccountNotFound.set_response",
+"url":5,
+"doc":"Adds an optional response object to the error.",
+"func":1
+},
+{
+"ref":"genshinstats.errors.DataNotPublic",
+"url":5,
+"doc":"User hasn't set their data to public."
+},
+{
+"ref":"genshinstats.errors.DataNotPublic.retcode",
+"url":5,
+"doc":""
+},
+{
+"ref":"genshinstats.errors.DataNotPublic.orig_msg",
+"url":5,
+"doc":""
+},
+{
+"ref":"genshinstats.errors.DataNotPublic.set_response",
+"url":5,
+"doc":"Adds an optional response object to the error.",
+"func":1
+},
+{
+"ref":"genshinstats.errors.CodeRedeemException",
+"url":5,
+"doc":"Code redemption failed."
+},
+{
+"ref":"genshinstats.errors.CodeRedeemException.retcode",
+"url":5,
+"doc":""
+},
+{
+"ref":"genshinstats.errors.CodeRedeemException.orig_msg",
+"url":5,
+"doc":""
+},
+{
+"ref":"genshinstats.errors.CodeRedeemException.set_response",
+"url":5,
+"doc":"Adds an optional response object to the error.",
+"func":1
+},
+{
+"ref":"genshinstats.errors.SignInException",
+"url":5,
+"doc":"Sign-in failed"
+},
+{
+"ref":"genshinstats.errors.SignInException.retcode",
+"url":5,
+"doc":""
+},
+{
+"ref":"genshinstats.errors.SignInException.orig_msg",
+"url":5,
+"doc":""
+},
+{
+"ref":"genshinstats.errors.SignInException.set_response",
+"url":5,
+"doc":"Adds an optional response object to the error.",
+"func":1
+},
+{
+"ref":"genshinstats.errors.AuthkeyError",
+"url":5,
+"doc":"Base GachaLog Exception."
+},
+{
+"ref":"genshinstats.errors.AuthkeyError.retcode",
+"url":5,
+"doc":""
+},
+{
+"ref":"genshinstats.errors.AuthkeyError.orig_msg",
+"url":5,
+"doc":""
+},
+{
+"ref":"genshinstats.errors.AuthkeyError.set_response",
+"url":5,
+"doc":"Adds an optional response object to the error.",
+"func":1
+},
+{
+"ref":"genshinstats.errors.InvalidAuthkey",
+"url":5,
+"doc":"An authkey is invalid."
+},
+{
+"ref":"genshinstats.errors.InvalidAuthkey.retcode",
+"url":5,
+"doc":""
+},
+{
+"ref":"genshinstats.errors.InvalidAuthkey.orig_msg",
+"url":5,
+"doc":""
+},
+{
+"ref":"genshinstats.errors.InvalidAuthkey.set_response",
+"url":5,
+"doc":"Adds an optional response object to the error.",
+"func":1
+},
+{
+"ref":"genshinstats.errors.AuthkeyTimeout",
+"url":5,
+"doc":"An authkey has timed out."
+},
+{
+"ref":"genshinstats.errors.AuthkeyTimeout.retcode",
+"url":5,
+"doc":""
+},
+{
+"ref":"genshinstats.errors.AuthkeyTimeout.orig_msg",
+"url":5,
+"doc":""
+},
+{
+"ref":"genshinstats.errors.AuthkeyTimeout.set_response",
+"url":5,
+"doc":"Adds an optional response object to the error.",
+"func":1
+},
+{
+"ref":"genshinstats.errors.MissingAuthKey",
+"url":5,
+"doc":"No gacha authkey was found."
+},
+{
+"ref":"genshinstats.errors.MissingAuthKey.retcode",
+"url":5,
+"doc":""
+},
+{
+"ref":"genshinstats.errors.MissingAuthKey.orig_msg",
+"url":5,
+"doc":""
+},
+{
+"ref":"genshinstats.errors.MissingAuthKey.set_response",
+"url":5,
+"doc":"Adds an optional response object to the error.",
+"func":1
+},
+{
+"ref":"genshinstats.errors.raise_for_error",
+"url":5,
+"doc":"Raises a custom genshinstats error from a response.",
+"func":1
+},
+{
+"ref":"genshinstats.hoyolab",
+"url":6,
+"doc":"Wrapper for the hoyolab.com community api. Can search users, get record cards, redeem codes ."
+},
+{
+"ref":"genshinstats.hoyolab.get_langs",
+"url":6,
+"doc":"Gets codes of all languages and their names",
+"func":1
+},
+{
+"ref":"genshinstats.hoyolab.search",
+"url":6,
+"doc":"Searches all users. Can return up to 20 results, based on size.",
+"func":1
+},
+{
+"ref":"genshinstats.hoyolab.set_visibility",
+"url":6,
+"doc":"Sets your data to public or private.",
+"func":1
+},
+{
+"ref":"genshinstats.hoyolab.hoyolab_check_in",
+"url":6,
+"doc":"Checks in the currently logged-in user to hoyolab. This function will not claim daily rewards !",
+"func":1
+},
+{
+"ref":"genshinstats.hoyolab.get_game_accounts",
+"url":6,
+"doc":"Gets all game accounts of the currently signed in player. Can get accounts both for overseas and china.",
+"func":1
+},
+{
+"ref":"genshinstats.hoyolab.get_record_card",
+"url":6,
+"doc":"Gets a game record card of a user based on their hoyolab uid. A record card contains data regarding the stats of a user for their displayed server. Their uid for a given server is also included. In case the user hasn't set their data to public or you are ratelimited the function returns None. You can get a hoyolab id with  search .",
+"func":1
+},
+{
+"ref":"genshinstats.hoyolab.get_uid_from_hoyolab_uid",
+"url":6,
+"doc":"Gets a uid with a community uid. This is so it's possible to search a user and then directly get the uid. In case the uid is private, returns None.",
+"func":1
+},
+{
+"ref":"genshinstats.hoyolab.redeem_code",
+"url":6,
+"doc":"Redeems a gift code for the currently signed in user. Api endpoint for https: genshin.mihoyo.com/en/gift.  ! This function requires account_id and cookie_token cookies  ! The code will be redeemed for every avalible account, specifying the uid will claim it only for that account. Returns the amount of users it managed to claim codes for. You can claim codes only every 5s so you must sleep between claims. The function sleeps for you when claiming for every account but you must sleep yourself when passing in a uid or when an error is encountered. Currently codes can only be claimed for overseas accounts, not chinese.",
+"func":1
+},
+{
+"ref":"genshinstats.hoyolab.get_recommended_users",
+"url":6,
+"doc":"Gets a list of recommended active users",
+"func":1
+},
+{
+"ref":"genshinstats.hoyolab.get_hot_posts",
+"url":6,
+"doc":"Fetches hot posts from the front page of hoyolabs Posts are split into different forums set by ids 1-5. There may be less posts returned than size.",
+"func":1
+},
+{
+"ref":"genshinstats.caching",
+"url":7,
+"doc":"Install a cache into genshinstats"
+},
+{
+"ref":"genshinstats.caching.permanent_cache",
+"url":7,
+"doc":"Like lru_cache except permanent and only caches based on some parameters",
+"func":1
+},
+{
+"ref":"genshinstats.caching.install_cache",
+"url":7,
+"doc":"Installs a cache into every cacheable function in genshinstats If strict mode is on then the first item of the paginator will no longer be requested every time. That can however cause a variety of problems and it's therefore recommend to use it only with TTL caches. Please do note that hundreds of accesses may be made per call so your cache shouldn't be doing heavy computations during accesses.",
+"func":1
+},
+{
+"ref":"genshinstats.caching.uninstall_cache",
+"url":7,
+"doc":"Uninstalls the cache from all functions",
+"func":1
+},
+{
+"ref":"genshinstats.wishes",
+"url":8,
+"doc":"Genshin Impact wish history. Gets wish history from the current banners in a clean api. Requires an authkey that is fetched automatically from a logfile."
+},
+{
+"ref":"genshinstats.wishes.extract_authkey",
+"url":8,
+"doc":"Extracts an authkey from the provided string. Returns None if not found.",
+"func":1
+},
+{
+"ref":"genshinstats.wishes.get_authkey",
+"url":8,
+"doc":"Gets the query for log requests. This will either be done from the logs or from a tempfile.",
+"func":1
+},
+{
+"ref":"genshinstats.wishes.set_authkey",
+"url":8,
+"doc":"Sets an authkey for log requests. You may pass in an authkey, a url with an authkey or a path to a logfile with the authkey.",
+"func":1
+},
+{
+"ref":"genshinstats.wishes.get_banner_ids",
+"url":8,
+"doc":"Gets all banner ids from a log file. You need to open the details of all banners for this to work.",
+"func":1
+},
+{
+"ref":"genshinstats.wishes.fetch_gacha_endpoint",
+"url":8,
+"doc":"Fetch an enpoint from mihoyo's gacha info. Takes in an endpoint url which is joined with the base url. If an authkey is provided, it uses that authkey specifically. A request is then sent and returns a parsed response. Includes error handling and getting the authkey.",
+"func":1
+},
+{
+"ref":"genshinstats.wishes.get_banner_types",
+"url":8,
+"doc":"Gets ids for all banners and their names",
+"func":1
+},
+{
+"ref":"genshinstats.wishes.get_wish_history",
+"url":8,
+"doc":"Gets wish history. Note that pulls are yielded and not returned to account for pagination. When a banner_type is set, only data from that banner type is retuned. You can get banner types and their names from get_banner_types. If a size is set the total returned amount of pulls will be equal to or lower than the size. To be able to get history starting from somewhere other than the last pull you may pass in the id of the pull right chronologically after the one you want to start from as end_id.",
+"func":1
+},
+{
+"ref":"genshinstats.wishes.get_gacha_items",
+"url":8,
+"doc":"Gets the list of characters and weapons that can be gotten from the gacha.",
+"func":1
+},
+{
+"ref":"genshinstats.wishes.get_banner_details",
+"url":8,
+"doc":"Gets details of a specific banner. This requires the banner's id. These keep rotating so you need to get them with get_banner_ids(). example standard wish: \"a37a19624270b092e7250edfabce541a3435c2\" The newbie gacha has no json resource tied to it so you can't get info about it.",
+"func":1
+},
+{
+"ref":"genshinstats.wishes.get_uid_from_authkey",
+"url":8,
+"doc":"Gets a uid from an authkey. If an authkey is not passed in the function uses the currently set authkey.",
+"func":1
+},
+{
+"ref":"genshinstats.wishes.validate_authkey",
+"url":8,
+"doc":"Checks whether an authkey is valid by sending a request If a previous authkey is provided the function also checks if the authkey belongs to the same person as the previous one.",
 "func":1
 },
 {
@@ -713,26 +689,50 @@ INDEX=[
 "func":1
 },
 {
-"ref":"genshinstats.caching",
+"ref":"genshinstats.map",
 "url":10,
-"doc":"Install a cache into genshinstats"
+"doc":"The official genshin map Gets data from the official genshin map such as categories, points and similar."
 },
 {
-"ref":"genshinstats.caching.permanent_cache",
+"ref":"genshinstats.map.fetch_map_endpoint",
 "url":10,
-"doc":"Like lru_cache except permanent and only caches based on some parameters",
+"doc":"Fetch an enpoint from mihoyo's webstatic map api. Only currently liyue is supported. Takes in an endpoint url which is joined with the base url. A request is then sent and returns a parsed response.",
 "func":1
 },
 {
-"ref":"genshinstats.caching.install_cache",
+"ref":"genshinstats.map.get_map_image",
 "url":10,
-"doc":"Installs a cache into every cacheable function in genshinstats If strict mode is on then the first item of the paginator will no longer be requested every time. That can however cause a variety of problems and it's therefore recommend to use it only with TTL caches. Please do note that hundreds of accesses may be made per call so your cache shouldn't be doing heavy computations during accesses.",
+"doc":"Get the url to the entire map image",
 "func":1
 },
 {
-"ref":"genshinstats.caching.uninstall_cache",
+"ref":"genshinstats.map.get_map_icons",
 "url":10,
-"doc":"Uninstalls the cache from all functions",
+"doc":"Get all icons for the map",
+"func":1
+},
+{
+"ref":"genshinstats.map.get_map_labels",
+"url":10,
+"doc":"Get labels and label categories",
+"func":1
+},
+{
+"ref":"genshinstats.map.get_map_locations",
+"url":10,
+"doc":"Get all locations on the map",
+"func":1
+},
+{
+"ref":"genshinstats.map.get_map_points",
+"url":10,
+"doc":"Get points on the map",
+"func":1
+},
+{
+"ref":"genshinstats.map.get_map_tile",
+"url":10,
+"doc":"Gets a map tile at a position You may set an x, y, width and height of the resulting image however you shoudl prefer to use multiples of 256 because they are cached on the mihoyo servers. Resolution dictates the resolution of the image as a percentage. 100 is highest and 0 is lowest. You should pick values from 100, 50, 25 and 12.5",
 "func":1
 }
 ]
