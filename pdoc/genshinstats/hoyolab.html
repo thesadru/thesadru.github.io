@@ -37,7 +37,7 @@ import time
 from typing import Any, Dict, List, Mapping, Optional
 
 from .caching import permanent_cache
-from .genshinstats import fetch_endpoint
+from .genshinstats import fetch_endpoint, fetch_game_record_endpoint
 from .pretty import prettify_game_accounts
 from .utils import deprecated, recognize_server
 
@@ -125,8 +125,8 @@ def get_record_card(
 
     You can get a hoyolab id with `search`.
     &#34;&#34;&#34;
-    cards = fetch_endpoint(
-        &#34;game_record/card/wapi/getGameRecordCard&#34;,
+    cards = fetch_game_record_endpoint(
+        &#34;card/wapi/getGameRecordCard&#34;,
         chinese=chinese,
         cookie=cookie,
         params=dict(uid=hoyolab_uid, gids=2),
@@ -325,8 +325,8 @@ In case the user hasn't set their data to public or you are ratelimited the func
 
     You can get a hoyolab id with `search`.
     &#34;&#34;&#34;
-    cards = fetch_endpoint(
-        &#34;game_record/card/wapi/getGameRecordCard&#34;,
+    cards = fetch_game_record_endpoint(
+        &#34;card/wapi/getGameRecordCard&#34;,
         chinese=chinese,
         cookie=cookie,
         params=dict(uid=hoyolab_uid, gids=2),
