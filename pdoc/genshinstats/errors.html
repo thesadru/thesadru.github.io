@@ -28,7 +28,7 @@ It's possible to add retcodes and the original api response message with <code>.
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/errors.py#L1-L113" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/errors.py#L1-L114" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">&#34;&#34;&#34;Genshinstats errors.
 
@@ -120,6 +120,7 @@ def raise_for_error(response: dict):
         10103: NotLoggedIn(&#34;Cookies are correct but do not have a hoyolab account bound to them.&#34;),
         # code redemption
         -2003: CodeRedeemException(&#34;Invalid redemption code&#34;),
+        -2007: CodeRedeemException(&#34;You have already used a redemption code of the same kind.&#34;),
         -2017: CodeRedeemException(&#34;Redemption code has been claimed already.&#34;),
         -2001: CodeRedeemException(&#34;Redemption code has expired.&#34;),
         -2021: CodeRedeemException(
@@ -160,7 +161,7 @@ def raise_for_error(response: dict):
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/errors.py#L72-L113" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/errors.py#L72-L114" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def raise_for_error(response: dict):
     &#34;&#34;&#34;Raises a custom genshinstats error from a response.&#34;&#34;&#34;
@@ -181,6 +182,7 @@ def raise_for_error(response: dict):
         10103: NotLoggedIn(&#34;Cookies are correct but do not have a hoyolab account bound to them.&#34;),
         # code redemption
         -2003: CodeRedeemException(&#34;Invalid redemption code&#34;),
+        -2007: CodeRedeemException(&#34;You have already used a redemption code of the same kind.&#34;),
         -2017: CodeRedeemException(&#34;Redemption code has been claimed already.&#34;),
         -2001: CodeRedeemException(&#34;Redemption code has expired.&#34;),
         -2021: CodeRedeemException(
