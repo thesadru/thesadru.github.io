@@ -28,7 +28,7 @@ that were leftover from during development</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/pretty.py#L1-L459" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/pretty.py#L1-L462" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">&#34;&#34;&#34;Prettifiers for genshinstats api returns.
 
@@ -335,6 +335,9 @@ def prettify_notes(data):
             for exp in data[&#34;expeditions&#34;]
         ],
         &#34;max_expeditions&#34;: data[&#34;max_expedition_num&#34;],
+        &#34;realm_currency&#34;: data[&#34;current_home_coin&#34;],
+        &#34;max_realm_currency&#34;: data[&#34;max_home_coin&#34;],
+        &#34;until_realm_currency_limit&#34;: data[&#34;home_coin_recovery_time&#34;],
     }
 
 
@@ -641,7 +644,7 @@ def prettify_trans(data, reasons={}):
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/pretty.py#L355-L428" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/pretty.py#L358-L431" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def prettify_banner_details(data):
     per = lambda p: None if p == &#34;0%&#34; else float(p[:-1].replace(&#34;,&#34;, &#34;.&#34;))
@@ -817,7 +820,7 @@ def prettify_trans(data, reasons={}):
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/pretty.py#L341-L352" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/pretty.py#L344-L355" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def prettify_gacha_items(data):
     return [
@@ -841,7 +844,7 @@ def prettify_trans(data, reasons={}):
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/pretty.py#L309-L322" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/pretty.py#L312-L325" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def prettify_game_accounts(data):
     return [
@@ -867,7 +870,7 @@ def prettify_trans(data, reasons={}):
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/pretty.py#L287-L306" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/pretty.py#L287-L309" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def prettify_notes(data):
     return {
@@ -888,6 +891,9 @@ def prettify_trans(data, reasons={}):
             for exp in data[&#34;expeditions&#34;]
         ],
         &#34;max_expeditions&#34;: data[&#34;max_expedition_num&#34;],
+        &#34;realm_currency&#34;: data[&#34;current_home_coin&#34;],
+        &#34;max_realm_currency&#34;: data[&#34;max_home_coin&#34;],
+        &#34;until_realm_currency_limit&#34;: data[&#34;home_coin_recovery_time&#34;],
     }</code></pre>
 </details>
 </dd>
@@ -968,7 +974,7 @@ def prettify_trans(data, reasons={}):
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/pretty.py#L431-L459" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/pretty.py#L434-L462" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def prettify_trans(data, reasons={}):
     if data and &#34;name&#34; in data[0]:
@@ -1009,7 +1015,7 @@ def prettify_trans(data, reasons={}):
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/pretty.py#L325-L338" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/pretty.py#L328-L341" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def prettify_wish_history(data, banner_name=None):
     return [
