@@ -56,7 +56,7 @@ __all__ = [
     &#34;approximate_current_resin&#34;,
 ]
 
-YSULOG_URL = &#34;https://hk4e-api-os.mihoyo.com/ysulog/api/&#34;
+YSULOG_URL = &#34;https://hk4e-api-os.hoyoverse.com/ysulog/api/&#34;
 
 
 def fetch_transaction_endpoint(
@@ -75,7 +75,7 @@ def fetch_transaction_endpoint(
 @permanent_cache(&#34;lang&#34;)
 def _get_reasons(lang: str = &#34;en-us&#34;) -&gt; Dict[int, str]:
     r = static_session.get(
-        f&#34;https://mi18n-os.mihoyo.com/webstatic/admin/mi18n/hk4e_global/m02251421001311/m02251421001311-{lang}.json&#34;
+        f&#34;https://mi18n-os.hoyoverse.com/webstatic/admin/mi18n/hk4e_global/m02251421001311/m02251421001311-{lang}.json&#34;
     )
     r.raise_for_status()
     data = r.json()

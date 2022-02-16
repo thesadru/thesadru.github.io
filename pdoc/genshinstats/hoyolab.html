@@ -27,7 +27,7 @@
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/hoyolab.py#L1-L175" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/hoyolab.py#L1-L177" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">&#34;&#34;&#34;Wrapper for the hoyolab.com community api.
 
@@ -95,7 +95,9 @@ def hoyolab_check_in(chinese: bool = False, cookie: Mapping[str, Any] = None) -&
     This function will not claim daily rewards!!!
     &#34;&#34;&#34;
     url = (
-        &#34;https://bbs-api.mihoyo.com/&#34; if chinese else &#34;https://api-os-takumi.mihoyo.com/community/&#34;
+        &#34;https://bbs-api.mihoyo.com/&#34;
+        if chinese
+        else &#34;https://api-os-takumi.hoyoverse.com/community/&#34;
     )
     fetch_endpoint(
         url + &#34;apihub/api/signIn&#34;, chinese=chinese, cookie=cookie, method=&#34;POST&#34;, json=dict(gids=2)
@@ -109,7 +111,7 @@ def get_game_accounts(
 
     Can get accounts both for overseas and china.
     &#34;&#34;&#34;
-    url = &#34;https://api-takumi.mihoyo.com/&#34; if chinese else &#34;https://api-os-takumi.mihoyo.com/&#34;
+    url = &#34;https://api-takumi.mihoyo.com/&#34; if chinese else &#34;https://api-os-takumi.hoyoverse.com/&#34;
     data = fetch_endpoint(url + &#34;binding/api/getUserGameRolesByCookie&#34;, cookie=cookie)[&#34;list&#34;]
     return prettify_game_accounts(data)
 
@@ -222,7 +224,7 @@ def get_hot_posts(forum_id: int = 1, size: int = 100, lang: str = &#34;en-us&#34
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/hoyolab.py#L74-L83" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/hoyolab.py#L76-L85" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def get_game_accounts(
     chinese: bool = False, cookie: Mapping[str, Any] = None
@@ -231,7 +233,7 @@ def get_hot_posts(forum_id: int = 1, size: int = 100, lang: str = &#34;en-us&#34
 
     Can get accounts both for overseas and china.
     &#34;&#34;&#34;
-    url = &#34;https://api-takumi.mihoyo.com/&#34; if chinese else &#34;https://api-os-takumi.mihoyo.com/&#34;
+    url = &#34;https://api-takumi.mihoyo.com/&#34; if chinese else &#34;https://api-os-takumi.hoyoverse.com/&#34;
     data = fetch_endpoint(url + &#34;binding/api/getUserGameRolesByCookie&#34;, cookie=cookie)[&#34;list&#34;]
     return prettify_game_accounts(data)</code></pre>
 </details>
@@ -246,7 +248,7 @@ There may be less posts returned than size.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/hoyolab.py#L162-L175" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/hoyolab.py#L164-L177" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def get_hot_posts(forum_id: int = 1, size: int = 100, lang: str = &#34;en-us&#34;) -&gt; List[Dict[str, Any]]:
     &#34;&#34;&#34;Fetches hot posts from the front page of hoyolabs
@@ -289,7 +291,7 @@ def get_langs() -&gt; Dict[str, str]:
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/hoyolab.py#L153-L159" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/hoyolab.py#L155-L161" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def get_recommended_users(page_size: int = None) -&gt; List[Dict[str, Any]]:
     &#34;&#34;&#34;Gets a list of recommended active users&#34;&#34;&#34;
@@ -312,7 +314,7 @@ In case the user hasn't set their data to public or you are ratelimited the func
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/hoyolab.py#L86-L103" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/hoyolab.py#L88-L105" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def get_record_card(
     hoyolab_uid: int, chinese: bool = False, cookie: Mapping[str, Any] = None
@@ -344,7 +346,7 @@ In case the uid is private, returns None.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/hoyolab.py#L106-L115" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/hoyolab.py#L108-L117" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def get_uid_from_hoyolab_uid(
     hoyolab_uid: int, chinese: bool = False, cookie: Mapping[str, Any] = None
@@ -367,7 +369,7 @@ In case the uid is private, returns None.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/hoyolab.py#L60-L71" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/hoyolab.py#L60-L73" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">@deprecated()
 def hoyolab_check_in(chinese: bool = False, cookie: Mapping[str, Any] = None) -&gt; None:
@@ -376,7 +378,9 @@ def hoyolab_check_in(chinese: bool = False, cookie: Mapping[str, Any] = None) -&
     This function will not claim daily rewards!!!
     &#34;&#34;&#34;
     url = (
-        &#34;https://bbs-api.mihoyo.com/&#34; if chinese else &#34;https://api-os-takumi.mihoyo.com/community/&#34;
+        &#34;https://bbs-api.mihoyo.com/&#34;
+        if chinese
+        else &#34;https://api-os-takumi.hoyoverse.com/community/&#34;
     )
     fetch_endpoint(
         url + &#34;apihub/api/signIn&#34;, chinese=chinese, cookie=cookie, method=&#34;POST&#34;, json=dict(gids=2)
@@ -400,7 +404,7 @@ but you must sleep yourself when passing in a uid or when an error is encountere
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/hoyolab.py#L118-L150" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/hoyolab.py#L120-L152" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def redeem_code(code: str, uid: int = None, cookie: Mapping[str, Any] = None) -&gt; None:
     &#34;&#34;&#34;Redeems a gift code for the currently signed in user.
