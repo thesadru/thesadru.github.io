@@ -166,7 +166,7 @@ def redeem_code(code: str, uid: int = None, cookie: Mapping[str, Any] = None) -&
     &#34;&#34;&#34;
     if uid is not None:
         fetch_endpoint(
-            &#34;https://hk4e-api-os.mihoyo.com/common/apicdkey/api/webExchangeCdkey&#34;,
+            &#34;https://sg-hk4e-api.hoyoverse.com/common/apicdkey/api/webExchangeCdkey&#34;,
             cookie=cookie,
             params=dict(
                 uid=uid, region=recognize_server(uid), cdkey=code, game_biz=&#34;hk4e_global&#34;, lang=&#34;en&#34;
@@ -424,7 +424,7 @@ but you must sleep yourself when passing in a uid or when an error is encountere
     &#34;&#34;&#34;
     if uid is not None:
         fetch_endpoint(
-            &#34;https://hk4e-api-os.mihoyo.com/common/apicdkey/api/webExchangeCdkey&#34;,
+            &#34;https://sg-hk4e-api.hoyoverse.com/common/apicdkey/api/webExchangeCdkey&#34;,
             cookie=cookie,
             params=dict(
                 uid=uid, region=recognize_server(uid), cdkey=code, game_biz=&#34;hk4e_global&#34;, lang=&#34;en&#34;
