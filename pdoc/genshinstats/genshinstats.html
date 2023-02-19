@@ -27,7 +27,7 @@
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/genshinstats.py#L1-L357" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/genshinstats.py#L1-L359" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">&#34;&#34;&#34;Wrapper for the hoyolab.com gameRecord api.
 
@@ -85,8 +85,10 @@ session.headers.update(
 )
 
 cookies: List[RequestsCookieJar] = []  # a list of all avalible cookies
-
-OS_DS_SALT = &#34;6cqshh5dhw73bzxn20oexa9k516chk7s&#34;
+#salt os update 
+OS_DS_SALT = &#34;6s25p5ox5y14umn1p61aqyyvbvvl3lrt&#34;
+#&#34;x-rpc-client_type&#34;: old salt = 6cqshh5dhw73bzxn20oexa9k516chk7s 
+#&#34;x-rpc-client_type&#34;: new salt = 6s25p5ox5y14umn1p61aqyyvbvvl3lrt 
 CN_DS_SALT = &#34;xV8v4Qu54lUKrEYFZkJhB8cuOh9Asafs&#34;
 OS_TAKUMI_URL = &#34;https://api-os-takumi.mihoyo.com/&#34;  # overseas
 CN_TAKUMI_URL = &#34;https://api-takumi.mihoyo.com/&#34;  # chinese
@@ -409,7 +411,7 @@ but that requires being logged in as that user.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/genshinstats.py#L177-L233" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/genshinstats.py#L179-L235" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def fetch_endpoint(
     endpoint: str, chinese: bool = False, cookie: Mapping[str, Any] = None, **kwargs
@@ -479,7 +481,7 @@ but that requires being logged in as that user.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/genshinstats.py#L313-L328" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/genshinstats.py#L315-L330" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def get_activities(
     uid: int, lang: str = &#34;en-us&#34;, cookie: Mapping[str, Any] = None
@@ -509,7 +511,7 @@ However that makes it fairly slow so it's not recommended to use it outside cach
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/genshinstats.py#L347-L357" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/genshinstats.py#L349-L359" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def get_all_user_data(
     uid: int, lang: str = &#34;en-us&#34;, cookie: Mapping[str, Any] = None
@@ -534,7 +536,7 @@ Avalible browsers: chrome, chromium, opera, edge, firefox</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/genshinstats.py#L102-L124" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/genshinstats.py#L104-L126" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def get_browser_cookies(browser: str = None) -&gt; Dict[str, str]:
     &#34;&#34;&#34;Gets cookies from your browser for later storing.
@@ -572,7 +574,7 @@ Talents are not included.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/genshinstats.py#L268-L292" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/genshinstats.py#L270-L294" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def get_characters(
     uid: int, character_ids: List[int] = None, lang: str = &#34;en-us&#34;, cookie: Mapping[str, Any] = None
@@ -610,7 +612,7 @@ Talents are not included.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/genshinstats.py#L331-L344" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/genshinstats.py#L333-L346" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def get_notes(uid: int, lang: str = &#34;en-us&#34;, cookie: Mapping[str, Any] = None) -&gt; Dict[str, Any]:
     &#34;&#34;&#34;Gets the real-time notes of the user
@@ -637,7 +639,7 @@ Talents are not included.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/genshinstats.py#L295-L310" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/genshinstats.py#L297-L312" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def get_spiral_abyss(
     uid: int, previous: bool = False, cookie: Mapping[str, Any] = None
@@ -666,7 +668,7 @@ Talents are not included.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/genshinstats.py#L245-L265" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/genshinstats.py#L247-L267" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def get_user_stats(
     uid: int, equipment: bool = False, lang: str = &#34;en-us&#34;, cookie: Mapping[str, Any] = None
@@ -705,7 +707,7 @@ Talents are not included.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/genshinstats.py#L66-L78" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/genshinstats.py#L68-L80" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def set_cookie(cookie: Union[Mapping[str, Any], str] = None, **kwargs: Any) -&gt; None:
     &#34;&#34;&#34;Logs-in using a cookie.
@@ -735,7 +737,7 @@ Avalible browsers: chrome, chromium, opera, edge, firefox</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/genshinstats.py#L127-L137" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/genshinstats.py#L129-L139" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def set_cookie_auto(browser: str = None) -&gt; None:
     &#34;&#34;&#34;Like set_cookie, but gets the cookies by itself from your browser.
@@ -761,7 +763,7 @@ This is so far the only way to circumvent the rate limit.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/genshinstats.py#L81-L99" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/genshinstats.py#L83-L101" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def set_cookies(*args: Union[Mapping[str, Any], str], clear: bool = True) -&gt; None:
     &#34;&#34;&#34;Sets multiple cookies at once to cycle between. Takes same arguments as set_cookie.
@@ -797,7 +799,7 @@ Avalible browsers: chrome, chromium, opera, edge, firefox</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
-<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/genshinstats.py#L127-L137" class="git-link">Browse git</a>
+<a href="https://github.com/thesadru/genshinstats/blob/master/genshinstats/genshinstats.py#L129-L139" class="git-link">Browse git</a>
 </summary>
 <pre><code class="python">def set_cookie_auto(browser: str = None) -&gt; None:
     &#34;&#34;&#34;Like set_cookie, but gets the cookies by itself from your browser.
